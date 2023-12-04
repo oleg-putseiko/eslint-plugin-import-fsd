@@ -1,0 +1,56 @@
+{
+  "name": "eslint-plugin-import-fsd",
+  "version": "1.0.0",
+  "description": "ESLint plugin for FSD imports",
+  "license": "MIT",
+  "author": "Oleg Putseiko <oleg.putseiko@gmail.com> (https://github.com/oleg-putseiko)",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "import",
+    "fsd"
+  ],
+  "homepage": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd"
+  },
+  "bugs": {
+    "url": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd/issues"
+  },
+  "main": "index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "lint": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} && yarn format",
+    "lint:fix": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} --fix && yarn format:fix",
+    "lint:strict": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} --max-warnings=0 && yarn format",
+    "format": "prettier -c .",
+    "format:fix": "prettier -w .",
+    "prepare": "husky install"
+  },
+  "peerDependencies": {
+    "eslint": "^8.53.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^3.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.2.0",
+    "@commitlint/config-conventional": "^18.1.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.2",
+    "prettier": "^3.0.3"
+  },
+  "engines": {
+    "node": "18.18.0",
+    "yarn": "3.6.4"
+  },
+  "volta": {
+    "node": "18.18.0",
+    "yarn": "3.6.4"
+  },
+  "packageManager": "yarn@3.6.4"
+}
