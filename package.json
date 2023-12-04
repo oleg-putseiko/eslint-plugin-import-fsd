@@ -23,9 +23,9 @@
     ".": "./src/index.js"
   },
   "scripts": {
-    "lint": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} && yarn format",
-    "lint:fix": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} --fix && yarn format:fix",
-    "lint:strict": "eslint ./index.{js,ts,json} ./presets/**/*.{js,ts,json} --max-warnings=0 && yarn format",
+    "lint": "eslint ./src/**/*.{js,ts,json} && yarn format",
+    "lint:fix": "eslint ./src/**/*.{js,ts,json} --fix && yarn format:fix",
+    "lint:strict": "eslint ./src/**/*.{js,ts,json} --max-warnings=0 && yarn format",
     "format": "prettier -c .",
     "format:fix": "prettier -w .",
     "prepare": "husky install"
