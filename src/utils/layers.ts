@@ -1,10 +1,7 @@
-/** Name pattern compatible with Glob, RegExp and gitignore syntax */
-type NamePattern = string;
-
 export type Layer = {
   name: string;
-  actualNames: NamePattern[];
-  deprecatedNames: NamePattern[];
+  actualNames: string[];
+  deprecatedNames: string[];
 };
 
 export const LAYERS: Layer[] = [
@@ -52,16 +49,5 @@ export const LAYERS: Layer[] = [
   },
 ];
 
-export const DEPRECATED_PATH_GROUP: string[] = LAYERS.flatMap((layer) =>
-  layer.deprecatedNames.flatMap((layerName) => [
-    `src/${layerName}/**/*`,
-    `@/${layerName}/**/*`,
-    `@${layerName}/**/*`,
-    `${layerName}/**/*`,
-  ]),
-);
-
-export const BREAKING_PATH_GROUP: string[] = ['/', './', '../'];
-
-export const getLayerNames = (layer: Layer): NamePattern[] =>
+export const getLayerNames = (layer: Layer): string[] =>
   layer.actualNames.concat(layer.deprecatedNames);
