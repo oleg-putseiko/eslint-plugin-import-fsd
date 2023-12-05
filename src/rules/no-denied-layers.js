@@ -1,12 +1,10 @@
-const { LAYERS } = require('../constants/layers');
+const { LAYERS, getLayerNames } = require('../utils/layers');
+const {
+  extractImportDataFromNode,
+  extractFileDataFromContext,
+} = require('../utils/rule');
 
-/**
- * @param { Layer } layer
- *
- * @returns { NamePattern[] } Layer name patterns
- */
-const getLayerNames = (layer) =>
-  layer.actualNames.concat(layer.deprecatedNames);
+const MESSAGE = 'Access to this layer or slice from the current one is denied.';
 
 /**
  * @type { import('eslint').Rule.RuleModule }
@@ -22,59 +20,24 @@ module.exports = {
     schema: [],
   },
   create(context) {
-    const fileFullPath = context.filename;
-    const rootDir = context.settings.fsd?.rootDir ?? context.cwd;
+    const fileData = extractFileDataFromContext(context);
 
-    if (typeof rootDir !== 'string' || !fileFullPath.startsWith(rootDir)) {
-      return;
-    }
+    if (fileData === null || fileData.layerIndex < 0) return {};
 
-    const fileRootPath = fileFullPath.substring(rootDir.length);
-    const filePathSegments = [...fileRootPath.matchAll(/[^\\/\\.]+/gu)];
-
-    if (filePathSegments.length < 2) return;
-
-    const fileLayer = filePathSegments[0].at(0);
-    const fileSlice = filePathSegments[1].at(0);
-
-    if (!fileLayer || !fileSlice) return;
-
-    const fileLayerIndex = LAYERS.findIndex((layer) =>
-      getLayerNames(layer).includes(fileLayer),
-    );
-
-    if (fileLayerIndex < 0) return;
-
-    const deniedLayers = LAYERS.slice(0, fileLayerIndex + 1).flatMap(
+    const deniedLayers = LAYERS.slice(0, fileData.layerIndex + 1).flatMap(
       getLayerNames,
     );
 
     return {
       ImportDeclaration(node) {
-        const importPath = node.source.value;
+        const importData = extractImportDataFromNode(node);
 
-        if (typeof importPath !== 'string' || !importPath) return;
-
-        const importLayer = /^(@|@\/|src\/)?([^\\/]+)/gu
-          .exec(importPath)
-          ?.at(2);
-
-        if (!importLayer) return;
-
-        if (deniedLayers.includes(importLayer)) {
-          const importSlice = RegExp(
-            `^(@|@\\/|src\\/)?${importLayer}/([^\\/]+)/`,
-          )
-            .exec(importPath)
-            ?.at(2);
-
-          if (fileSlice !== importSlice) {
-            context.report({
-              node,
-              message:
-                'Access to this layer or slice from the current one is denied.',
-            });
-          }
+        if (
+          importData !== null &&
+          deniedLayers.includes(importData.layer) &&
+          fileData.slice !== importData.slice
+        ) {
+          context.report({ node, message: MESSAGE });
         }
       },
     };

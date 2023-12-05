@@ -60,8 +60,17 @@ const DEPRECATED_PATH_GROUP = LAYERS.flatMap((layer) =>
 
 const BREAKING_PATH_GROUP = ['/', './', '../'];
 
+/**
+ * @param { import('./layers').Layer } layer
+ *
+ * @returns { NamePattern[] } Layer name patterns
+ */
+const getLayerNames = (layer) =>
+  layer.actualNames.concat(layer.deprecatedNames);
+
 module.exports = {
   LAYERS,
   DEPRECATED_PATH_GROUP,
   BREAKING_PATH_GROUP,
+  getLayerNames,
 };
