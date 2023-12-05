@@ -1,15 +1,14 @@
-const { LAYERS, getLayerNames } = require('../utils/layers');
-const { extractImportDataFromNode } = require('../utils/rule');
+import { Rule } from 'eslint';
+
+import { LAYERS, getLayerNames } from '../utils/layers';
+import { extractImportDataFromNode } from '../utils/rule';
 
 const MESSAGE =
   'Unknown layer "{{ layer }}", use one related to FSD version 2.X.X';
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
-/**
- * @type { import('eslint').Rule.RuleModule }
- */
-module.exports = {
+const rule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
@@ -55,3 +54,5 @@ module.exports = {
     };
   },
 };
+
+export default rule;

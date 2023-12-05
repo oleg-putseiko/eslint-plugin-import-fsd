@@ -1,10 +1,13 @@
-/**
- * @typedef { string } NamePattern Name pattern compatible with Glob, RegExp and gitignore syntax
- * @typedef { { name: string; actualNames: NamePattern[]; deprecatedNames: NamePattern[] } } Layer
- *
- * @type { Layer[] }
- */
-const LAYERS = [
+/** Name pattern compatible with Glob, RegExp and gitignore syntax */
+type NamePattern = string;
+
+export type Layer = {
+  name: string;
+  actualNames: NamePattern[];
+  deprecatedNames: NamePattern[];
+};
+
+export const LAYERS: Layer[] = [
   {
     name: 'app',
     actualNames: ['app', 'apps'],
@@ -49,7 +52,7 @@ const LAYERS = [
   },
 ];
 
-const DEPRECATED_PATH_GROUP = LAYERS.flatMap((layer) =>
+export const DEPRECATED_PATH_GROUP: string[] = LAYERS.flatMap((layer) =>
   layer.deprecatedNames.flatMap((layerName) => [
     `src/${layerName}/**/*`,
     `@/${layerName}/**/*`,
@@ -58,19 +61,7 @@ const DEPRECATED_PATH_GROUP = LAYERS.flatMap((layer) =>
   ]),
 );
 
-const BREAKING_PATH_GROUP = ['/', './', '../'];
+export const BREAKING_PATH_GROUP: string[] = ['/', './', '../'];
 
-/**
- * @param { import('./layers').Layer } layer
- *
- * @returns { NamePattern[] } Layer name patterns
- */
-const getLayerNames = (layer) =>
+export const getLayerNames = (layer: Layer): NamePattern[] =>
   layer.actualNames.concat(layer.deprecatedNames);
-
-module.exports = {
-  LAYERS,
-  DEPRECATED_PATH_GROUP,
-  BREAKING_PATH_GROUP,
-  getLayerNames,
-};

@@ -1,19 +1,26 @@
-const { LAYERS, getLayerNames } = require('./layers');
+import { Rule } from 'eslint';
+import { ImportDeclaration } from 'estree';
 
-/**
- * @typedef { {
- *      fullPath: string;
- *      rootPath: string;
- *      layer: string;
- *      slice: string;
- *      layerIndex: number;
- * } } FileData
- *
- * @param { import('eslint').Rule.RuleContext } context
- *
- * @returns { FileData | null } Extracted file data
- */
-const extractFileDataFromContext = (context) => {
+import { LAYERS, getLayerNames } from './layers';
+
+type FileData = {
+  fullPath: string;
+  rootPath: string;
+  layer: string;
+  slice: string;
+  layerIndex: number;
+};
+
+type ImportData = {
+  path: string;
+  layer: string;
+  slice: string;
+  layerIndex: number;
+};
+
+export const extractFileDataFromContext = (
+  context: Rule.RuleContext,
+): FileData | null => {
   const fullPath = context.filename;
   const rootDir = context.settings.fsd?.rootDir ?? context.cwd;
 
@@ -24,12 +31,12 @@ const extractFileDataFromContext = (context) => {
   const rootPath = fullPath.substring(rootDir.length);
   const rootPathSegments = [...rootPath.matchAll(/[^\\/\\.]+/gu)];
 
-  if (rootPathSegments.length < 2) return;
+  if (rootPathSegments.length < 2) return null;
 
   const layer = rootPathSegments[0].at(0);
   const slice = rootPathSegments[1].at(0);
 
-  if (!layer || !slice) return;
+  if (!layer || !slice) return null;
 
   const layerIndex = LAYERS.findIndex((item) =>
     getLayerNames(item).includes(layer),
@@ -40,19 +47,9 @@ const extractFileDataFromContext = (context) => {
   return { fullPath, rootPath, layer, slice, layerIndex };
 };
 
-/**
- * @typedef { {
- *      path: string;
- *      layer: string;
- *      slice: string;
- *      layerIndex: number;
- * } } ImportData
- *
- * @param {import('estree').ImportDeclaration & import('eslint').Rule.NodeParentExtension} node
- *
- * @returns { ImportData | null } Extracted import data
- */
-const extractImportDataFromNode = (node) => {
+export const extractImportDataFromNode = (
+  node: ImportDeclaration & Rule.NodeParentExtension,
+): ImportData | null => {
   const path = node.source.value;
 
   if (typeof path !== 'string' || !path) return null;
@@ -68,5 +65,3 @@ const extractImportDataFromNode = (node) => {
 
   return { path, layer, slice, layerIndex };
 };
-
-module.exports = { extractFileDataFromContext, extractImportDataFromNode };

@@ -1,12 +1,8 @@
-/**
- * @type { import('eslint').ESLint.Plugin }
- */
-module.exports = {
+const plugin = {
   rules: {
     'no-denied-layers': require('./rules/no-denied-layers'),
     'no-unknown-layers': require('./rules/no-unknown-layers'),
-    // 'no-deprecated-layers': {},
-    // sort: {},
   },
-  //   configs: {},
 };
+
+export default plugin;

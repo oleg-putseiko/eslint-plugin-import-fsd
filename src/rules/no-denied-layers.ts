@@ -1,15 +1,14 @@
-const { LAYERS, getLayerNames } = require('../utils/layers');
-const {
+import { Rule } from 'eslint';
+
+import { LAYERS, getLayerNames } from '../utils/layers';
+import {
   extractImportDataFromNode,
   extractFileDataFromContext,
-} = require('../utils/rule');
+} from '../utils/rule';
 
 const MESSAGE = 'Access to this layer or slice from the current one is denied.';
 
-/**
- * @type { import('eslint').Rule.RuleModule }
- */
-module.exports = {
+const rule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
@@ -45,3 +44,5 @@ module.exports = {
     };
   },
 };
+
+export default rule;
