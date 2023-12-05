@@ -43,3 +43,6 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# lint
+.eslint*.cjs
