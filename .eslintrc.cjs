@@ -22,7 +22,6 @@ module.exports = {
   rules: {
     'array-callback-return': ['error', { checkForEach: true }],
     eqeqeq: 'error',
-    'no-empty-function': 'error',
     'no-restricted-exports': [
       'error',
       {
@@ -33,15 +32,6 @@ module.exports = {
       },
     ],
     'no-console': 'warn',
-    'no-unused-vars': [
-      'warn',
-      {
-        vars: 'all',
-        varsIgnorePattern: '^_',
-        args: 'after-used',
-        argsIgnorePattern: '^_',
-      },
-    ],
     'no-duplicate-imports': ['error', { includeExports: true }],
     'max-classes-per-file': ['error', { ignoreExpressions: true }],
     'no-floating-decimal': 'warn',
@@ -51,5 +41,28 @@ module.exports = {
     'one-var': ['warn', 'never'],
     'prefer-exponentiation-operator': 'warn',
     'require-unicode-regexp': 'warn',
+    'no-undef': 'off',
+
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
+      },
+    ],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-empty-function': 'error',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
+    '@typescript-eslint/prefer-as-const': 'warn',
+    '@typescript-eslint/prefer-includes': 'warn',
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
   },
 };

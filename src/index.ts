@@ -1,4 +1,4 @@
-import { ESLint } from 'eslint';
+import { type ESLint } from 'eslint';
 
 import { noDeniedLayersRule } from './rules/no-denied-layers';
 import { noUnknownLayersRule } from './rules/no-unknown-layers';
