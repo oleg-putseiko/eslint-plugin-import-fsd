@@ -8,7 +8,7 @@ import {
 
 const MESSAGE = 'Access to this layer or slice from the current one is denied.';
 
-const rule: Rule.RuleModule = {
+export const noDeniedLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
@@ -44,5 +44,3 @@ const rule: Rule.RuleModule = {
     };
   },
 };
-
-export default rule;

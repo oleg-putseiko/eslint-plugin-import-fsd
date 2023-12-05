@@ -8,7 +8,7 @@ const MESSAGE =
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
-const rule: Rule.RuleModule = {
+export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
@@ -54,5 +54,3 @@ const rule: Rule.RuleModule = {
     };
   },
 };
-
-export default rule;
