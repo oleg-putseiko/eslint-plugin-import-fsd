@@ -31,8 +31,8 @@ const extractFileDataFromContext = (context) => {
 
   if (!layer || !slice) return;
 
-  const layerIndex = LAYERS.findIndex((layer) =>
-    getLayerNames(layer).includes(layer),
+  const layerIndex = LAYERS.findIndex((item) =>
+    getLayerNames(item).includes(layer),
   );
 
   if (layerIndex < 0) return null;

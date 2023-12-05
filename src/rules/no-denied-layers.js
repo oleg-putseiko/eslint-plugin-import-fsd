@@ -20,6 +20,8 @@ module.exports = {
     schema: [],
   },
   create(context) {
+    console.log('file', context.filename);
+
     const fileData = extractFileDataFromContext(context);
 
     if (fileData === null || fileData.layerIndex < 0) return {};
