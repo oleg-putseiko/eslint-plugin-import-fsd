@@ -55,7 +55,9 @@ export const extractImportDataFromNode = (
   if (typeof path !== 'string' || !path) return null;
 
   const layer = /^(@|@\/|src\/)([^\\/]+)/gu.exec(path)?.at(2);
-  const slice = RegExp(`^(@|@\\/|src\\/)${layer}/([^\\/]+)/`).exec(path)?.at(2);
+  const slice = RegExp(`^(@|@\\/|src\\/)${layer}/([^\\/]+)/`, 'gu')
+    .exec(path)
+    ?.at(2);
 
   if (!layer || !slice) return null;
 
