@@ -55,7 +55,7 @@ export const extractImportDataFromNode = (
 
   if (typeof path !== 'string') return null;
 
-  const nonAliasedPath = /^(@\/|@|src\/)(.+)/u.exec(path)?.at(2);
+  const nonAliasedPath = /^(@\/|src\/)(.+)/u.exec(path)?.at(2);
 
   if (!nonAliasedPath) return null;
 
