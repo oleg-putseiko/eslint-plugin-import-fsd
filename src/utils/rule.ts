@@ -42,8 +42,6 @@ export const extractFileDataFromContext = (
     getLayerNames(item).includes(layer),
   );
 
-  if (layerIndex < 0) return null;
-
   return { fullPath, rootPath, layer, slice, layerIndex };
 };
 

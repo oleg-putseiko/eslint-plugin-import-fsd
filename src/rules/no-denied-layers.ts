@@ -6,7 +6,10 @@ import {
   extractFileDataFromContext,
 } from '../utils/rule';
 
-const MESSAGE = 'Access to this layer or slice from the current one is denied.';
+const DENIED_LAYER_MESSAGE =
+  "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";
+const DENIED_SLICE_MESSAGE =
+  "Access to slice '{{ denied_slice }}' from '{{ file_slice }}' is denied.";
 
 export const noDeniedLayersRule: Rule.RuleModule = {
   meta: {
@@ -31,12 +34,32 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       ImportDeclaration(node) {
         const importData = extractImportDataFromNode(node);
 
-        if (
-          importData !== null &&
-          deniedLayers.includes(importData.layer) &&
-          fileData.slice !== importData.slice
-        ) {
-          context.report({ node, message: MESSAGE });
+        if (importData === null) return;
+
+        const areSlicesSame =
+          fileData.layer === importData.layer &&
+          fileData.slice === importData.slice;
+
+        if (areSlicesSame || !deniedLayers.includes(importData.layer)) return;
+
+        if (fileData.layer !== importData.layer) {
+          context.report({
+            node,
+            message: DENIED_LAYER_MESSAGE,
+            data: {
+              denied_layer: importData.layer,
+              file_layer: fileData.layer,
+            },
+          });
+        } else {
+          context.report({
+            node,
+            message: DENIED_SLICE_MESSAGE,
+            data: {
+              denied_slice: importData.slice,
+              file_slice: fileData.slice,
+            },
+          });
         }
       },
     };
