@@ -50,12 +50,21 @@ export const extractImportDataFromNode = (
 ): ImportData | null => {
   const path = node.source.value;
 
-  if (typeof path !== 'string' || !path) return null;
+  if (typeof path !== 'string') return null;
 
-  const layer = /^(@|@\/|src\/)([^\\/]+)/gu.exec(path)?.at(2);
-  const slice = RegExp(`^(@|@\\/|src\\/)${layer}/([^\\/]+)/`, 'gu')
-    .exec(path)
-    ?.at(2);
+  const nonAliasedPath = /^(@\/|@|src\/)(.+)/gu.exec(path)?.at(2);
+
+  if (!nonAliasedPath) return null;
+
+  const pathSegments = nonAliasedPath.split('/');
+
+  if (pathSegments.length < 2) return null;
+
+  const layer = pathSegments[0];
+  const slice =
+    pathSegments.length > 2
+      ? pathSegments[1]
+      : pathSegments[1].replace(/\.[^\\.]+$/u, '');
 
   if (!layer || !slice) return null;
 
