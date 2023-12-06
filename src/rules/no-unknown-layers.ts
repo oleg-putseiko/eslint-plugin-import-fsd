@@ -3,8 +3,7 @@ import { type Rule } from 'eslint';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import { extractImportDataFromNode } from '../utils/rule';
 
-const MESSAGE =
-  'Unknown layer "{{ layer }}", use one related to FSD version 2.X.X';
+const MESSAGE = "Unknown layer '{{ layer }}'";
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
