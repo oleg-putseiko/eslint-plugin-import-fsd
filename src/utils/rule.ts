@@ -29,12 +29,15 @@ export const extractFileDataFromContext = (
   }
 
   const rootPath = fullPath.substring(rootDir.length);
-  const rootPathSegments = [...rootPath.matchAll(/[^\\/\\.]+/gu)];
+  const rootPathSegments = [...rootPath.matchAll(/[^\\/]+/gu)];
 
   if (rootPathSegments.length < 2) return null;
 
   const layer = rootPathSegments[0].at(0);
-  const slice = rootPathSegments[1].at(0);
+  const slice =
+    rootPathSegments.length > 2
+      ? rootPathSegments[1].at(0)
+      : rootPathSegments[1].at(0)?.replace(/.+\.[^\\.]+$/u, '');
 
   if (!layer || !slice) return null;
 
@@ -52,7 +55,7 @@ export const extractImportDataFromNode = (
 
   if (typeof path !== 'string') return null;
 
-  const nonAliasedPath = /^(@\/|@|src\/)(.+)/gu.exec(path)?.at(2);
+  const nonAliasedPath = /^(@\/|@|src\/)(.+)/u.exec(path)?.at(2);
 
   if (!nonAliasedPath) return null;
 
@@ -64,7 +67,7 @@ export const extractImportDataFromNode = (
   const slice =
     pathSegments.length > 2
       ? pathSegments[1]
-      : pathSegments[1].replace(/\.[^\\.]+$/u, '');
+      : pathSegments[1].replace(/.+\.[^\\.]+$/u, '');
 
   if (!layer || !slice) return null;
 
