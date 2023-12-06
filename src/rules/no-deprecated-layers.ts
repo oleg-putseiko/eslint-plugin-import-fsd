@@ -1,18 +1,18 @@
 import { type Rule } from 'eslint';
 
-import { LAYERS, getLayerNames } from '../utils/layers';
+import { LAYERS } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
 } from '../utils/rule';
 import { isStringArray } from '../utils/guards';
 
-const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
-const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
+const MESSAGE =
+  "Layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
 
-const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
+const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
 
-export const noUnknownLayersRule: Rule.RuleModule = {
+export const noDeprecatedLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
@@ -42,37 +42,25 @@ export const noUnknownLayersRule: Rule.RuleModule = {
 
     const fileData = extractFileDataFromContext(context);
 
-    if (fileData === null) {
-      return {};
-    } else if (
-      fileData.layerIndex < 0 &&
-      !ignoredLayers.includes(fileData.layer)
-    ) {
-      return {
-        Program(node) {
-          context.report({
-            node,
-            message: UNKNOWN_FILE_LAYER_MESSAGE,
-            data: { layer: fileData.layer },
-          });
-        },
-      };
-    }
+    if (fileData === null) return {};
 
     return {
       ImportDeclaration(node) {
         const importData = extractImportDataFromNode(node);
 
-        if (importData === null) return;
+        if (importData === null || importData.layerIndex < 0) return;
 
         if (
           !ignoredLayers.includes(importData.layer) &&
-          !KNOWN_LAYER_NAMES.includes(importData.layer)
+          DEPRECATED_LAYER_NAMES.includes(importData.layer)
         ) {
           context.report({
             node,
-            message: UNKNOWN_IMPORT_LAYER_MESSAGE,
-            data: { layer: importData.layer },
+            message: MESSAGE,
+            data: {
+              deprecated_layer: importData.layer,
+              recommended_layer: LAYERS[importData.layerIndex].name,
+            },
           });
         }
       },
