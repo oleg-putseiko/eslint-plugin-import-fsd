@@ -15,7 +15,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
-      description: '',
+      description: 'Prevent import from a denied layer for a current one.',
       recommended: true,
       url: '',
     },
