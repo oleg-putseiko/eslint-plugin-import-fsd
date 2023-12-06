@@ -5,6 +5,7 @@ import {
   extractFileDataFromContext,
   extractImportDataFromNode,
 } from '../utils/rule';
+import { isStringArray } from '../utils/guards';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'";
@@ -23,7 +24,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       {
         type: 'object',
         properties: {
-          exclude: {
+          ignore: {
             type: 'array',
             items: {
               type: 'string',
@@ -35,11 +36,18 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     ],
   },
   create(context) {
+    const ignoredLayers = context.options.at(0)?.ignore ?? [];
+
+    if (!isStringArray(ignoredLayers)) return {};
+
     const fileData = extractFileDataFromContext(context);
 
     if (fileData === null) {
       return {};
-    } else if (fileData.layerIndex < 0) {
+    } else if (
+      fileData.layerIndex < 0 &&
+      !ignoredLayers.includes(fileData.layer)
+    ) {
       return {
         Program(node) {
           context.report({
@@ -51,8 +59,6 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       };
     }
 
-    const excludedLayers = context.options.at(0)?.exclude ?? [];
-
     return {
       ImportDeclaration(node) {
         const importData = extractImportDataFromNode(node);
@@ -60,7 +66,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
         if (importData === null) return;
 
         if (
-          !excludedLayers.includes(importData.layer) &&
+          !ignoredLayers.includes(importData.layer) &&
           !KNOWN_LAYER_NAMES.includes(importData.layer)
         ) {
           context.report({
