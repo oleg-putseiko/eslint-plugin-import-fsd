@@ -28,9 +28,9 @@ const isAliases = (value: unknown): value is Aliases =>
   Object.keys(value).every((key) => isString(key) && isString(value[key]));
 
 const resolvePath = (dir: string, path: string) => {
-  if (!/^\.+\//u.test(path)) return path;
+  if (!/^\.*\//u.test(path)) return path;
 
-  let resolvedPath = `${dir}/${path}`
+  let resolvedPath = (/^\.+\//u.test(path) ? `${dir}/${path}` : path)
     // Remove '/./', '/.' and '/' from the end
     .replace(/\/\.?\/?$/u, '')
     // Remove './'
