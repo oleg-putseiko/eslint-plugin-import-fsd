@@ -32,9 +32,9 @@ export const noDeniedLayersRule: Rule.RuleModule = {
 
     return {
       ImportDeclaration(node) {
-        const importData = extractImportDataFromNode(node);
+        const importData = extractImportDataFromNode(node, fileData);
 
-        if (importData === null) return;
+        if (!fileData.layer || !importData?.layer) return;
 
         const areSlicesSame =
           fileData.layer === importData.layer &&
@@ -51,7 +51,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
               file_layer: fileData.layer,
             },
           });
-        } else {
+        } else if (importData.slice && fileData.slice) {
           context.report({
             node,
             message: DENIED_SLICE_MESSAGE,

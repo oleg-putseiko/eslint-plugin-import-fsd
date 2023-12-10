@@ -46,9 +46,9 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
 
     return {
       ImportDeclaration(node) {
-        const importData = extractImportDataFromNode(node);
+        const importData = extractImportDataFromNode(node, fileData);
 
-        if (importData === null || importData.layerIndex < 0) return;
+        if (!importData?.layer || importData.layerIndex < 0) return;
 
         if (
           !ignoredLayers.includes(importData.layer) &&

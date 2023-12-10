@@ -12,6 +12,7 @@ const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
+// TODO: handle absolute and relative paths
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
@@ -42,14 +43,13 @@ export const noUnknownLayersRule: Rule.RuleModule = {
 
     const fileData = extractFileDataFromContext(context);
 
-    if (fileData === null) {
-      return {};
-    } else if (
-      fileData.layerIndex < 0 &&
-      !ignoredLayers.includes(fileData.layer)
-    ) {
+    if (!fileData?.layer) return {};
+
+    if (fileData.layerIndex < 0 && !ignoredLayers.includes(fileData.layer)) {
       return {
         Program(node) {
+          if (!fileData?.layer) return;
+
           context.report({
             node,
             message: UNKNOWN_FILE_LAYER_MESSAGE,
@@ -61,9 +61,10 @@ export const noUnknownLayersRule: Rule.RuleModule = {
 
     return {
       ImportDeclaration(node) {
-        const importData = extractImportDataFromNode(node);
+        node.loc;
+        const importData = extractImportDataFromNode(node, fileData);
 
-        if (importData === null) return;
+        if (!importData?.layer) return;
 
         if (
           !ignoredLayers.includes(importData.layer) &&

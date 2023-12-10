@@ -3,76 +3,110 @@ import { type ImportDeclaration } from 'estree';
 
 import { LAYERS, getLayerNames } from './layers';
 
-type FileData = {
+type Segments = {
+  layer: string | null;
+  slice: string | null;
+};
+
+type FileData = Segments & {
+  rootDir: string;
   fullPath: string;
-  rootPath: string;
-  layer: string;
-  slice: string;
   layerIndex: number;
 };
 
-type ImportData = {
+type ImportData = Segments & {
   path: string;
-  layer: string;
-  slice: string;
   layerIndex: number;
+};
+
+const resolvePath = (dir: string, path: string) => {
+  if (/^\//u.test(path)) return path;
+
+  let resolvedPath = `${dir}/${path}`
+    .replace(/\/\.?\/?$/u, '')
+    .replaceAll(/(?<=(^|\/))\.\//gu, '');
+
+  while (/(\.{2}\/|\/\.{2}$)/u.test(resolvedPath)) {
+    resolvedPath = resolvedPath.replace(/(^|([^\\/]*\/))\.{2}(\/|$)/u, '');
+  }
+
+  return resolvedPath.replace(/\/+$/u, '');
+};
+
+const extractSegments = (fullPath: string, rootDir: string): Segments => {
+  if (!fullPath.startsWith(rootDir)) {
+    return { layer: null, slice: null };
+  }
+
+  const pathFromRoot = fullPath.substring(rootDir.length);
+  const segments = [...pathFromRoot.matchAll(/[^\\/]+/gu)].map((matches) =>
+    matches.at(0),
+  );
+
+  const layer = segments.at(0) || null;
+  const slice =
+    (segments.length > 2
+      ? segments.at(1)
+      : // Remove file extension
+        segments.at(1)?.replace(/.+\.[^\\.]+$/u, '')) || null;
+
+  return { layer, slice };
 };
 
 export const extractFileDataFromContext = (
   context: Rule.RuleContext,
 ): FileData | null => {
-  const fullPath = context.filename;
   const rootDir = context.settings.fsd?.rootDir ?? context.cwd;
 
-  if (typeof rootDir !== 'string' || !fullPath.startsWith(rootDir)) {
-    return null;
-  }
+  if (typeof rootDir !== 'string') return null;
 
-  const rootPath = fullPath.substring(rootDir.length);
-  const rootPathSegments = [...rootPath.matchAll(/[^\\/]+/gu)];
-
-  if (rootPathSegments.length < 2) return null;
-
-  const layer = rootPathSegments[0].at(0);
-  const slice =
-    rootPathSegments.length > 2
-      ? rootPathSegments[1].at(0)
-      : rootPathSegments[1].at(0)?.replace(/.+\.[^\\.]+$/u, '');
-
-  if (!layer || !slice) return null;
+  const fullPath = context.filename;
+  const segments = extractSegments(fullPath, rootDir);
 
   const layerIndex = LAYERS.findIndex((item) =>
-    getLayerNames(item).includes(layer),
+    segments.layer ? getLayerNames(item).includes(segments.layer) : false,
   );
 
-  return { fullPath, rootPath, layer, slice, layerIndex };
+  return { ...segments, rootDir, fullPath, layerIndex };
 };
 
 export const extractImportDataFromNode = (
   node: ImportDeclaration & Rule.NodeParentExtension,
+  fileData: FileData,
 ): ImportData | null => {
   const path = node.source.value;
 
   if (typeof path !== 'string') return null;
 
   const nonAliasedPath = /^(@\/|src\/)(.+)/u.exec(path)?.at(2);
+  let layer: string | null = null;
+  let slice: string | null = null;
 
-  if (!nonAliasedPath) return null;
+  if (nonAliasedPath) {
+    const pathSegments = nonAliasedPath.split('/');
 
-  const pathSegments = nonAliasedPath.split('/');
+    if (pathSegments.length < 1) return null;
 
-  if (pathSegments.length < 2) return null;
+    layer = pathSegments.at(0) || null;
+    slice =
+      (pathSegments.length > 1
+        ? pathSegments.at(1)
+        : // Remove file extension
+          pathSegments.at(1)?.replace(/.+\.[^\\.]+$/u, '')) || null;
+  } else if (/^\.+/u.test(path)) {
+    const fileDir =
+      // Remove file name segment
+      fileData.fullPath.replace(/\/[^\\/]*$/u, '');
 
-  const layer = pathSegments[0];
-  const slice =
-    pathSegments.length > 2
-      ? pathSegments[1]
-      : pathSegments[1].replace(/.+\.[^\\.]+$/u, '');
+    const resolvedPath = resolvePath(fileDir, path);
+    const segments = extractSegments(resolvedPath, fileData.rootDir);
 
-  if (!layer || !slice) return null;
+    layer = segments.layer;
+    slice = segments.slice;
+  }
 
   const layerIndex = LAYERS.findIndex((item) =>
-    getLayerNames(item).includes(layer),
+    layer ? getLayerNames(item).includes(layer) : false,
   );
 
   return { path, layer, slice, layerIndex };
