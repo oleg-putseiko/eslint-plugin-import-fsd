@@ -61,7 +61,6 @@ export const noUnknownLayersRule: Rule.RuleModule = {
 
     return {
       ImportDeclaration(node) {
-        node.loc;
         const importData = extractImportDataFromNode(node, fileData);
 
         if (!importData?.layer) return;
