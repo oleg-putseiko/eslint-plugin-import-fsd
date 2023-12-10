@@ -4,7 +4,11 @@
     "parser": {
       "syntax": "typescript"
     },
-    "target": "es2015"
+    "target": "es2015",
+    "minify": {
+      "compress": true,
+      "mangle": true
+    }
   },
   "module": {
     "type": "commonjs"

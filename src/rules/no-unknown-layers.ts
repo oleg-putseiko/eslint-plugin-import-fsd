@@ -12,7 +12,6 @@ const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
-// TODO: handle absolute and relative paths
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
