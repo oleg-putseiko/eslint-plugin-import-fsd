@@ -2,6 +2,9 @@ import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 
 import { LAYERS, getLayerNames } from './layers';
+import { isObject, isString } from './guards';
+
+type Aliases = Record<string, string>;
 
 type Segments = {
   layer: string | null;
@@ -12,6 +15,7 @@ type FileData = Segments & {
   rootDir: string;
   fullPath: string;
   layerIndex: number;
+  aliases: Aliases;
 };
 
 type ImportData = Segments & {
@@ -19,8 +23,12 @@ type ImportData = Segments & {
   layerIndex: number;
 };
 
+const isAliases = (value: unknown): value is Aliases =>
+  isObject(value) &&
+  Object.keys(value).every((key) => isString(key) && isString(value[key]));
+
 const resolvePath = (dir: string, path: string) => {
-  if (/^\//u.test(path)) return path;
+  if (!/^\.+\//u.test(path)) return path;
 
   let resolvedPath = `${dir}/${path}`
     // Remove '/./', '/.' and '/' from the end
@@ -64,8 +72,9 @@ export const extractFileDataFromContext = (
   context: Rule.RuleContext,
 ): FileData | null => {
   const rootDir = context.settings.fsd?.rootDir ?? context.cwd;
+  const aliases = context.settings.fsd?.aliases ?? {};
 
-  if (typeof rootDir !== 'string') return null;
+  if (!isString(rootDir) || !isAliases(aliases)) return null;
 
   const fullPath = context.filename;
   const segments = extractSegments(fullPath, rootDir);
@@ -74,7 +83,7 @@ export const extractFileDataFromContext = (
     segments.layer ? getLayerNames(item).includes(segments.layer) : false,
   );
 
-  return { ...segments, rootDir, fullPath, layerIndex };
+  return { ...segments, rootDir, fullPath, layerIndex, aliases };
 };
 
 export const extractImportDataFromNode = (
@@ -83,25 +92,35 @@ export const extractImportDataFromNode = (
 ): ImportData | null => {
   const path = node.source.value;
 
-  if (typeof path !== 'string') return null;
+  if (!isString(path)) return null;
 
-  const nonAliasedPath = /^(@\/|src\/)(.+)/u.exec(path)?.at(2);
-  let segments: Segments = { layer: null, slice: null };
+  const fileDir =
+    // Remove file name segment
+    fileData.fullPath.replace(/\/[^\\/]*$/u, '');
+  const alias = Object.keys(fileData.aliases)
+    .map((alias) => ({
+      name: alias,
+      replacement: RegExp(`^${alias.replace('*', '(.*)')}$`, 'u')
+        .exec(path)
+        ?.at(1),
+    }))
+    .find(({ replacement }) => replacement !== undefined);
+
+  let resolvedPath = path;
 
   // Aliased import path
-  if (nonAliasedPath) {
-    segments = parseSegments(nonAliasedPath.split('/'));
+  if (alias?.replacement !== undefined) {
+    resolvedPath = resolvePath(
+      fileData.rootDir,
+      fileData.aliases[alias.name].replace('*', alias.replacement),
+    );
   }
   // Relative or absolute import path
   else if (/^\.+/u.test(path)) {
-    const fileDir =
-      // Remove file name segment
-      fileData.fullPath.replace(/\/[^\\/]*$/u, '');
-    const resolvedPath = resolvePath(fileDir, path);
-
-    segments = extractSegments(resolvedPath, fileData.rootDir);
+    resolvedPath = resolvePath(fileDir, path);
   }
 
+  const segments = extractSegments(resolvedPath, fileData.rootDir);
   const layerIndex = LAYERS.findIndex((item) =>
     segments.layer ? getLayerNames(item).includes(segments.layer) : false,
   );
