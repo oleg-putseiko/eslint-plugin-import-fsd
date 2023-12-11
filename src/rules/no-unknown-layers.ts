@@ -1,11 +1,11 @@
 import { type Rule } from 'eslint';
 
+import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
 } from '../utils/rule';
-import { isStringArray } from '../utils/guards';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
@@ -16,7 +16,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
-      description: '',
+      description: 'Prevent import from an unknown layer',
       recommended: true,
       url: '',
     },
