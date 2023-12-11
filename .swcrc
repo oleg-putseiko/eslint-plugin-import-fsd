@@ -4,7 +4,7 @@
     "parser": {
       "syntax": "typescript"
     },
-    "target": "es2015",
+    "target": "es5",
     "minify": {
       "compress": true,
       "mangle": true
