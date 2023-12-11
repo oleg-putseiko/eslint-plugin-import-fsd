@@ -5,6 +5,7 @@ import {
   extractImportDataFromNode,
   extractFileDataFromContext,
 } from '../utils/rule';
+import { isStringArray } from '../utils/guards';
 
 const DENIED_LAYER_MESSAGE =
   "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";
@@ -19,9 +20,26 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: '',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          ignores: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
   },
   create(context) {
+    const ignoredLayers = context.options.at(0)?.ignores ?? [];
+
+    if (!isStringArray(ignoredLayers)) return {};
+
     const fileData = extractFileDataFromContext(context);
 
     if (fileData === null || fileData.layerIndex < 0) return {};
@@ -34,7 +52,13 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       ImportDeclaration(node) {
         const importData = extractImportDataFromNode(node, fileData);
 
-        if (!fileData.layer || !importData?.layer) return;
+        if (
+          !fileData.layer ||
+          !importData?.layer ||
+          ignoredLayers.includes(importData.layer)
+        ) {
+          return;
+        }
 
         const areSlicesSame =
           fileData.layer === importData.layer &&
