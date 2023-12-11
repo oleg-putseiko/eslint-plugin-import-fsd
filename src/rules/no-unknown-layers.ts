@@ -24,7 +24,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       {
         type: 'object',
         properties: {
-          ignore: {
+          ignores: {
             type: 'array',
             items: {
               type: 'string',
@@ -36,7 +36,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     ],
   },
   create(context) {
-    const ignoredLayers = context.options.at(0)?.ignore ?? [];
+    const ignoredLayers = context.options.at(0)?.ignores ?? [];
 
     if (!isStringArray(ignoredLayers)) return {};
 
