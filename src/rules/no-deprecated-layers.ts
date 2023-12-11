@@ -1,11 +1,11 @@
 import { type Rule } from 'eslint';
 
+import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
 } from '../utils/rule';
-import { isStringArray } from '../utils/guards';
 
 const MESSAGE =
   "Layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
@@ -16,7 +16,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
-      description: '',
+      description: 'Prevent import from a deprecated layer.',
       recommended: true,
       url: '',
     },
