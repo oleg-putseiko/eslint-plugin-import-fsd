@@ -11,9 +11,42 @@
 
 **Contents:**
 
+- [Getting started](#getting-started)
 - [Settings](#settings)
   - [rootDir](#rootdir)
   - [aliases](#aliases)
+
+## Getting started
+
+Install `eslint-plugin-import-fsd` to your repository as dev dependency:
+
+```bash
+npm install eslint-config-woofmeow --save-dev
+
+pnpm install eslint-config-woofmeow --save-dev
+
+yarn add eslint-config-woofmeow --dev
+```
+
+In your ESLint configuration file specify the directory where your FSD layers are located:
+
+```js
+export default {
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+    },
+  },
+};
+```
+
+Add the `eslint-plugin-import-fsd` to the list of ESLint configuration plugins:
+
+```js
+export default {
+  plugins: ['import-fsd'],
+};
+```
 
 ## Settings
 
