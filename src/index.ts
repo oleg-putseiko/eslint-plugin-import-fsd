@@ -9,3 +9,13 @@ export const rules: ESLint.Plugin['rules'] = {
   'no-unknown-layers': noUnknownLayersRule,
   'no-deprecated-layers': noDeprecatedLayersRule,
 };
+
+export const configs: ESLint.Plugin['configs'] = {
+  recommended: {
+    rules: {
+      'no-denied-layers': 'error',
+      'no-unknown-layers': 'error',
+      'no-deprecated-layers': 'warn',
+    },
+  },
+};
