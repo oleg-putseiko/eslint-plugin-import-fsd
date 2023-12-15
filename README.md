@@ -15,6 +15,8 @@
 - [Settings](#settings)
   - [rootDir](#rootdir)
   - [aliases](#aliases)
+- [Rules](#rules)
+  - [no-denied-layers](#no-denied-layers)
 
 ## Getting started
 
@@ -105,4 +107,75 @@ export default {
     },
   },
 };
+```
+
+## Rules
+
+### no-denied-layers
+
+Prevents import from a denied layer for a current one.
+
+FSD layers have the following hierarchy, in which the first layer having the highest rank and the last one has the lowest:
+
+1. `app`
+2. `processes`
+3. `pages`
+4. `widgets`
+5. `features`
+6. `entities`
+7. `shared`
+
+A module of each layer has access only to layers located strictly lower in hierarchy:
+
+| Layer       | Available layers                                                  |
+| ----------- | ----------------------------------------------------------------- |
+| `app`       | `processes`, `pages`, `widgets`, `features`, `entities`, `shared` |
+| `processes` | `pages`, `widgets`, `features`, `entities`, `shared`              |
+| `pages`     | `widgets`, `features`, `entities`, `shared`                       |
+| `widgets`   | `features`, `entities`, `shared`                                  |
+| `features`  | `entities`, `shared`                                              |
+| `entities`  | `shared`                                                          |
+| `shared`    | no one                                                            |
+
+At the same time, each slice does not have access to other slices defined on the same layer. But each segment module has access to other segments within its slice.
+
+Example:
+
+```js
+// .eslint.config.js
+
+export default {
+  plugins: ['import-fsd'],
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+      aliases: {
+        '@/*': './*',
+      },
+    },
+  },
+  rules: {
+    'import-fsd/no-denied-layers': 'error',
+  },
+};
+```
+
+```ts
+// @/features/foo/bar/qwe.js
+
+// 📛 Error (denied layers)
+import foo from '@/app/bar/baz';
+import foo from '@/pages/bar/baz';
+import foo from '@/widgets/bar/baz';
+
+// ✅ OK
+import foo from '@/entities/bar/baz';
+import foo from '@/shared/bar/baz';
+
+// 📛 Error (denied slices)
+import foo from '@/features/bar/baz';
+import foo from '@/features/qux/baz';
+
+// ✅ OK
+import foo from '@/features/foo/baz';
 ```
