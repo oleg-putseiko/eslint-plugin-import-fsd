@@ -17,6 +17,7 @@
   - [aliases](#aliases)
 - [Rules](#rules)
   - [no-denied-layers](#no-denied-layers)
+  - [no-deprecated-layers](#no-deprecated-layers)
 
 ## Getting started
 
@@ -165,6 +166,7 @@ export default {
 
 // 📛 Error (denied layers)
 import foo from '@/app/bar/baz';
+import foo from '@/processes/bar/baz';
 import foo from '@/pages/bar/baz';
 import foo from '@/widgets/bar/baz';
 
@@ -204,6 +206,7 @@ export default {
 
 // 📛 Error (denied layers)
 import foo from '@/app/bar/baz';
+import foo from '@/processes/bar/baz';
 import foo from '@/pages/bar/baz';
 
 // ✅ OK
@@ -211,4 +214,57 @@ import foo from '@/widgets/bar/baz'; // Ignored
 import foo from '@/features/bar/baz'; // Ignored
 import foo from '@/entities/bar/baz';
 import foo from '@/shared/bar/baz';
+```
+
+### no-deprecated-layers
+
+Prevents import from a deprecated layer.
+
+Previous versions of FSD have different layer names:
+
+| Layer       | Previous names                |
+| ----------- | ----------------------------- |
+| `app`       | `core`, `init`                |
+| `processes` | `flows`, `workflows`          |
+| `pages`     | `screens`, `views`, `layouts` |
+| `widgets`   | hasn't changed                |
+| `features`  | `components`, `containers`    |
+| `entities`  | `models`                      |
+| `shared`    | `common`, `lib`               |
+
+If you are using FSD version 2.0.0 or higher, it's recommended to add this rule to your ESLint configuration to follow the new layer naming.
+
+Example:
+
+```js
+// .eslint.config.js
+
+export default {
+  plugins: ['import-fsd'],
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+      aliases: {
+        '@/*': './*',
+      },
+    },
+  },
+  rules: {
+    'import-fsd/no-deprecated-layers': 'error',
+  },
+};
+```
+
+```ts
+// @/features/foo/bar/qwe.js
+
+// 📛 Error (deprecated layers)
+import foo from '@/core/bar/baz';
+import foo from '@/flows/bar/baz';
+import foo from '@/views/bar/baz';
+
+// ✅ OK
+import foo from '@/app/bar/baz';
+import foo from '@/processes/bar/baz';
+import foo from '@/pages/bar/baz';
 ```
