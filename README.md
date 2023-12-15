@@ -179,3 +179,36 @@ import foo from '@/features/qux/baz';
 // ✅ OK
 import foo from '@/features/foo/baz';
 ```
+
+To make migration to FSD easier, there is an `ignores` option tha allows you to exclude the import from a listed layers from being checked by this rule:
+
+```js
+// .eslint.config.js
+
+export default {
+  ...
+
+  rules: {
+    'import-fsd/no-denied-layers': [
+      'error',
+      {
+        ignores: ['widgets', 'features'],
+      },
+    ],
+  },
+};
+```
+
+```ts
+// @/features/foo/bar/qwe.js
+
+// 📛 Error (denied layers)
+import foo from '@/app/bar/baz';
+import foo from '@/pages/bar/baz';
+
+// ✅ OK
+import foo from '@/widgets/bar/baz'; // Ignored
+import foo from '@/features/bar/baz'; // Ignored
+import foo from '@/entities/bar/baz';
+import foo from '@/shared/bar/baz';
+```
