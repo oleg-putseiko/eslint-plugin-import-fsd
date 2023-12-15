@@ -18,6 +18,7 @@
 - [Rules](#rules)
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
+  - [no-unknown-layers](#no-unknown-layers)
 
 ## Getting started
 
@@ -86,6 +87,8 @@ the matching part will be substituted into the path associated with the alias.
 This option will not make aliases work, it tells the plugin which aliases are used in your project.
 
 ```js
+/* eslint.config.js */
+
 export default {
   settings: {
     fsd: {
@@ -143,7 +146,7 @@ At the same time, each slice does not have access to other slices defined on the
 Example:
 
 ```js
-// .eslint.config.js
+/* eslint.config.js */
 
 export default {
   plugins: ['import-fsd'],
@@ -162,7 +165,7 @@ export default {
 ```
 
 ```ts
-// @/features/foo/bar/qwe.js
+/* @/features/foo/bar/qwe.js */
 
 // 📛 Error (denied layers)
 import foo from '@/app/bar/baz';
@@ -185,7 +188,7 @@ import foo from '@/features/foo/baz';
 To make migration to FSD easier, there is an `ignores` option tha allows you to exclude the import from a listed layers from being checked by this rule:
 
 ```js
-// .eslint.config.js
+/* eslint.config.js */
 
 export default {
   ...
@@ -202,7 +205,7 @@ export default {
 ```
 
 ```ts
-// @/features/foo/bar/qwe.js
+/* @/features/foo/bar/qwe.js */
 
 // 📛 Error (denied layers)
 import foo from '@/app/bar/baz';
@@ -237,7 +240,7 @@ If you are using FSD version 2.0.0 or higher, it's recommended to add this rule 
 Example:
 
 ```js
-// .eslint.config.js
+/* eslint.config.js */
 
 export default {
   plugins: ['import-fsd'],
@@ -256,9 +259,9 @@ export default {
 ```
 
 ```ts
-// @/features/foo/bar/qwe.js
+/* @/features/foo/bar/qwe.js */
 
-// 📛 Error (deprecated layers)
+// 📛 Error
 import foo from '@/core/bar/baz';
 import foo from '@/flows/bar/baz';
 import foo from '@/views/bar/baz';
@@ -267,4 +270,61 @@ import foo from '@/views/bar/baz';
 import foo from '@/app/bar/baz';
 import foo from '@/processes/bar/baz';
 import foo from '@/pages/bar/baz';
+```
+
+### no-unknown-layers
+
+Prevents import from an unknown layer.
+
+The plugin supports layer naming corresponding to FSD version 2.X.X and lower. Some layer names support both plural and singular.
+
+Available layer names:
+
+| Recommended names       | Deprecated names                                             |
+| ----------------------- | ------------------------------------------------------------ |
+| `app` (`apps`)          | `core`, `init`                                               |
+| `processes` (`process`) | `flows` (`flow`), `workflows` (`workflow`)                   |
+| `pages` (`page`)        | `screens` (`screen`), `views` (`view`), `layouts` (`layout`) |
+| `widgets` (`widget`)    | -                                                            |
+| `features` (`feature`)  | `components` (`component`), `containers` (`container`)       |
+| `entities` (`entity`)   | `models` (`model`)                                           |
+| `shared`                | `common`, `lib`, `libs`                                      |
+
+All other layer names are considered unknown.
+
+Example:
+
+```js
+/* eslint.config.js */
+
+export default {
+  plugins: ['import-fsd'],
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+      aliases: {
+        '@/*': './*',
+      },
+    },
+  },
+  rules: {
+    'import-fsd/no-unknown-layers': 'error',
+  },
+};
+```
+
+```ts
+/* @/features/foo/bar/qwe.js */
+
+// 📛 Error
+import foo from '@/qwe/bar/baz';
+import foo from '@/feature-1/bar/baz';
+import foo from '@/cores/bar/baz';
+
+// ✅ OK
+import foo from '@/app/bar/baz';
+import foo from '@/core/bar/baz';
+import foo from '@/feature/bar/baz';
+import foo from '@/features/bar/baz';
+import foo from '@/models/bar/baz';
 ```

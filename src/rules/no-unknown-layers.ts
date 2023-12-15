@@ -16,7 +16,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     docs: {
-      description: 'Prevent import from an unknown layer',
+      description: 'Prevent import from an unknown layer.',
       recommended: true,
       url: '',
     },
