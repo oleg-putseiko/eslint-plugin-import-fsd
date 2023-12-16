@@ -14,11 +14,11 @@ const DENIED_SLICE_MESSAGE =
 
 export const noDeniedLayersRule: Rule.RuleModule = {
   meta: {
-    type: 'layout',
+    type: 'suggestion',
     docs: {
       description: 'Prevent import from a denied layer for a current one.',
       recommended: true,
-      url: '',
+      url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-denied-layers',
     },
     schema: [
       {
