@@ -19,6 +19,7 @@
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
   - [no-unknown-layers](#no-unknown-layers)
+- [Migration to FSD](#migration-to-fsd)
 
 ## Getting started
 
@@ -164,7 +165,7 @@ export default {
 };
 ```
 
-```ts
+```js
 /* @/features/foo/bar/qwe.js */
 
 // 📛 Error (denied layers)
@@ -183,40 +184,6 @@ import foo from '@/features/qux/baz';
 
 // ✅ OK
 import foo from '@/features/foo/baz';
-```
-
-To make migration to FSD easier, there is an `ignores` option tha allows you to exclude the import from a listed layers from being checked by this rule:
-
-```js
-/* eslint.config.js */
-
-export default {
-  ...
-
-  rules: {
-    'import-fsd/no-denied-layers': [
-      'error',
-      {
-        ignores: ['widgets', 'features'],
-      },
-    ],
-  },
-};
-```
-
-```ts
-/* @/features/foo/bar/qwe.js */
-
-// 📛 Error (denied layers)
-import foo from '@/app/bar/baz';
-import foo from '@/processes/bar/baz';
-import foo from '@/pages/bar/baz';
-
-// ✅ OK
-import foo from '@/widgets/bar/baz'; // Ignored
-import foo from '@/features/bar/baz'; // Ignored
-import foo from '@/entities/bar/baz';
-import foo from '@/shared/bar/baz';
 ```
 
 ### no-deprecated-layers
@@ -258,7 +225,7 @@ export default {
 };
 ```
 
-```ts
+```js
 /* @/features/foo/bar/qwe.js */
 
 // 📛 Error
@@ -313,7 +280,7 @@ export default {
 };
 ```
 
-```ts
+```js
 /* @/features/foo/bar/qwe.js */
 
 // 📛 Error
@@ -327,4 +294,58 @@ import foo from '@/core/bar/baz';
 import foo from '@/feature/bar/baz';
 import foo from '@/features/bar/baz';
 import foo from '@/models/bar/baz';
+```
+
+## Migration to FSD
+
+For ease of migration to FSD, it's recommended to do this layer by layer. Therefore, an `ignores` option is provided for each rule. This option allows you to exclude the import from a listed layers from being checked by the rule for which it's configured.
+
+The option value must be an array consisting of a layer names.
+
+Example:
+
+```js
+/* eslint.config.js */
+
+export default {
+  ...
+
+  rules: {
+    'import-fsd/no-denied-layers': [
+      'error',
+      {
+        ignores: ['widgets', 'features'],
+      },
+    ],
+
+    'import-fsd/no-deprecated-layers': [
+      'error',
+      {
+        ignores: ['components', 'models'],
+      },
+    ],
+
+    'import-fsd/no-unknown-layers': [
+      'error',
+      {
+        ignores: ['qwe'],
+      },
+    ],
+  },
+};
+```
+
+```js
+/* @/features/foo/bar/qwe.js */
+
+// ✅ OK
+import foo from '@/widgets/bar/baz'; // Ignored denied layer
+import foo from '@/features/bar/baz'; // Ignored denied layer
+
+// ✅ OK
+import foo from '@/components/bar/baz'; // Ignored deprecated layer
+import foo from '@/models/bar/baz'; // Ignored deprecated layer
+
+// ✅ OK
+import foo from '@/qwe/bar/baz'; // Ignored unknown layer
 ```
