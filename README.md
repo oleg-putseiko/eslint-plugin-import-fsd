@@ -28,11 +28,11 @@
 Install `eslint-plugin-import-fsd` to your repository as dev dependency:
 
 ```bash
-npm install eslint-config-woofmeow --save-dev
+npm install eslint-plugin-import-fsd --save-dev
 
-pnpm install eslint-config-woofmeow --save-dev
+pnpm install eslint-plugin-import-fsd --save-dev
 
-yarn add eslint-config-woofmeow --dev
+yarn add eslint-plugin-import-fsd --dev
 ```
 
 In your ESLint configuration file specify the directory where your FSD layers are located:
