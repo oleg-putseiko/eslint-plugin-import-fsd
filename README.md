@@ -184,6 +184,12 @@ import foo from '@/features/qux/baz';
 import foo from '@/features/foo/baz';
 ```
 
+#### Options
+
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+
+  Possible value is an array consisting of a layer names.
+
 ### no-deprecated-layers
 
 Prevents import from a deprecated layer.
@@ -236,6 +242,20 @@ import foo from '@/app/bar/baz';
 import foo from '@/processes/bar/baz';
 import foo from '@/pages/bar/baz';
 ```
+
+#### Options
+
+- `declaration` - defines the target scope of the rule check.
+
+  Possible values:
+
+  - `import` - the rule will only check imports
+  - `file` - the rule will only check files to see if they are in a deprecated layer
+  - `all` (default) - the rule will check both imports and files
+
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+
+  Possible value is an array consisting of a layer names.
 
 ### no-unknown-layers
 
@@ -293,6 +313,20 @@ import foo from '@/feature/bar/baz';
 import foo from '@/features/bar/baz';
 import foo from '@/models/bar/baz';
 ```
+
+#### Options
+
+- `declaration` - defines the target scope of the rule check.
+
+  Possible values:
+
+  - `import` - the rule will only check imports
+  - `file` - the rule will only check files to see if they are in an unknown layer
+  - `all` (default) - the rule will check both imports and files
+
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+
+  Possible value is an array consisting of a layer names.
 
 ## Configs
 
