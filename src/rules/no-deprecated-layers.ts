@@ -14,11 +14,11 @@ const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
 
 export const noDeprecatedLayersRule: Rule.RuleModule = {
   meta: {
-    type: 'layout',
+    type: 'suggestion',
     docs: {
       description: 'Prevent import from a deprecated layer.',
       recommended: true,
-      url: '',
+      url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-deprecated-layers',
     },
     schema: [
       {
