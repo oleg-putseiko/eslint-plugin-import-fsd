@@ -5,7 +5,7 @@
 [![Latest Release](https://badgen.net/github/release/oleg-putseiko/eslint-plugin-import-fsd?icon=github&cache=240)](https://github.com/oleg-putseiko/eslint-plugin-import-fsd/releases)
 [![Total Downloads](https://badgen.net/npm/dt/eslint-plugin-import-fsd?icon=npm&cache=240)](https://www.npmjs.com/package/eslint-plugin-import-fsd)
 [![Install Size](https://badgen.net/packagephobia/install/eslint-plugin-import-fsd?color=purple&cache=240)](https://www.npmjs.com/package/eslint-plugin-import-fsd)
-[![License](https://badgen.net/npm/license/eslint-plugin-import-fsd?color=black&cache=240)](./LICENSE.md)
+[![License](https://badgen.net/npm/license/eslint-plugin-import-fsd?color=black&cache=240)](https://github.com/oleg-putseiko/eslint-plugin-import-fsd/blob/main/LICENSE.md)
 
 </div>
 
