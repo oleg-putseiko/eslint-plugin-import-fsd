@@ -19,6 +19,8 @@
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
   - [no-unknown-layers](#no-unknown-layers)
+- [Configs](#configs)
+  - [recommended](#recommended)
 - [Migration to FSD](#migration-to-fsd)
 
 ## Getting started
@@ -248,7 +250,7 @@ Available layer names:
 | `app` (`apps`)          | `core`, `init`                                               |
 | `processes` (`process`) | `flows` (`flow`), `workflows` (`workflow`)                   |
 | `pages` (`page`)        | `screens` (`screen`), `views` (`view`), `layouts` (`layout`) |
-| `widgets` (`widget`)    | -                                                            |
+| `widgets` (`widget`)    | —                                                            |
 | `features` (`feature`)  | `components` (`component`), `containers` (`container`)       |
 | `entities` (`entity`)   | `models` (`model`)                                           |
 | `shared`                | `common`, `lib`, `libs`                                      |
@@ -290,6 +292,28 @@ import foo from '@/core/bar/baz';
 import foo from '@/feature/bar/baz';
 import foo from '@/features/bar/baz';
 import foo from '@/models/bar/baz';
+```
+
+## Configs
+
+### recommended
+
+Contains a preset of the recommended plugin rules configuration:
+
+| Rule                   | Severity | Options |
+| ---------------------- | -------- | ------- |
+| `no-denied-layers`     | error    | —       |
+| `no-deprecated-layers` | warn     | —       |
+| `no-unknown-layers`    | error    | —       |
+
+To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended` to the list of extensions in your ESLint configuration file:
+
+```js
+/* eslint.config.js */
+
+export default {
+  extends: ['plugin:import-fsd/recommended'],
+};
 ```
 
 ## Migration to FSD
