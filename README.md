@@ -79,13 +79,15 @@ export default {
 
 ### aliases
 
-Tells the plugin which aliases are used in your project.
+Tells the plugin which aliases are using in your project.
 
-A path associated with an alias can be absolute or relative to the root directory specified using option `rootDir`. Other values will be ignored.
+The path associated with an alias can be absolute or relative to the root directory specified using the option `rootDir`. Other values will not be resolved and will be used as is.
 
-An alias pattern can contain a `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
+Alias patterns can contain the `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
 
 If an import path matches multiple aliases, the first match will be applied.
+
+Example:
 
 ```js
 /* eslint.config.js */
@@ -101,13 +103,13 @@ export default {
         // bar -> <rootDir>/vendor/bar
         bar: './vendor/bar',
 
-        // baz -> <rootDir>/src/baz-1
-        '*': './src/baz-1',
-        baz: './src/baz-2',
-        'baz/*': './src/baz-3',
+        // baz -> /baz
+        baz: '/baz',
 
-        // qux -> /qux
-        qux: '/qux',
+        // qux -> <rootDir>/src/qux-1
+        '*': './src/qux-1',
+        qux: './src/qux-2',
+        'qux/*': './src/qux-3',
       },
     },
   },
