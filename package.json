@@ -34,9 +34,7 @@
     "prepare": "husky install | chmod +x ./.husky/*"
   },
   "peerDependencies": {
-    "eslint": "^8.53.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
-    "eslint-plugin-unused-imports": "^3.0.0"
+    "eslint": ">=0.8.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.2.0",
