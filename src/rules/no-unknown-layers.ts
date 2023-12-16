@@ -44,12 +44,10 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     ],
   },
   create(context) {
-    const ignoredLayers = context.options.at(0)?.ignores ?? [];
     const declaration = context.options.at(0)?.declaration ?? Declaration.All;
+    const ignoredLayers = context.options.at(0)?.ignores ?? [];
 
-    if (!isStringArray(ignoredLayers) || !isDeclaration(declaration)) {
-      return {};
-    }
+    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) return {};
 
     const fileData = extractFileDataFromContext(context);
 

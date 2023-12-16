@@ -34,7 +34,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
           declaration: {
             enum: DECLARATIONS,
           },
-          ignore: {
+          ignores: {
             type: 'array',
             items: {
               type: 'string',
@@ -46,10 +46,10 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
     ],
   },
   create(context) {
-    const ignoredLayers = context.options.at(0)?.ignore ?? [];
     const declaration = context.options.at(0)?.declaration ?? Declaration.All;
+    const ignoredLayers = context.options.at(0)?.ignores ?? [];
 
-    if (!isStringArray(ignoredLayers) || !isDeclaration(declaration)) return {};
+    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) return {};
 
     const fileData = extractFileDataFromContext(context);
 
