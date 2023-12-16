@@ -137,7 +137,7 @@ export const extractImportDataFromNode = (
     );
   }
   // Relative or absolute import path
-  else if (/^\.+/u.test(path)) {
+  else if (/^\.*\//u.test(path)) {
     resolvedPath = resolvePath(fileDir, path);
   }
 
