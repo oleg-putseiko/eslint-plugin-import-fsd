@@ -1,31 +1,21 @@
 import { type Rule } from 'eslint';
 
-import { isString, isStringArray } from '../utils/guards';
+import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
+  DECLARATIONS,
+  Declaration,
   extractFileDataFromContext,
   extractImportDataFromNode,
+  isDeclaration,
+  isFileDeclaration,
+  isImportDeclaration,
 } from '../utils/rule';
-
-enum Declaration {
-  Import = 'import',
-  File = 'file',
-  All = 'all',
-}
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
-
-const DECLARATIONS: string[] = [
-  Declaration.Import,
-  Declaration.File,
-  Declaration.All,
-];
-
-const isDeclaration = (value: unknown): value is Declaration =>
-  isString(value) && DECLARATIONS.includes(value);
 
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
@@ -66,9 +56,9 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     if (!fileData?.layer) return {};
 
     if (
+      isFileDeclaration(declaration) &&
       fileData.layerIndex < 0 &&
-      !ignoredLayers.includes(fileData.layer) &&
-      (declaration === Declaration.File || declaration === Declaration.All)
+      !ignoredLayers.includes(fileData.layer)
     ) {
       return {
         Program(node) {
@@ -83,9 +73,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       };
     }
 
-    if (declaration !== Declaration.Import && declaration !== Declaration.All) {
-      return {};
-    }
+    if (!isImportDeclaration(declaration)) return {};
 
     return {
       ImportDeclaration(node) {

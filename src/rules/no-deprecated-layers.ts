@@ -3,11 +3,18 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
+  DECLARATIONS,
+  Declaration,
   extractFileDataFromContext,
   extractImportDataFromNode,
+  isDeclaration,
+  isFileDeclaration,
+  isImportDeclaration,
 } from '../utils/rule';
 
-const MESSAGE =
+const DEPRECATED_FILE_LAYER_MESSAGE =
+  "File layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
+const DEPRECATED_IMPORT_LAYER_MESSAGE =
   "Layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
 
 const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
@@ -24,6 +31,9 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       {
         type: 'object',
         properties: {
+          declaration: {
+            enum: DECLARATIONS,
+          },
           ignore: {
             type: 'array',
             items: {
@@ -37,12 +47,36 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
   },
   create(context) {
     const ignoredLayers = context.options.at(0)?.ignore ?? [];
+    const declaration = context.options.at(0)?.declaration ?? Declaration.All;
 
-    if (!isStringArray(ignoredLayers)) return {};
+    if (!isStringArray(ignoredLayers) || !isDeclaration(declaration)) return {};
 
     const fileData = extractFileDataFromContext(context);
 
-    if (fileData === null) return {};
+    if (!fileData?.layer) return {};
+
+    if (
+      isFileDeclaration(declaration) &&
+      DEPRECATED_LAYER_NAMES.includes(fileData.layer) &&
+      !ignoredLayers.includes(fileData.layer)
+    ) {
+      return {
+        Program(node) {
+          if (!fileData?.layer) return;
+
+          context.report({
+            node,
+            message: DEPRECATED_FILE_LAYER_MESSAGE,
+            data: {
+              deprecated_layer: fileData.layer,
+              recommended_layer: LAYERS[fileData.layerIndex].name,
+            },
+          });
+        },
+      };
+    }
+
+    if (!isImportDeclaration(declaration)) return {};
 
     return {
       ImportDeclaration(node) {
@@ -56,7 +90,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
         ) {
           context.report({
             node,
-            message: MESSAGE,
+            message: DEPRECATED_IMPORT_LAYER_MESSAGE,
             data: {
               deprecated_layer: importData.layer,
               recommended_layer: LAYERS[importData.layerIndex].name,
