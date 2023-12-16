@@ -9,6 +9,8 @@
 
 </div>
 
+ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.design/) methodology in imports and file locations. Supports FSD versions up to and including 2.X.X.
+
 **Contents:**
 
 - [Getting started](#getting-started)
