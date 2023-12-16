@@ -8,7 +8,8 @@
     "eslint",
     "eslintplugin",
     "import",
-    "fsd"
+    "fsd",
+    "feature-sliced"
   ],
   "homepage": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd",
   "repository": {
