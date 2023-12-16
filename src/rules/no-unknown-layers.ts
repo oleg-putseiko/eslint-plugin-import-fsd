@@ -1,16 +1,31 @@
 import { type Rule } from 'eslint';
 
-import { isStringArray } from '../utils/guards';
+import { isString, isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
 } from '../utils/rule';
 
+enum Declaration {
+  Import = 'import',
+  File = 'file',
+  All = 'all',
+}
+
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
+
+const DECLARATIONS: string[] = [
+  Declaration.Import,
+  Declaration.File,
+  Declaration.All,
+];
+
+const isDeclaration = (value: unknown): value is Declaration =>
+  isString(value) && DECLARATIONS.includes(value);
 
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
@@ -24,6 +39,9 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       {
         type: 'object',
         properties: {
+          declaration: {
+            enum: DECLARATIONS,
+          },
           ignores: {
             type: 'array',
             items: {
@@ -37,14 +55,21 @@ export const noUnknownLayersRule: Rule.RuleModule = {
   },
   create(context) {
     const ignoredLayers = context.options.at(0)?.ignores ?? [];
+    const declaration = context.options.at(0)?.declaration ?? Declaration.All;
 
-    if (!isStringArray(ignoredLayers)) return {};
+    if (!isStringArray(ignoredLayers) || !isDeclaration(declaration)) {
+      return {};
+    }
 
     const fileData = extractFileDataFromContext(context);
 
     if (!fileData?.layer) return {};
 
-    if (fileData.layerIndex < 0 && !ignoredLayers.includes(fileData.layer)) {
+    if (
+      fileData.layerIndex < 0 &&
+      !ignoredLayers.includes(fileData.layer) &&
+      (declaration === Declaration.File || declaration === Declaration.All)
+    ) {
       return {
         Program(node) {
           if (!fileData?.layer) return;
@@ -56,6 +81,10 @@ export const noUnknownLayersRule: Rule.RuleModule = {
           });
         },
       };
+    }
+
+    if (declaration !== Declaration.Import && declaration !== Declaration.All) {
+      return {};
     }
 
     return {
