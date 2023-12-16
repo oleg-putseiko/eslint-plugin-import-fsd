@@ -14,11 +14,11 @@ const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
 
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
-    type: 'layout',
+    type: 'suggestion',
     docs: {
       description: 'Prevent import from an unknown layer.',
       recommended: true,
-      url: '',
+      url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
     schema: [
       {
