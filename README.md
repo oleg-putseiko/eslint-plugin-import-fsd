@@ -59,11 +59,9 @@ export default {
 
 Defines a directory that follows the FSD methodology. This option is required.
 
-The value must be an absolute path to a folder with the layers.
-Files and folders lying directly in this directory will be considered as layers.
+The value must be an absolute path to a folder with the layers. Files and folders lying directly in this directory will be considered as layers.
 
-For example, if your FSD layers are located in the `src` folder in the same directory
-as the ESLint configuration file, the the `rootDir` option should be set as follow:
+For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the the `rootDir` option should be set as follow:
 
 ```js
 export default {
@@ -77,15 +75,13 @@ export default {
 
 ### aliases
 
-Defines import path aliases.
+Tells the plugin which aliases are used in your project.
 
-A path associated with an alias can be absolute or relative to the root directory specified using option [`rootDir`](#rootdir).
-Other values will be ignored.
+A path associated with an alias can be absolute or relative to the root directory specified using option `rootDir`. Other values will be ignored.
 
-An alias pattern can contain a `*` wildcard that matches any string. If it's present,
-the matching part will be substituted into the path associated with the alias.
+An alias pattern can contain a `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
 
-This option will not make aliases work, it tells the plugin which aliases are used in your project.
+If an import path matches multiple aliases, the first match will be applied.
 
 ```js
 /* eslint.config.js */
@@ -95,16 +91,16 @@ export default {
     fsd: {
       rootDir: __dirname,
       aliases: {
-        // @/features/foo -> <rootDir>/src/features/foo
+        // @/foo/bar -> <rootDir>/src/foo/bar
         '@/*': './src/*',
 
         // bar -> <rootDir>/vendor/bar
         bar: './vendor/bar',
 
-        // baz -> <rootDir>/src/baz_1
-        '*': './src/baz_1',
-        'baz/*': './src/baz_2',
-        'baz/qux/*': './src/baz_3',
+        // baz -> <rootDir>/src/baz-1
+        '*': './src/baz-1',
+        baz: './src/baz-2',
+        'baz/*': './src/baz-3',
 
         // qux -> /qux
         qux: '/qux',
