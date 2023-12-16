@@ -57,6 +57,8 @@ export default {
 };
 ```
 
+Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
+
 ## Settings
 
 ### rootDir
