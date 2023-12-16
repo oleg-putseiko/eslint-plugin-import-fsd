@@ -63,7 +63,7 @@ Configure the plugin [rules](#rules) or use the [recommended configuration](#rec
 
 ### rootDir
 
-Defines a directory that follows the FSD methodology. This option is required.
+Defines a directory that follows the FSD methodology. If not specified, the root directory will default to the directory containing the ESLint configuration file or the path passed with the `cwd` linter option.
 
 The value must be an absolute path to a folder with the layers. Files and folders lying directly in this directory will be considered as layers.
 
