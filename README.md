@@ -9,7 +9,7 @@
 
 </div>
 
-ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.design/) methodology in imports and file locations. Supports FSD versions up to and including 2.X.X.
+ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.design/) methodology in imports and file locations. Compatible with FSD versions up to 2.
 
 **Contents:**
 
@@ -37,7 +37,7 @@ pnpm install eslint-plugin-import-fsd --save-dev
 yarn add eslint-plugin-import-fsd --dev
 ```
 
-In your ESLint configuration file specify the directory where your FSD layers are located:
+In your ESLint configuration, file specify the directory where your FSD layers are located:
 
 ```js
 export default {
@@ -67,7 +67,7 @@ Defines a directory that follows the FSD methodology. If not specified, the root
 
 The value must be an absolute path to a folder with the layers. Files and folders lying directly in this directory will be considered as layers.
 
-For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the the `rootDir` option should be set as follow:
+For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the `rootDir` option should be set as follows:
 
 ```js
 export default {
@@ -134,7 +134,7 @@ FSD layers have the following hierarchy, in which the first layer having the hig
 6. `entities`
 7. `shared`
 
-A module of each layer has access only to layers located strictly lower in hierarchy:
+A module of each layer has access only to layers located strictly lower in the hierarchy:
 
 | Layer       | Available layers                                                  |
 | ----------- | ----------------------------------------------------------------- |
@@ -146,7 +146,7 @@ A module of each layer has access only to layers located strictly lower in hiera
 | `entities`  | `shared`                                                          |
 | `shared`    | no one                                                            |
 
-At the same time, each slice does not have access to other slices defined on the same layer. But each segment module has access to other segments within its slice.
+Each segment module on a slice has access to other segments, but not to other slices on the same layer.
 
 Example:
 
@@ -198,11 +198,11 @@ import foo from '@/features/foo/baz';
 
 ### no-deprecated-layers
 
-Prevents import from a deprecated layer.
+Prevents import from deprecated layers.
 
 Previous versions of FSD have different layer names:
 
-| Layer       | Previous names                |
+| Version 2   | Previous versions             |
 | ----------- | ----------------------------- |
 | `app`       | `core`, `init`                |
 | `processes` | `flows`, `workflows`          |
@@ -265,9 +265,9 @@ import foo from '@/pages/bar/baz';
 
 ### no-unknown-layers
 
-Prevents import from an unknown layer.
+Prevents import from unknown layers.
 
-The plugin supports layer naming corresponding to FSD version 2.X.X and lower. Some layer names support both plural and singular.
+The plugin supports layer naming corresponding to FSD version 2 and lower. Some layer names support both plural and singular.
 
 Available layer names:
 
@@ -338,7 +338,7 @@ import foo from '@/models/bar/baz';
 
 ### recommended
 
-Contains a preset of the recommended plugin rules configuration:
+Contains recommended plugin rules configuration:
 
 | Rule                   | Severity | Options |
 | ---------------------- | -------- | ------- |
@@ -358,9 +358,9 @@ export default {
 
 ## Migration to FSD
 
-For ease of migration to FSD, it's recommended to do this layer by layer. Therefore, an `ignores` option is provided for each rule. This option allows you to exclude the import from a listed layers from being checked by the rule for which it's configured.
+For ease of migration to FSD, it's recommended to do this layer by layer. Therefore, an `ignores` option is provided for each rule. This option allows you to exclude the import from listed layers from being checked by the rule for which it's configured.
 
-The option value must be an array consisting of a layer names.
+The option value must be an array consisting of layer names.
 
 Example:
 
