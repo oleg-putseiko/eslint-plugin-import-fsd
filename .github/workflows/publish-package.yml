@@ -7,7 +7,6 @@ on:
 jobs:
   publish-npm:
     name: Publish to npm registry
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
