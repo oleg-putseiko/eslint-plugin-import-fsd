@@ -3,6 +3,7 @@ import { type ImportDeclaration } from 'estree';
 
 import { LAYERS, getLayerNames } from './layers';
 import { isObject, isString } from './guards';
+import { PATH_REGEXPS, resolvePath } from './path';
 
 export enum Declaration {
   Import = 'import',
@@ -48,30 +49,12 @@ const isAliases = (value: unknown): value is Aliases =>
   isObject(value) &&
   Object.keys(value).every((key) => isString(key) && isString(value[key]));
 
-const resolvePath = (dir: string, path: string) => {
-  if (!/^\.*\//u.test(path)) return path;
-
-  let resolvedPath = (/^\.+\//u.test(path) ? `${dir}/${path}` : path)
-    // Remove '/./', '/.' and '/' from the end
-    .replace(/\/\.?\/?$/u, '')
-    // Remove './'
-    .replaceAll(/(?<=(^|\/))\.\//gu, '');
-
-  while (/(^|([^\\/]*\/))\.{2}(\/|$)/u.test(resolvedPath)) {
-    // Remove 'foo/../'
-    resolvedPath = resolvedPath.replace(/(^|([^\\/]*\/))\.{2}(\/|$)/u, '');
-  }
-
-  return resolvedPath.replace(/\/+$/u, '');
-};
-
 const parseSegments = (segments: (string | undefined)[]): Segments => {
   const layer = segments.at(0) || null;
   const slice =
     (segments.length > 2
       ? segments.at(1)
-      : // Remove file extension
-        segments.at(1)?.replace(/.+\.[^\\.]+$/u, '')) || null;
+      : segments.at(1)?.replace(PATH_REGEXPS.fileExtension, '')) || null;
 
   return { layer, slice };
 };
@@ -82,8 +65,8 @@ const extractSegments = (fullPath: string, rootDir: string): Segments => {
   }
 
   const pathFromRoot = fullPath.substring(rootDir.length);
-  const segments = [...pathFromRoot.matchAll(/[^\\/]+/gu)].map((matches) =>
-    matches.at(0),
+  const segments = [...pathFromRoot.matchAll(PATH_REGEXPS.segments)].map(
+    (matches) => matches.at(0),
   );
 
   return parseSegments(segments);
@@ -115,9 +98,7 @@ export const extractImportDataFromNode = (
 
   if (!isString(path)) return null;
 
-  const fileDir =
-    // Remove file name segment
-    fileData.fullPath.replace(/\/[^\\/]*$/u, '');
+  const fileDir = fileData.fullPath.replace(PATH_REGEXPS.fileName, '');
   const alias = Object.keys(fileData.aliases)
     .map((alias) => ({
       name: alias,
@@ -129,15 +110,12 @@ export const extractImportDataFromNode = (
 
   let resolvedPath = path;
 
-  // Aliased import path
   if (alias?.replacement !== undefined) {
     resolvedPath = resolvePath(
       fileData.rootDir,
       fileData.aliases[alias.name].replace('*', alias.replacement),
     );
-  }
-  // Relative or absolute import path
-  else if (/^\.*\//u.test(path)) {
+  } else if (PATH_REGEXPS.relativeOrAbsolute.test(path)) {
     resolvedPath = resolvePath(fileDir, path);
   }
 
