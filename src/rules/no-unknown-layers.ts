@@ -1,18 +1,18 @@
 import { type Rule } from 'eslint';
 
-import { isStringArray } from '../utils/guards';
-import { LAYERS, getLayerNames } from '../utils/layers';
-import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule';
 import {
   DECLARATIONS,
   Declaration,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '../utils/declaration';
+} from '@/utils/declaration';
+import { isStringArray } from '@/utils/guards';
+import { LAYERS, getLayerNames } from '@/utils/layers';
+import {
+  extractFileDataFromContext,
+  extractImportDataFromNode,
+} from '@/utils/rule';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";

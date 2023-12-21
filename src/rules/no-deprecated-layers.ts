@@ -1,18 +1,18 @@
 import { type Rule } from 'eslint';
 
-import { isStringArray } from '../utils/guards';
-import { LAYERS } from '../utils/layers';
-import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule';
 import {
   DECLARATIONS,
   Declaration,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '../utils/declaration';
+} from '@/utils/declaration';
+import { isStringArray } from '@/utils/guards';
+import { LAYERS } from '@/utils/layers';
+import {
+  extractFileDataFromContext,
+  extractImportDataFromNode,
+} from '@/utils/rule';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
   "File layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
