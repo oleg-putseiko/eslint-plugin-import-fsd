@@ -3,14 +3,16 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
-  DECLARATIONS,
-  Declaration,
   extractFileDataFromContext,
   extractImportDataFromNode,
+} from '../utils/rule';
+import {
+  DECLARATIONS,
+  Declaration,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '../utils/rule';
+} from '../utils/declaration';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
