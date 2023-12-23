@@ -37,23 +37,24 @@ pnpm install eslint-plugin-import-fsd --save-dev
 yarn add eslint-plugin-import-fsd --dev
 ```
 
-In your ESLint configuration, file specify the directory where your FSD layers are located:
+In your ESLint configuration file, add `eslint-plugin-import-fsd` to the list of plugins:
 
 ```js
 export default {
+  plugins: ['import-fsd'],
+};
+```
+
+Specify the directory where your FSD layers are located:
+
+```js
+export default {
+  plugins: ['import-fsd'],
   settings: {
     fsd: {
       rootDir: `${__dirname}/src`,
     },
   },
-};
-```
-
-Add the `eslint-plugin-import-fsd` to the list of ESLint configuration plugins:
-
-```js
-export default {
-  plugins: ['import-fsd'],
 };
 ```
 
@@ -83,7 +84,7 @@ export default {
 
 Tells the plugin which aliases are using in your project.
 
-The path associated with an alias can be absolute or relative to the root directory specified using the option `rootDir`. Other values will not be resolved and will be used as is.
+The path associated with an alias can be absolute or relative to the root directory specified using the option `rootDir`. Other values will not be resolved and will be used as is, because it's possible to identify a third-party package as a layer when it's not.
 
 Alias patterns can contain the `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
 
@@ -92,8 +93,6 @@ If an import path matches multiple aliases, the first match will be applied.
 Example:
 
 ```js
-/* eslint.config.js */
-
 export default {
   settings: {
     fsd: {
@@ -236,17 +235,17 @@ export default {
 ```
 
 ```js
-/* @/features/foo/bar/qwe.js */
+/* @/widgets/foo/bar/qwe.js */
 
 // 📛 Error
-import foo from '@/core/bar/baz';
-import foo from '@/flows/bar/baz';
-import foo from '@/views/bar/baz';
+import foo from '@/components/bar/baz';
+import foo from '@/models/bar/baz';
+import foo from '@/lib/bar/baz';
 
 // ✅ OK
-import foo from '@/app/bar/baz';
-import foo from '@/processes/bar/baz';
-import foo from '@/pages/bar/baz';
+import foo from '@/features/bar/baz';
+import foo from '@/entities/bar/baz';
+import foo from '@/shared/bar/baz';
 ```
 
 #### Options
@@ -279,7 +278,7 @@ Available layer names:
 | `widgets` (`widget`)    | —                                                            |
 | `features` (`feature`)  | `components` (`component`), `containers` (`container`)       |
 | `entities` (`entity`)   | `models` (`model`)                                           |
-| `shared`                | `common`, `lib`, `libs`                                      |
+| `shared`                | `common`, `libs` (`lib`)                                     |
 
 All other layer names are considered unknown.
 
@@ -305,7 +304,7 @@ export default {
 ```
 
 ```js
-/* @/features/foo/bar/qwe.js */
+/* @/widgets/foo/bar/qwe.js */
 
 // 📛 Error
 import foo from '@/qwe/bar/baz';
@@ -313,11 +312,9 @@ import foo from '@/feature-1/bar/baz';
 import foo from '@/cores/bar/baz';
 
 // ✅ OK
-import foo from '@/app/bar/baz';
-import foo from '@/core/bar/baz';
 import foo from '@/feature/bar/baz';
 import foo from '@/features/bar/baz';
-import foo from '@/models/bar/baz';
+import foo from '@/entities/bar/baz';
 ```
 
 #### Options
@@ -349,9 +346,8 @@ Contains recommended plugin rules configuration:
 To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended` to the list of extensions in your ESLint configuration file:
 
 ```js
-/* eslint.config.js */
-
 export default {
+  // ...
   extends: ['plugin:import-fsd/recommended'],
 };
 ```
@@ -368,13 +364,13 @@ Example:
 /* eslint.config.js */
 
 export default {
-  ...
+  // ...
 
   rules: {
     'import-fsd/no-denied-layers': [
       'error',
       {
-        ignores: ['widgets', 'features'],
+        ignores: ['pages', 'widgets'],
       },
     ],
 
@@ -396,11 +392,11 @@ export default {
 ```
 
 ```js
-/* @/features/foo/bar/qwe.js */
+/* @/widgets/foo/bar/qwe.js */
 
 // ✅ OK
+import foo from '@/pages/bar/baz'; // Ignored denied layer
 import foo from '@/widgets/bar/baz'; // Ignored denied layer
-import foo from '@/features/bar/baz'; // Ignored denied layer
 
 // ✅ OK
 import foo from '@/components/bar/baz'; // Ignored deprecated layer
