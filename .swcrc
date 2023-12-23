@@ -4,14 +4,9 @@
     "parser": {
       "syntax": "typescript"
     },
-    "target": "es5",
-    "minify": {
-      "compress": true,
-      "mangle": true
-    }
+    "target": "es5"
   },
   "module": {
     "type": "commonjs"
-  },
-  "minify": true
+  }
 }
