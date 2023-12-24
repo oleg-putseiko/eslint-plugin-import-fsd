@@ -4,10 +4,7 @@
     "target": "es2021",
     "rootDir": "src",
     "outDir": "dist",
-    "strictNullChecks": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "strictNullChecks": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

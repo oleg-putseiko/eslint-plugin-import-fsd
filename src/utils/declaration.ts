@@ -1,4 +1,4 @@
-import { isString } from '@/utils/guards';
+import { isString } from './guards';
 
 export enum Declaration {
   Import = 'import',

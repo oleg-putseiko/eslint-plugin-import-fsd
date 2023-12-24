@@ -6,13 +6,13 @@ import {
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '@/utils/declaration';
-import { isStringArray } from '@/utils/guards';
-import { LAYERS } from '@/utils/layers';
+} from '../utils/declaration';
+import { isStringArray } from '../utils/guards';
+import { LAYERS } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
-} from '@/utils/rule';
+} from '../utils/rule';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
   "File layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";

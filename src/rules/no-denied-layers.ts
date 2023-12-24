@@ -1,11 +1,11 @@
 import { type Rule } from 'eslint';
 
-import { isStringArray } from '@/utils/guards';
-import { LAYERS, getLayerNames } from '@/utils/layers';
+import { isStringArray } from '../utils/guards';
+import { LAYERS, getLayerNames } from '../utils/layers';
 import {
   extractImportDataFromNode,
   extractFileDataFromContext,
-} from '@/utils/rule';
+} from '../utils/rule';
 
 const DENIED_LAYER_MESSAGE =
   "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";

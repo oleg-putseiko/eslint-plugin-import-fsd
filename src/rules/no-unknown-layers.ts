@@ -6,13 +6,13 @@ import {
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '@/utils/declaration';
-import { isStringArray } from '@/utils/guards';
-import { LAYERS, getLayerNames } from '@/utils/layers';
+} from '../utils/declaration';
+import { isStringArray } from '../utils/guards';
+import { LAYERS, getLayerNames } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
-} from '@/utils/rule';
+} from '../utils/rule';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";

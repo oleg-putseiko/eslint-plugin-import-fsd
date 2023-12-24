@@ -1,9 +1,9 @@
 import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 
-import { isObject, isString } from '@/utils/guards';
-import { LAYERS, getLayerNames } from '@/utils/layers';
-import { PATH_REGEXPS, resolvePath } from '@/utils/path';
+import { isObject, isString } from './guards';
+import { LAYERS, getLayerNames } from './layers';
+import { PATH_REGEXPS, resolvePath } from './path';
 
 type Aliases = Record<string, string>;
 
