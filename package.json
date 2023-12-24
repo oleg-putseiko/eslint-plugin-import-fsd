@@ -26,13 +26,14 @@
   "exports": "./dist/index.js",
   "scripts": {
     "build": "tsc",
+    "format": "prettier -c .",
+    "format:fix": "prettier -w .",
     "lint": "eslint ./src/**/*.{js,ts,json} && yarn format",
     "lint:fix": "eslint ./src/**/*.{js,ts,json} --fix && yarn format:fix",
     "lint:strict": "eslint ./src/**/*.{js,ts,json} --max-warnings=0 && yarn format",
-    "format": "prettier -c .",
-    "format:fix": "prettier -w .",
-    "typecheck": "tsc --noEmit --incremental false",
-    "prepare": "husky install | chmod +x ./.husky/*"
+    "prepare": "husky install | chmod +x ./.husky/*",
+    "prepublishOnly": "npm install && npm run build",
+    "typecheck": "tsc --noEmit --incremental false"
   },
   "peerDependencies": {
     "eslint": ">=0.8.0"
