@@ -1,11 +1,16 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# artifacts
+build
+dist
+coverage
+.cache
+
 # dependencies
 node_modules
 .pnp
 .pnp.js
 .yarn
-yarn.lock
 
 # debug
 npm-debug.log*
@@ -13,24 +18,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# artifacts
-build
-dist
-coverage
-.cache
-
-# development
+# linting
 .husky
 .eslintignore
 .prettierignore
+.eslintrc.*
 
 # misc
 .DS_Store
 *.pem
-
-# local env files
-.env
-.env*.local
 
 # code editors
 .vscode/*
@@ -41,6 +37,3 @@ coverage
 *.njsproj
 *.sln
 *.sw?
-
-# lint
-.eslint*.cjs

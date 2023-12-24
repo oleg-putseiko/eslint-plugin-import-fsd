@@ -40,7 +40,7 @@ yarn add eslint-plugin-import-fsd --dev
 In your ESLint configuration file, add `eslint-plugin-import-fsd` to the list of plugins:
 
 ```js
-export default {
+module.exports = {
   plugins: ['import-fsd'],
 };
 ```
@@ -48,7 +48,7 @@ export default {
 Specify the directory where your FSD layers are located:
 
 ```js
-export default {
+module.exports = {
   plugins: ['import-fsd'],
   settings: {
     fsd: {
@@ -71,7 +71,7 @@ The value must be an absolute path to a folder with the layers. Files and folder
 For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the `rootDir` option should be set as follows:
 
 ```js
-export default {
+module.exports = {
   settings: {
     fsd: {
       rootDir: `${__dirname}/src`,
@@ -93,7 +93,7 @@ If an import path matches multiple aliases, the first match will be applied.
 Example:
 
 ```js
-export default {
+module.exports = {
   settings: {
     fsd: {
       rootDir: __dirname,
@@ -150,9 +150,9 @@ Each segment module on a slice has access to other segments, but not to other sl
 Example:
 
 ```js
-/* eslint.config.js */
+/* .eslintrc.js */
 
-export default {
+module.exports = {
   plugins: ['import-fsd'],
   settings: {
     fsd: {
@@ -216,9 +216,9 @@ If you are using FSD version 2.0.0 or higher, it's recommended to add this rule 
 Example:
 
 ```js
-/* eslint.config.js */
+/* .eslintrc.js */
 
-export default {
+module.exports = {
   plugins: ['import-fsd'],
   settings: {
     fsd: {
@@ -285,9 +285,9 @@ All other layer names are considered unknown.
 Example:
 
 ```js
-/* eslint.config.js */
+/* .eslintrc.js */
 
-export default {
+module.exports = {
   plugins: ['import-fsd'],
   settings: {
     fsd: {
@@ -346,7 +346,7 @@ Contains recommended plugin rules configuration:
 To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended` to the list of extensions in your ESLint configuration file:
 
 ```js
-export default {
+module.exports = {
   // ...
   extends: ['plugin:import-fsd/recommended'],
 };
@@ -361,9 +361,9 @@ The option value must be an array consisting of layer names.
 Example:
 
 ```js
-/* eslint.config.js */
+/* .eslintrc.js */
 
-export default {
+module.exports = {
   // ...
 
   rules: {
