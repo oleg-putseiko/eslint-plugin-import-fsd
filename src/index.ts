@@ -13,9 +13,9 @@ export const rules: ESLint.Plugin['rules'] = {
 export const configs: ESLint.Plugin['configs'] = {
   recommended: {
     rules: {
-      'no-denied-layers': 'error',
-      'no-unknown-layers': 'error',
-      'no-deprecated-layers': 'warn',
+      'import-fsd/no-denied-layers': 'error',
+      'import-fsd/no-unknown-layers': 'error',
+      'import-fsd/no-deprecated-layers': 'warn',
     },
   },
 };
