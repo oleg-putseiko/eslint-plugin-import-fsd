@@ -13,12 +13,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# testing
-coverage
-
-# production
+# artifacts
 build
 dist
+coverage
 .cache
 
 # development
