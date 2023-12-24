@@ -33,7 +33,7 @@ const parseSegments = (segments: (string | undefined)[]): Segments => {
   const slice =
     (segments.length > 2
       ? segments.at(1)
-      : segments.at(1)?.replace(PATH_REGEXPS.fileExtension, '')) || null;
+      : segments.at(1)?.replace(PATH_REGEXPS.fileExtension, '$1')) || null;
 
   return { layer, slice };
 };

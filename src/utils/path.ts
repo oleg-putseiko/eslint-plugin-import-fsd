@@ -5,7 +5,7 @@ export const PATH_REGEXPS = {
   segments: /[^\\/]+/gu,
 
   fileName: /\/[^\\/]*$/u,
-  fileExtension: /.+\.[^\\.]+$/u,
+  fileExtension: /(.+)(\.[^\\.]+$)/u,
 } satisfies Record<string, RegExp>;
 
 export const resolvePath = (dir: string, path: string) => {
