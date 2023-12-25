@@ -46,37 +46,37 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     ],
   },
   create(context) {
+    const listener: Rule.RuleListener = {};
+
     const declaration = context.options.at(0)?.declaration ?? Declaration.All;
     const ignoredLayers = context.options.at(0)?.ignores ?? [];
 
-    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) return {};
+    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
+      return listener;
+    }
 
     const fileData = extractFileDataFromContext(context);
 
-    if (!fileData?.layer) return {};
+    if (!fileData?.layer) return listener;
 
     if (
       isFileDeclaration(declaration) &&
       fileData.layerIndex < 0 &&
       !ignoredLayers.includes(fileData.layer)
     ) {
-      return {
-        Program(node) {
-          if (!fileData?.layer) return;
+      listener.Program = (node) => {
+        if (!fileData?.layer) return;
 
-          context.report({
-            node,
-            message: UNKNOWN_FILE_LAYER_MESSAGE,
-            data: { layer: fileData.layer },
-          });
-        },
+        context.report({
+          node,
+          message: UNKNOWN_FILE_LAYER_MESSAGE,
+          data: { layer: fileData.layer },
+        });
       };
     }
 
-    if (!isImportDeclaration(declaration)) return {};
-
-    return {
-      ImportDeclaration(node) {
+    if (isImportDeclaration(declaration)) {
+      listener.ImportDeclaration = (node) => {
         const importData = extractImportDataFromNode(node, fileData);
 
         if (!importData?.layer) return;
@@ -91,7 +91,9 @@ export const noUnknownLayersRule: Rule.RuleModule = {
             data: { layer: importData.layer },
           });
         }
-      },
-    };
+      };
+    }
+
+    return listener;
   },
 };
