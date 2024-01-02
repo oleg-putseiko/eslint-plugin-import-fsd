@@ -1,17 +1,15 @@
 import { type Rule } from 'eslint';
 
-import {
-  DECLARATIONS,
-  Declaration,
-  isDeclaration,
-  isFileDeclaration,
-  isImportDeclaration,
-} from '../utils/declaration';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
+  DECLARED_SCHEMA,
+  Declaration,
   extractFileDataFromContext,
   extractImportDataFromNode,
+  isDeclaration,
+  isFileDeclaration,
+  isImportDeclaration,
 } from '../utils/rule';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
@@ -29,23 +27,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-deprecated-layers',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          declaration: {
-            enum: DECLARATIONS,
-          },
-          ignores: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: DECLARED_SCHEMA,
   },
   create(context) {
     const declaration = context.options.at(0)?.declaration ?? Declaration.All;

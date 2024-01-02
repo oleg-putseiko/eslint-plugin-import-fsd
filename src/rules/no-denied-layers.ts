@@ -5,6 +5,7 @@ import { LAYERS, getLayerNames } from '../utils/layers';
 import {
   extractImportDataFromNode,
   extractFileDataFromContext,
+  BASE_SCHEMA,
 } from '../utils/rule';
 
 const DENIED_LAYER_MESSAGE =
@@ -20,20 +21,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-denied-layers',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          ignores: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: BASE_SCHEMA,
   },
   create(context) {
     const ignoredLayers = context.options.at(0)?.ignores ?? [];

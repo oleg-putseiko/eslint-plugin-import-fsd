@@ -1,17 +1,15 @@
 import { type Rule } from 'eslint';
 
-import {
-  DECLARATIONS,
-  Declaration,
-  isDeclaration,
-  isFileDeclaration,
-  isImportDeclaration,
-} from '../utils/declaration';
 import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
+  DECLARED_SCHEMA,
+  Declaration,
   extractFileDataFromContext,
   extractImportDataFromNode,
+  isDeclaration,
+  isFileDeclaration,
+  isImportDeclaration,
 } from '../utils/rule';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
@@ -27,23 +25,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          declaration: {
-            enum: DECLARATIONS,
-          },
-          ignores: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: DECLARED_SCHEMA,
   },
   create(context) {
     const listener: Rule.RuleListener = {};
