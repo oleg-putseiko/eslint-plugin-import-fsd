@@ -1,9 +1,7 @@
 export const PATH_REGEXPS = {
   relative: /^\.+\//u,
   relativeOrAbsolute: /^\.*\//u,
-
   segments: /[^\\/]+/gu,
-
   fileName: /\/[^\\/]*$/u,
   fileExtension: /(.+)(\.[^\\.]+$)/u,
 } satisfies Record<string, RegExp>;

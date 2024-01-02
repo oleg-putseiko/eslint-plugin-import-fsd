@@ -61,9 +61,8 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       listener.ImportDeclaration = (node) => {
         const importData = extractImportDataFromNode(node, fileData);
 
-        if (!importData?.layer) return;
-
         if (
+          importData?.layer &&
           !ignoredLayers.includes(importData.layer) &&
           !KNOWN_LAYER_NAMES.includes(importData.layer)
         ) {
