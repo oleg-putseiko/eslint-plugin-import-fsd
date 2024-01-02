@@ -3,14 +3,16 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
-  DECLARED_SCHEMA,
   Declaration,
-  extractFileDataFromContext,
-  extractImportDataFromNode,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '../utils/rule';
+} from '../utils/rule/declarations';
+import {
+  extractFileDataFromContext,
+  extractImportDataFromNode,
+} from '../utils/rule/parsers';
+import { DECLARED_SCHEMA } from '../utils/rule/schema';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
@@ -25,7 +27,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
-    schema: DECLARED_SCHEMA,
+    schema: [DECLARED_SCHEMA],
   },
   create(context) {
     const listener: Rule.RuleListener = {};

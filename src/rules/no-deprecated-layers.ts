@@ -3,14 +3,16 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
-  DECLARED_SCHEMA,
   Declaration,
-  extractFileDataFromContext,
-  extractImportDataFromNode,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
-} from '../utils/rule';
+} from '../utils/rule/declarations';
+import {
+  extractFileDataFromContext,
+  extractImportDataFromNode,
+} from '../utils/rule/parsers';
+import { DECLARED_SCHEMA } from '../utils/rule/schema';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
   "File layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
@@ -27,7 +29,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-deprecated-layers',
     },
-    schema: DECLARED_SCHEMA,
+    schema: [DECLARED_SCHEMA],
   },
   create(context) {
     const listener: Rule.RuleListener = {};

@@ -3,10 +3,10 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS, getLayerNames } from '../utils/layers';
 import {
-  extractImportDataFromNode,
   extractFileDataFromContext,
-  BASE_SCHEMA,
-} from '../utils/rule';
+  extractImportDataFromNode,
+} from '../utils/rule/parsers';
+import { BASE_SCHEMA } from '../utils/rule/schema';
 
 const DENIED_LAYER_MESSAGE =
   "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";
@@ -21,7 +21,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-denied-layers',
     },
-    schema: BASE_SCHEMA,
+    schema: [BASE_SCHEMA],
   },
   create(context) {
     const ignoredLayers = context.options.at(0)?.ignores ?? [];
