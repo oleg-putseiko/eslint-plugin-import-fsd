@@ -48,13 +48,14 @@ export const noDeniedLayersRule: Rule.RuleModule = {
           return;
         }
 
+        const areSlicesExist = importData.slice && fileData.slice;
         const areSlicesSame =
           fileData.layer === importData.layer &&
           fileData.slice === importData.slice;
 
         if (areSlicesSame || !deniedLayers.includes(importData.layer)) return;
 
-        if (fileData.layer !== importData.layer) {
+        if (fileData.layer !== importData.layer || !areSlicesExist) {
           context.report({
             node,
             message: DENIED_LAYER_MESSAGE,
