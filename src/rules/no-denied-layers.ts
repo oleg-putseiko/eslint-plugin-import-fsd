@@ -1,7 +1,7 @@
 import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
-import { LAYERS, getLayerNames } from '../utils/layers';
+import { LAYERS } from '../utils/layers';
 import {
   extractFileDataFromContext,
   extractImportDataFromNode,
@@ -33,7 +33,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
     if (fileData === null || fileData.layerIndex < 0) return {};
 
     const deniedLayers = LAYERS.slice(0, fileData.layerIndex + 1).flatMap(
-      getLayerNames,
+      (item) => item.names,
     );
 
     return {

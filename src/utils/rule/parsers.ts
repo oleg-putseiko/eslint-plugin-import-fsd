@@ -2,7 +2,7 @@ import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 
 import { isObject, isString } from '../guards';
-import { LAYERS, getLayerNames } from '../layers';
+import { LAYERS } from '../layers';
 import { PATH_REGEXPS, resolvePath } from '../path';
 
 type Aliases = Record<string, string>;
@@ -63,7 +63,7 @@ export const extractFileDataFromContext = (
   const segments = extractSegments(fullPath, rootDir);
 
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? getLayerNames(item).includes(segments.layer) : false,
+    segments.layer ? item.names.includes(segments.layer) : false,
   );
 
   return { ...segments, rootDir, fullPath, layerIndex, aliases };
@@ -100,7 +100,7 @@ export const extractImportDataFromNode = (
 
   const segments = extractSegments(resolvedPath, fileData.rootDir);
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? getLayerNames(item).includes(segments.layer) : false,
+    segments.layer ? item.names.includes(segments.layer) : false,
   );
 
   return { ...segments, path, layerIndex };

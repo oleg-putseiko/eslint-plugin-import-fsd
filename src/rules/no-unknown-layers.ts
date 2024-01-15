@@ -1,7 +1,7 @@
 import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
-import { LAYERS, getLayerNames } from '../utils/layers';
+import { LAYERS } from '../utils/layers';
 import {
   Declaration,
   isDeclaration,
@@ -17,7 +17,7 @@ import { DECLARED_SCHEMA } from '../utils/rule/schema';
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
 
-const KNOWN_LAYER_NAMES = LAYERS.flatMap(getLayerNames);
+const KNOWN_LAYER_NAMES = LAYERS.flatMap((item) => item.names);
 
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {

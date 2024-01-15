@@ -1,7 +1,7 @@
 import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
-import { LAYERS } from '../utils/layers';
+import { LAYERS, listNames } from '../utils/layers';
 import {
   Declaration,
   isDeclaration,
@@ -15,9 +15,14 @@ import {
 import { DECLARED_SCHEMA } from '../utils/rule/schema';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
-  "File layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
+  "File layer '{{ deprecated_layer }}' is deprecated.";
+const REPLACEABLE_DEPRECATED_FILE_LAYER_MESSAGE =
+  "File layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.";
+
 const DEPRECATED_IMPORT_LAYER_MESSAGE =
-  "Layer '{{ deprecated_layer }}' is deprecated, use '{{ recommended_layer }}' instead.";
+  "Layer '{{ deprecated_layer }}' is deprecated.";
+const REPLACEABLE_DEPRECATED_IMPORT_LAYER_MESSAGE =
+  "Layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.";
 
 const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
 
@@ -53,12 +58,19 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       listener.Program = (node) => {
         if (!fileData?.layer) return;
 
+        const replacementLayer = LAYERS[fileData.layerIndex];
+        const isReplaceable = replacementLayer.displayedActualNames.length > 0;
+
         context.report({
           node,
-          message: DEPRECATED_FILE_LAYER_MESSAGE,
+          message: isReplaceable
+            ? REPLACEABLE_DEPRECATED_FILE_LAYER_MESSAGE
+            : DEPRECATED_FILE_LAYER_MESSAGE,
           data: {
             deprecated_layer: fileData.layer,
-            recommended_layer: LAYERS[fileData.layerIndex].name,
+            recommended_layers: listNames(
+              replacementLayer.displayedActualNames,
+            ),
           },
         });
       };
@@ -74,12 +86,20 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
           !ignoredLayers.includes(importData.layer) &&
           DEPRECATED_LAYER_NAMES.includes(importData.layer)
         ) {
+          const replacementLayer = LAYERS[importData.layerIndex];
+          const isReplaceable =
+            replacementLayer.displayedActualNames.length > 0;
+
           context.report({
             node,
-            message: DEPRECATED_IMPORT_LAYER_MESSAGE,
+            message: isReplaceable
+              ? REPLACEABLE_DEPRECATED_IMPORT_LAYER_MESSAGE
+              : DEPRECATED_IMPORT_LAYER_MESSAGE,
             data: {
               deprecated_layer: importData.layer,
-              recommended_layer: LAYERS[importData.layerIndex].name,
+              recommended_layers: listNames(
+                replacementLayer.displayedActualNames,
+              ),
             },
           });
         }
