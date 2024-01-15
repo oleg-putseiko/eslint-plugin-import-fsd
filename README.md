@@ -126,7 +126,7 @@ Prevents import from a denied layer for a current one.
 FSD layers have the following hierarchy, in which the first layer having the highest rank and the last one has the lowest:
 
 1. `app`
-2. `processes`
+2. `processes` _(deprecated)_
 3. `pages`
 4. `widgets`
 5. `features`
@@ -199,17 +199,17 @@ import foo from '@/features/foo/baz';
 
 Prevents import from deprecated layers.
 
-Previous versions of FSD have different layer names:
+Previous versions of FSD have different layer names. Version FSD 2 provides new naming:
 
-| Version 2   | Previous versions             |
-| ----------- | ----------------------------- |
-| `app`       | `core`, `init`                |
-| `processes` | `flows`, `workflows`          |
-| `pages`     | `screens`, `views`, `layouts` |
-| `widgets`   | hasn't changed                |
-| `features`  | `components`, `containers`    |
-| `entities`  | `models`                      |
-| `shared`    | `common`, `lib`               |
+| Deprecated names                  | Recommended names |
+| --------------------------------- | ----------------- |
+| `core`, `init`                    | `app`             |
+| `processes`, `flows`, `workflows` | `app`, `features` |
+| `screens`, `views`, `layouts`     | `pages`           |
+| —                                 | `widgets`         |
+| `components`, `containers`        | `features`        |
+| `models`                          | `entities`        |
+| `common`, `lib`                   | `shared`          |
 
 If you are using FSD version 2.0.0 or higher, it's recommended to add this rule to your ESLint configuration to follow the new layer naming.
 
@@ -270,15 +270,15 @@ The plugin supports layer naming corresponding to FSD version 2 and lower. Some 
 
 Available layer names:
 
-| Recommended names       | Deprecated names                                             |
-| ----------------------- | ------------------------------------------------------------ |
-| `app` (`apps`)          | `core`, `init`                                               |
-| `processes` (`process`) | `flows` (`flow`), `workflows` (`workflow`)                   |
-| `pages` (`page`)        | `screens` (`screen`), `views` (`view`), `layouts` (`layout`) |
-| `widgets` (`widget`)    | —                                                            |
-| `features` (`feature`)  | `components` (`component`), `containers` (`container`)       |
-| `entities` (`entity`)   | `models` (`model`)                                           |
-| `shared`                | `common`, `libs` (`lib`)                                     |
+| Deprecated names                                                    | Recommended names                      |
+| ------------------------------------------------------------------- | -------------------------------------- |
+| `core`, `init`                                                      | `app` (`apps`)                         |
+| `processes` (`process`), `flows` (`flow`), `workflows` (`workflow`) | `app` (`apps`), `features` (`feature`) |
+| `screens` (`screen`), `views` (`view`), `layouts` (`layout`)        | `pages` (`page`)                       |
+| —                                                                   | `widgets` (`widget`)                   |
+| `components` (`component`), `containers` (`container`)              | `features` (`feature`)                 |
+| `models` (`model`)                                                  | `entities` (`entity`)                  |
+| `common`, `libs` (`lib`)                                            | `shared`                               |
 
 All other layer names are considered unknown.
 
