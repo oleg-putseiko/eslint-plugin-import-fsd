@@ -94,7 +94,7 @@ export const extractImportDataFromNode = (
       fileData.rootDir,
       fileData.aliases[alias.name].replace('*', alias.replacement),
     );
-  } else if (PATH_REGEXPS.relativeOrAbsolute.test(path)) {
+  } else if (PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) {
     resolvedPath = resolvePath(fileDir, path);
   }
 
