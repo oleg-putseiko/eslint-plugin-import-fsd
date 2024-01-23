@@ -1,11 +1,12 @@
 import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
-import { LAYERS, getLayerNames } from '../utils/layers';
+import { LAYERS } from '../utils/layers';
 import {
-  extractImportDataFromNode,
   extractFileDataFromContext,
-} from '../utils/rule';
+  extractImportDataFromNode,
+} from '../utils/rule/parsers';
+import { BASE_SCHEMA } from '../utils/rule/schema';
 
 const DENIED_LAYER_MESSAGE =
   "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";
@@ -20,20 +21,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-denied-layers',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          ignores: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: [BASE_SCHEMA],
   },
   create(context) {
     const ignoredLayers = context.options.at(0)?.ignores ?? [];
@@ -45,7 +33,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
     if (fileData === null || fileData.layerIndex < 0) return {};
 
     const deniedLayers = LAYERS.slice(0, fileData.layerIndex + 1).flatMap(
-      getLayerNames,
+      (item) => item.names,
     );
 
     return {
@@ -60,13 +48,14 @@ export const noDeniedLayersRule: Rule.RuleModule = {
           return;
         }
 
+        const areSlicesExist = importData.slice && fileData.slice;
         const areSlicesSame =
           fileData.layer === importData.layer &&
           fileData.slice === importData.slice;
 
         if (areSlicesSame || !deniedLayers.includes(importData.layer)) return;
 
-        if (fileData.layer !== importData.layer) {
+        if (fileData.layer !== importData.layer || !areSlicesExist) {
           context.report({
             node,
             message: DENIED_LAYER_MESSAGE,

@@ -1,23 +1,38 @@
 export type Layer = {
-  name: string;
-  actualNames: string[];
+  names: string[];
+  displayedActualNames: string[];
   deprecatedNames: string[];
 };
 
 export const LAYERS: Layer[] = [
   {
-    name: 'app',
-    actualNames: ['app', 'apps'],
+    names: ['app', 'apps', 'core', 'init'],
     deprecatedNames: ['core', 'init'],
+    displayedActualNames: ['app'],
   },
   {
-    name: 'processes',
-    actualNames: ['process', 'processes'],
-    deprecatedNames: ['flow', 'flows', 'workflow', 'workflows'],
+    names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'],
+    deprecatedNames: [
+      'process',
+      'processes',
+      'flow',
+      'flows',
+      'workflow',
+      'workflows',
+    ],
+    displayedActualNames: ['app', 'features'],
   },
   {
-    name: 'pages',
-    actualNames: ['page', 'pages'],
+    names: [
+      'page',
+      'pages',
+      'screen',
+      'screens',
+      'view',
+      'views',
+      'layout',
+      'layouts',
+    ],
     deprecatedNames: [
       'screen',
       'screens',
@@ -26,28 +41,40 @@ export const LAYERS: Layer[] = [
       'layout',
       'layouts',
     ],
+    displayedActualNames: ['pages'],
   },
   {
-    name: 'widgets',
-    actualNames: ['widget', 'widgets'],
+    names: ['widget', 'widgets'],
     deprecatedNames: [],
+    displayedActualNames: ['widgets'],
   },
   {
-    name: 'features',
-    actualNames: ['feature', 'features'],
+    names: [
+      'feature',
+      'features',
+      'component',
+      'components',
+      'container',
+      'containers',
+    ],
     deprecatedNames: ['component', 'components', 'container', 'containers'],
+    displayedActualNames: ['features'],
   },
   {
-    name: 'entities',
-    actualNames: ['entity', 'entities'],
+    names: ['entity', 'entities', 'model', 'models'],
     deprecatedNames: ['model', 'models'],
+    displayedActualNames: ['entities'],
   },
   {
-    name: 'shared',
-    actualNames: ['shared'],
+    names: ['shared', 'common', 'lib', 'libs'],
     deprecatedNames: ['common', 'lib', 'libs'],
+    displayedActualNames: ['shared'],
   },
 ];
 
-export const getLayerNames = (layer: Layer): string[] =>
-  layer.actualNames.concat(layer.deprecatedNames);
+export const listNames = (names: string[]): string =>
+  names.reduce((acc, name, index) => {
+    if (index <= 0) return `'${name}'`;
+    if (index !== names.length - 1) return `${acc}, '${name}'`;
+    return `${acc} or '${name}'`;
+  }, '');

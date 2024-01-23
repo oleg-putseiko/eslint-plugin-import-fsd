@@ -1,9 +1,9 @@
 import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 
-import { isObject, isString } from './guards';
-import { LAYERS, getLayerNames } from './layers';
-import { PATH_REGEXPS, resolvePath } from './path';
+import { isObject, isString } from '../guards';
+import { LAYERS } from '../layers';
+import { PATH_REGEXPS, resolvePath } from '../path';
 
 type Aliases = Record<string, string>;
 
@@ -33,7 +33,7 @@ const parseSegments = (segments: (string | undefined)[]): Segments => {
   const slice =
     (segments.length > 2
       ? segments.at(1)
-      : segments.at(1)?.replace(PATH_REGEXPS.fileExtension, '')) || null;
+      : segments.at(1)?.replace(PATH_REGEXPS.fileExtension, '$1')) || null;
 
   return { layer, slice };
 };
@@ -63,7 +63,7 @@ export const extractFileDataFromContext = (
   const segments = extractSegments(fullPath, rootDir);
 
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? getLayerNames(item).includes(segments.layer) : false,
+    segments.layer ? item.names.includes(segments.layer) : false,
   );
 
   return { ...segments, rootDir, fullPath, layerIndex, aliases };
@@ -94,13 +94,13 @@ export const extractImportDataFromNode = (
       fileData.rootDir,
       fileData.aliases[alias.name].replace('*', alias.replacement),
     );
-  } else if (PATH_REGEXPS.relativeOrAbsolute.test(path)) {
+  } else if (PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) {
     resolvedPath = resolvePath(fileDir, path);
   }
 
   const segments = extractSegments(resolvedPath, fileData.rootDir);
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? getLayerNames(item).includes(segments.layer) : false,
+    segments.layer ? item.names.includes(segments.layer) : false,
   );
 
   return { ...segments, path, layerIndex };
