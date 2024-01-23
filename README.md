@@ -201,15 +201,15 @@ Prevents import from deprecated layers.
 
 Previous versions of FSD have different layer names. Version FSD 2 provides new naming:
 
-| Deprecated names                  | Recommended names |
-| --------------------------------- | ----------------- |
-| `core`, `init`                    | `app`             |
-| `processes`, `flows`, `workflows` | `app`, `features` |
-| `screens`, `views`, `layouts`     | `pages`           |
-| —                                 | `widgets`         |
-| `components`, `containers`        | `features`        |
-| `models`                          | `entities`        |
-| `common`, `lib`                   | `shared`          |
+| Deprecated names                                                    | Recommended names                      |
+| ------------------------------------------------------------------- | -------------------------------------- |
+| `core`, `init`                                                      | `app` (`apps`)                         |
+| `processes` (`process`), `flows` (`flow`), `workflows` (`workflow`) | `app` (`apps`), `features` (`feature`) |
+| `screens` (`screen`), `views` (`view`), `layouts` (`layout`)        | `pages` (`page`)                       |
+| —                                                                   | `widgets` (`widget`)                   |
+| `components` (`component`), `containers` (`container`)              | `features` (`feature`)                 |
+| `models` (`model`)                                                  | `entities` (`entity`)                  |
+| `common`, `lib` (`libs`)                                            | `shared`                               |
 
 If you are using FSD version 2.0.0 or higher, it's recommended to add this rule to your ESLint configuration to follow the new layer naming.
 
@@ -278,7 +278,7 @@ Available layer names:
 | —                                                                   | `widgets` (`widget`)                   |
 | `components` (`component`), `containers` (`container`)              | `features` (`feature`)                 |
 | `models` (`model`)                                                  | `entities` (`entity`)                  |
-| `common`, `libs` (`lib`)                                            | `shared`                               |
+| `common`, `lib` (`libs`)                                            | `shared`                               |
 
 All other layer names are considered unknown.
 
@@ -396,7 +396,7 @@ module.exports = {
 
 // ✅ OK
 import foo from '@/pages/bar/baz'; // Ignored denied layer
-import foo from '@/widgets/bar/baz'; // Ignored denied layer
+import foo from '@/widgets/bar/baz'; // Ignored denied slice
 
 // ✅ OK
 import foo from '@/components/bar/baz'; // Ignored deprecated layer
