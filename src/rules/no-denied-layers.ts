@@ -3,9 +3,9 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule/parsers';
+  extractPathContext,
+  extractImportContext,
+} from '../utils/rule/context';
 import { BASE_SCHEMA } from '../utils/rule/schema';
 
 const DENIED_LAYER_MESSAGE =
@@ -23,54 +23,55 @@ export const noDeniedLayersRule: Rule.RuleModule = {
     },
     schema: [BASE_SCHEMA],
   },
-  create(context) {
-    const ignoredLayers = context.options.at(0)?.ignores ?? [];
+  create(ruleContext) {
+    const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
     if (!isStringArray(ignoredLayers)) return {};
 
-    const fileData = extractFileDataFromContext(context);
+    const pathContext = extractPathContext(ruleContext);
 
-    if (fileData === null || fileData.layerIndex < 0) return {};
+    if (pathContext === null || pathContext.layerIndex < 0) return {};
 
-    const deniedLayers = LAYERS.slice(0, fileData.layerIndex + 1).flatMap(
+    const deniedLayers = LAYERS.slice(0, pathContext.layerIndex + 1).flatMap(
       (item) => item.names,
     );
 
     return {
       ImportDeclaration(node) {
-        const importData = extractImportDataFromNode(node, fileData);
+        const importContext = extractImportContext(node, pathContext);
 
         if (
-          !fileData.layer ||
-          !importData?.layer ||
-          ignoredLayers.includes(importData.layer)
+          !pathContext.layer ||
+          !importContext?.layer ||
+          ignoredLayers.includes(importContext.layer)
         ) {
           return;
         }
 
-        const areSlicesExist = importData.slice && fileData.slice;
+        const areSlicesExist = importContext.slice && pathContext.slice;
         const areSlicesSame =
-          fileData.layer === importData.layer &&
-          fileData.slice === importData.slice;
+          pathContext.layer === importContext.layer &&
+          pathContext.slice === importContext.slice;
 
-        if (areSlicesSame || !deniedLayers.includes(importData.layer)) return;
+        if (areSlicesSame || !deniedLayers.includes(importContext.layer))
+          return;
 
-        if (fileData.layer !== importData.layer || !areSlicesExist) {
-          context.report({
+        if (pathContext.layer !== importContext.layer || !areSlicesExist) {
+          ruleContext.report({
             node,
             message: DENIED_LAYER_MESSAGE,
             data: {
-              denied_layer: importData.layer,
-              file_layer: fileData.layer,
+              denied_layer: importContext.layer,
+              file_layer: pathContext.layer,
             },
           });
-        } else if (importData.slice && fileData.slice) {
-          context.report({
+        } else if (importContext.slice && pathContext.slice) {
+          ruleContext.report({
             node,
             message: DENIED_SLICE_MESSAGE,
             data: {
-              denied_slice: importData.slice,
-              file_slice: fileData.slice,
+              denied_slice: importContext.slice,
+              file_slice: pathContext.slice,
             },
           });
         }
