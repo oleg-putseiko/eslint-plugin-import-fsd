@@ -14,15 +14,15 @@ type Segments = {
   slice: string;
 };
 
+type Aliases = { [alias: string]: string };
+type Packages = { [packagePattern: string]: Segments };
+
 type SegmentsContext = {
   rootDir: string;
   packages: Packages;
 };
 
-type Aliases = { [alias: string]: string };
-type Packages = { [packagePattern: string]: Segments };
-
-type FileData = ShallowNullable<Segments> & {
+type PathContext = ShallowNullable<Segments> & {
   rootDir: string;
   fullPath: string;
   layerIndex: number;
@@ -30,7 +30,7 @@ type FileData = ShallowNullable<Segments> & {
   packages: Packages;
 };
 
-type ImportData = ShallowNullable<Segments> & {
+type ImportContext = ShallowNullable<Segments> & {
   path: string;
   layerIndex: number;
 };
@@ -48,9 +48,9 @@ const isPackages = (value: unknown): value is Packages =>
 
 const extractSegments = (
   fullPath: string,
-  context: SegmentsContext,
+  segmentsContext: SegmentsContext,
 ): ShallowNullable<Segments> => {
-  const { rootDir, packages } = context;
+  const { rootDir, packages } = segmentsContext;
 
   const matchedPattern = Object.keys(packages).find((pattern) =>
     new RegExp(`^${pattern.replaceAll('*', '(.*)')}$`, 'gu').test(fullPath),
@@ -78,18 +78,18 @@ const extractSegments = (
   return { layer, slice };
 };
 
-export const extractFileDataFromContext = (
-  context: Rule.RuleContext,
-): FileData | null => {
-  const rootDir = context.settings.fsd?.rootDir ?? context.cwd;
-  const aliases = context.settings.fsd?.aliases ?? {};
-  const packages = context.settings.fsd?.packages ?? {};
+export const extractPathContext = (
+  ruleContext: Rule.RuleContext,
+): PathContext | null => {
+  const rootDir = ruleContext.settings.fsd?.rootDir ?? ruleContext.cwd;
+  const aliases = ruleContext.settings.fsd?.aliases ?? {};
+  const packages = ruleContext.settings.fsd?.packages ?? {};
 
   if (!isString(rootDir) || !isAliases(aliases) || !isPackages(packages)) {
     return null;
   }
 
-  const fullPath = context.filename;
+  const fullPath = ruleContext.filename;
   const segments = extractSegments(fullPath, { rootDir, packages });
 
   const layerIndex = LAYERS.findIndex((item) =>
@@ -99,16 +99,16 @@ export const extractFileDataFromContext = (
   return { ...segments, rootDir, fullPath, layerIndex, aliases, packages };
 };
 
-export const extractImportDataFromNode = (
+export const extractImportContext = (
   node: ImportDeclaration & Rule.NodeParentExtension,
-  fileData: FileData,
-): ImportData | null => {
+  pathContext: PathContext,
+): ImportContext | null => {
   const path = node.source.value;
 
   if (!isString(path)) return null;
 
-  const fileDir = fileData.fullPath.replace(PATH_REGEXPS.fileName, '');
-  const alias = Object.keys(fileData.aliases)
+  const fileDir = pathContext.fullPath.replace(PATH_REGEXPS.fileName, '');
+  const alias = Object.keys(pathContext.aliases)
     .map((alias) => ({
       name: alias,
       replacement: RegExp(`^${alias.replace('*', '(.*)')}$`, 'u')
@@ -121,14 +121,14 @@ export const extractImportDataFromNode = (
 
   if (alias?.replacement !== undefined) {
     resolvedPath = resolvePath(
-      fileData.rootDir,
-      fileData.aliases[alias.name].replace('*', alias.replacement),
+      pathContext.rootDir,
+      pathContext.aliases[alias.name].replace('*', alias.replacement),
     );
   } else if (PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) {
     resolvedPath = resolvePath(fileDir, path);
   }
 
-  const segments = extractSegments(resolvedPath, fileData);
+  const segments = extractSegments(resolvedPath, pathContext);
   const layerIndex = LAYERS.findIndex((item) =>
     segments.layer ? item.names.includes(segments.layer) : false,
   );

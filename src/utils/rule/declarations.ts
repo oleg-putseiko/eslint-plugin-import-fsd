@@ -15,8 +15,12 @@ export const DECLARATIONS: string[] = [
 export const isDeclaration = (value: unknown): value is Declaration =>
   isString(value) && DECLARATIONS.includes(value);
 
-export const isFileDeclaration = (value: Declaration) =>
+export const isFileDeclaration = (
+  value: Declaration,
+): value is Declaration.File | Declaration.All =>
   [Declaration.File, Declaration.All].includes(value);
 
-export const isImportDeclaration = (value: Declaration) =>
+export const isImportDeclaration = (
+  value: Declaration,
+): value is Declaration.Import | Declaration.All =>
   [Declaration.Import, Declaration.All].includes(value);

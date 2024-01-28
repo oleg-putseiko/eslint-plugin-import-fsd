@@ -3,15 +3,15 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS, listNames } from '../utils/layers';
 import {
+  extractPathContext,
+  extractImportContext,
+} from '../utils/rule/context';
+import {
   Declaration,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
 } from '../utils/rule/declarations';
-import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule/parsers';
 import { DECLARED_SCHEMA } from '../utils/rule/schema';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
@@ -36,38 +36,39 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
     },
     schema: [DECLARED_SCHEMA],
   },
-  create(context) {
+  create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const declaration = context.options.at(0)?.declaration ?? Declaration.All;
-    const ignoredLayers = context.options.at(0)?.ignores ?? [];
+    const declaration =
+      ruleContext.options.at(0)?.declaration ?? Declaration.All;
+    const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
     if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
       return listener;
     }
 
-    const fileData = extractFileDataFromContext(context);
+    const pathContext = extractPathContext(ruleContext);
 
-    if (!fileData?.layer) return listener;
+    if (!pathContext?.layer) return listener;
 
     if (
       isFileDeclaration(declaration) &&
-      DEPRECATED_LAYER_NAMES.includes(fileData.layer) &&
-      !ignoredLayers.includes(fileData.layer)
+      DEPRECATED_LAYER_NAMES.includes(pathContext.layer) &&
+      !ignoredLayers.includes(pathContext.layer)
     ) {
       listener.Program = (node) => {
-        if (!fileData?.layer) return;
+        if (!pathContext?.layer) return;
 
-        const replacementLayer = LAYERS[fileData.layerIndex];
+        const replacementLayer = LAYERS[pathContext.layerIndex];
         const isReplaceable = replacementLayer.displayedActualNames.length > 0;
 
-        context.report({
+        ruleContext.report({
           node,
           message: isReplaceable
             ? REPLACEABLE_DEPRECATED_FILE_LAYER_MESSAGE
             : DEPRECATED_FILE_LAYER_MESSAGE,
           data: {
-            deprecated_layer: fileData.layer,
+            deprecated_layer: pathContext.layer,
             recommended_layers: listNames(
               replacementLayer.displayedActualNames,
             ),
@@ -78,25 +79,25 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
 
     if (isImportDeclaration(declaration)) {
       listener.ImportDeclaration = (node) => {
-        const importData = extractImportDataFromNode(node, fileData);
+        const importContext = extractImportContext(node, pathContext);
 
         if (
-          importData?.layer &&
-          importData.layerIndex >= 0 &&
-          !ignoredLayers.includes(importData.layer) &&
-          DEPRECATED_LAYER_NAMES.includes(importData.layer)
+          importContext?.layer &&
+          importContext.layerIndex >= 0 &&
+          !ignoredLayers.includes(importContext.layer) &&
+          DEPRECATED_LAYER_NAMES.includes(importContext.layer)
         ) {
-          const replacementLayer = LAYERS[importData.layerIndex];
+          const replacementLayer = LAYERS[importContext.layerIndex];
           const isReplaceable =
             replacementLayer.displayedActualNames.length > 0;
 
-          context.report({
+          ruleContext.report({
             node,
             message: isReplaceable
               ? REPLACEABLE_DEPRECATED_IMPORT_LAYER_MESSAGE
               : DEPRECATED_IMPORT_LAYER_MESSAGE,
             data: {
-              deprecated_layer: importData.layer,
+              deprecated_layer: importContext.layer,
               recommended_layers: listNames(
                 replacementLayer.displayedActualNames,
               ),

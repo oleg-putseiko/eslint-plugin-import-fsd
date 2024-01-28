@@ -3,15 +3,15 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
+  extractPathContext,
+  extractImportContext,
+} from '../utils/rule/context';
+import {
   Declaration,
   isDeclaration,
   isFileDeclaration,
   isImportDeclaration,
 } from '../utils/rule/declarations';
-import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule/parsers';
 import { DECLARED_SCHEMA } from '../utils/rule/schema';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
@@ -29,49 +29,50 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     },
     schema: [DECLARED_SCHEMA],
   },
-  create(context) {
+  create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const declaration = context.options.at(0)?.declaration ?? Declaration.All;
-    const ignoredLayers = context.options.at(0)?.ignores ?? [];
+    const declaration =
+      ruleContext.options.at(0)?.declaration ?? Declaration.All;
+    const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
     if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
       return listener;
     }
 
-    const fileData = extractFileDataFromContext(context);
+    const pathContext = extractPathContext(ruleContext);
 
-    if (!fileData?.layer) return listener;
+    if (!pathContext?.layer) return listener;
 
     if (
       isFileDeclaration(declaration) &&
-      fileData.layerIndex < 0 &&
-      !ignoredLayers.includes(fileData.layer)
+      pathContext.layerIndex < 0 &&
+      !ignoredLayers.includes(pathContext.layer)
     ) {
       listener.Program = (node) => {
-        if (!fileData?.layer) return;
+        if (!pathContext?.layer) return;
 
-        context.report({
+        ruleContext.report({
           node,
           message: UNKNOWN_FILE_LAYER_MESSAGE,
-          data: { layer: fileData.layer },
+          data: { layer: pathContext.layer },
         });
       };
     }
 
     if (isImportDeclaration(declaration)) {
       listener.ImportDeclaration = (node) => {
-        const importData = extractImportDataFromNode(node, fileData);
+        const importContext = extractImportContext(node, pathContext);
 
         if (
-          importData?.layer &&
-          !ignoredLayers.includes(importData.layer) &&
-          !KNOWN_LAYER_NAMES.includes(importData.layer)
+          importContext?.layer &&
+          !ignoredLayers.includes(importContext.layer) &&
+          !KNOWN_LAYER_NAMES.includes(importContext.layer)
         ) {
-          context.report({
+          ruleContext.report({
             node,
             message: UNKNOWN_IMPORT_LAYER_MESSAGE,
-            data: { layer: importData.layer },
+            data: { layer: importContext.layer },
           });
         }
       };
