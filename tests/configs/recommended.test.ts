@@ -2,30 +2,34 @@ import { configs } from '../../src';
 
 describe('configs', () => {
   describe('recommended', () => {
-    it('should have all the rules', () => {
-      const EXPECTED_RULE_NAMES = [
-        'import-fsd/no-denied-layers',
-        'import-fsd/no-deprecated-layers',
-        'import-fsd/no-unknown-layers',
-      ];
+    it('should have three rules', () => {
+      const rules = configs.recommended.rules ?? {};
 
-      const rules = configs.recommended.rules;
-      const ruleNames = rules ? Object.keys(rules) : [];
-
-      expect(rules).not.toBeUndefined();
-      expect(ruleNames.length).toBe(EXPECTED_RULE_NAMES.length);
-
-      EXPECTED_RULE_NAMES.forEach((name) => {
-        expect(rules).toHaveProperty(name);
-      });
+      expect(Object.keys(rules)).toHaveLength(3);
     });
 
-    it('each rule should have a severity', () => {
-      const rules = configs.recommended.rules;
+    it.each([
+      { rule: 'import-fsd/no-denied-layers' },
+      { rule: 'import-fsd/no-deprecated-layers' },
+      { rule: 'import-fsd/no-unknown-layers' },
+    ])('should have rule $rule', ({ rule }) => {
+      expect(configs.recommended.rules).toHaveProperty(rule);
+    });
 
-      expect(rules?.['import-fsd/no-denied-layers']).toEqual('error');
-      expect(rules?.['import-fsd/no-deprecated-layers']).toEqual('warn');
-      expect(rules?.['import-fsd/no-unknown-layers']).toEqual('error');
+    it.each([
+      { rule: 'import-fsd/no-denied-layers' },
+      { rule: 'import-fsd/no-deprecated-layers' },
+      { rule: 'import-fsd/no-unknown-layers' },
+    ])('rule $rule should not have options', ({ rule }) => {
+      expect(Array.isArray(configs.recommended.rules?.[rule])).toBe(false);
+    });
+
+    it.each([
+      { rule: 'import-fsd/no-denied-layers', severity: 'error' },
+      { rule: 'import-fsd/no-deprecated-layers', severity: 'warn' },
+      { rule: 'import-fsd/no-unknown-layers', severity: 'error' },
+    ])('rule $rule should have $severity severity', ({ rule, severity }) => {
+      expect(configs.recommended.rules?.[rule]).toEqual(severity);
     });
   });
 });
