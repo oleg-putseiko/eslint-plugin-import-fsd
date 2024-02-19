@@ -1,10 +1,8 @@
-import { type Rule } from 'eslint';
+import { type JSONSchema4 } from 'json-schema';
 
 import { DECLARATIONS } from './declarations';
 
-type Schema = Rule.RuleMetaData['schema'];
-
-export const BASE_SCHEMA: Schema = {
+export const BASE_SCHEMA: JSONSchema4 = {
   type: 'object',
   properties: {
     ignores: {
@@ -17,7 +15,7 @@ export const BASE_SCHEMA: Schema = {
   additionalProperties: false,
 };
 
-export const DECLARED_SCHEMA: Schema = {
+export const DECLARED_SCHEMA: JSONSchema4 = {
   ...BASE_SCHEMA,
   properties: {
     ...BASE_SCHEMA.properties,
