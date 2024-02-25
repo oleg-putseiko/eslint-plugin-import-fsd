@@ -17,6 +17,10 @@ type Segments = {
 type Aliases = { [alias: string]: string };
 type Packages = { [packagePattern: string]: Segments };
 
+type ImportNode = Pick<ImportDeclaration, 'source'>;
+
+type RuleContext = Pick<Rule.RuleContext, 'cwd' | 'filename' | 'settings'>;
+
 type SegmentsContext = {
   rootDir: string;
   packages: Packages;
@@ -79,7 +83,7 @@ const extractSegments = (
 };
 
 export const extractPathContext = (
-  ruleContext: Rule.RuleContext,
+  ruleContext: RuleContext,
 ): PathContext | null => {
   const rootDir = ruleContext.settings.fsd?.rootDir ?? ruleContext.cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
@@ -100,7 +104,7 @@ export const extractPathContext = (
 };
 
 export const extractImportContext = (
-  node: ImportDeclaration & Rule.NodeParentExtension,
+  node: ImportNode,
   pathContext: PathContext,
 ): ImportContext | null => {
   const path = node.source.value;
