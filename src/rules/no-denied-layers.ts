@@ -8,11 +8,6 @@ import {
 } from '../utils/rule/context';
 import { BASE_SCHEMA } from '../utils/rule/schema';
 
-const DENIED_LAYER_MESSAGE =
-  "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.";
-const DENIED_SLICE_MESSAGE =
-  "Access to slice '{{ denied_slice }}' from '{{ file_slice }}' is denied.";
-
 export const noDeniedLayersRule: Rule.RuleModule = {
   meta: {
     type: 'suggestion',
@@ -22,6 +17,12 @@ export const noDeniedLayersRule: Rule.RuleModule = {
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-denied-layers',
     },
     schema: [BASE_SCHEMA],
+    messages: {
+      deniedLayer:
+        "Access to layer '{{ denied_layer }}' from '{{ file_layer }}' is denied.",
+      deniedSlice:
+        "Access to slice '{{ denied_slice }}' from '{{ file_slice }}' is denied.",
+    },
   },
   create(ruleContext) {
     const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
@@ -59,7 +60,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
         if (pathContext.layer !== importContext.layer || !areSlicesExist) {
           ruleContext.report({
             node,
-            message: DENIED_LAYER_MESSAGE,
+            messageId: 'deniedLayer',
             data: {
               denied_layer: importContext.layer,
               file_layer: pathContext.layer,
@@ -68,7 +69,7 @@ export const noDeniedLayersRule: Rule.RuleModule = {
         } else if (importContext.slice && pathContext.slice) {
           ruleContext.report({
             node,
-            message: DENIED_SLICE_MESSAGE,
+            messageId: 'deniedSlice',
             data: {
               denied_slice: importContext.slice,
               file_slice: pathContext.slice,
