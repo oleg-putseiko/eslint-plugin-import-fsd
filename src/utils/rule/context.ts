@@ -35,7 +35,6 @@ type PathContext = ShallowNullable<Segments> & {
 };
 
 type ImportContext = ShallowNullable<Segments> & {
-  path: string;
   layerIndex: number;
 };
 
@@ -137,5 +136,5 @@ export const extractImportContext = (
     segments.layer ? item.names.includes(segments.layer) : false,
   );
 
-  return { ...segments, path, layerIndex };
+  return { ...segments, layerIndex };
 };
