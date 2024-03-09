@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "module": "commonjs",
-    "target": "es2021",
-    "rootDir": "src",
     "outDir": "dist",
-    "strictNullChecks": true
+    "rootDir": "src",
+    "strictNullChecks": true,
+    "target": "es2021"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts"]
 }
