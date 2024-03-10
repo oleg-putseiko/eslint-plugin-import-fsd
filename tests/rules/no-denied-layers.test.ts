@@ -139,5 +139,65 @@ describe.each(TEST_ITEMS)(
           })),
       },
     );
+
+    tester.run(
+      'segment-level imports from a slice-level file should be allowed',
+      noDeniedLayersRule,
+      {
+        valid: availableLayers
+          .flatMap((availableLayer) => [
+            `../${availableLayer}/foo/bar`,
+            `@/${availableLayer}/foo/bar`,
+            `~/${availableLayer}/foo/bar`,
+            `prefix/${availableLayer}/foo/bar`,
+          ])
+          .map((importPath) => ({
+            settings: {
+              fsd: {
+                rootDir: '/users/user/projects/plugin/src',
+                aliases: {
+                  '@/*': './*',
+                  '~/*': './*',
+                  'prefix/*': './*',
+                },
+              },
+            },
+            filename: `/users/user/projects/plugin/src/${layer}/foo.js`,
+            code: `import foo from "${importPath}";`,
+          })),
+        invalid: deniedLayers
+          .flatMap((deniedLayer) => [
+            { deniedLayer, importPath: `../${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `@/${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `~/${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `prefix/${deniedLayer}/foo/bar` },
+          ])
+          .map(({ deniedLayer, importPath }) => ({
+            settings: {
+              fsd: {
+                rootDir: '/users/user/projects/plugin/src',
+                aliases: {
+                  '@/*': './*',
+                  '~/*': './*',
+                  'prefix/*': './*',
+                },
+              },
+            },
+            filename: `/users/user/projects/plugin/src/${layer}/qux.js`,
+            code: `import foo from "${importPath}";`,
+            errors: [
+              deniedLayer === layer
+                ? {
+                    messageId: 'deniedSlice',
+                    data: { file_slice: 'qux', denied_slice: 'foo' },
+                  }
+                : {
+                    messageId: 'deniedLayer',
+                    data: { file_layer: layer, denied_layer: deniedLayer },
+                  },
+            ],
+          })),
+      },
+    );
   },
 );
