@@ -1,9 +1,11 @@
-import { noDeniedLayersRule } from '../../src/rules/no-denied-layers';
 import { RuleTester } from 'eslint';
+
+import plugin from '../../dist';
 
 type TestItem = {
   layer: string;
   availableLayers: string[];
+  deniedLayers: string[];
 };
 
 const TEST_ITEMS: TestItem[] = [
@@ -19,6 +21,7 @@ const TEST_ITEMS: TestItem[] = [
       'shared', 'common', 'lib', 'libs',
       'unknown-layer', 'qwe'
     ],
+    deniedLayers: ['app', 'apps', 'core', 'init'],
   },
   {
     layer: 'apps',
@@ -32,6 +35,7 @@ const TEST_ITEMS: TestItem[] = [
       'shared', 'common', 'lib', 'libs',
       'unknown-layer', 'qwe'
     ],
+    deniedLayers: ['app', 'apps', 'core', 'init'],
   },
   {
     layer: 'core',
@@ -45,6 +49,7 @@ const TEST_ITEMS: TestItem[] = [
       'shared', 'common', 'lib', 'libs',
       'unknown-layer', 'qwe'
     ],
+    deniedLayers: ['app', 'apps', 'core', 'init'],
   },
   {
     layer: 'init',
@@ -58,6 +63,7 @@ const TEST_ITEMS: TestItem[] = [
       'shared', 'common', 'lib', 'libs',
       'unknown-layer', 'qwe'
     ],
+    deniedLayers: ['app', 'apps', 'core', 'init'],
   },
 ];
 
@@ -69,79 +75,69 @@ const tester = new RuleTester({
   },
 });
 
-const joinLines = (...values: string[]) => values.join('\n');
+const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
-describe('no-denied-layers', () => {
-  describe.each(TEST_ITEMS)('layer $layer', ({ layer, availableLayers }) => {
-    tester.run('aliased imports', noDeniedLayersRule, {
-      valid: [
-        // Aliased segment-level imports
-        {
-          name: 'segment-level imports should be allowed',
-          settings: {
-            fsd: {
-              rootDir: '/users/user/projects/plugin-tests/src',
-              aliases: {
-                '@/*': './*',
+describe.each(TEST_ITEMS)(
+  '$layer layer',
+  ({ layer, availableLayers, deniedLayers }) => {
+    tester.run(
+      'segment-level imports from a segment-level file should be allowed',
+      noDeniedLayersRule,
+      {
+        valid: availableLayers
+          .flatMap((availableLayer) => [
+            `../../${availableLayer}/foo/bar`,
+            `@/${availableLayer}/foo/bar`,
+            `~/${availableLayer}/foo/bar`,
+            `prefix/${availableLayer}/foo/bar`,
+          ])
+          .map((importPath) => ({
+            settings: {
+              fsd: {
+                rootDir: '/users/user/projects/plugin/src',
+                aliases: {
+                  '@/*': './*',
+                  '~/*': './*',
+                  'prefix/*': './*',
+                },
               },
             },
-          },
-          filename: `/users/user/projects/plugin-tests/src/${layer}/foo/bar.js`,
-          code: joinLines(
-            ...availableLayers.map<string>(
-              (availableLayer, index) =>
-                `import foo${index} from "@/${availableLayer}/foo/bar";`,
-            ),
-            'import bar0 from "@scope/foo/bar";',
-            'import bar1 from "next/foo/bar";',
-          ),
-        },
-
-        // Aliased slice-level imports
-        {
-          name: 'slice-level imports should be allowed',
-          settings: {
-            fsd: {
-              rootDir: '/users/user/projects/plugin-tests/src',
-              aliases: {
-                '@/*': './*',
+            filename: `/users/user/projects/plugin/src/${layer}/foo/bar.js`,
+            code: `import foo from "${importPath}";`,
+          })),
+        invalid: deniedLayers
+          .flatMap((deniedLayer) => [
+            { deniedLayer, importPath: `../../${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `@/${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `~/${deniedLayer}/foo/bar` },
+            { deniedLayer, importPath: `prefix/${deniedLayer}/foo/bar` },
+          ])
+          .map(({ deniedLayer, importPath }) => ({
+            settings: {
+              fsd: {
+                rootDir: '/users/user/projects/plugin/src',
+                aliases: {
+                  '@/*': './*',
+                  '~/*': './*',
+                  'prefix/*': './*',
+                },
               },
             },
-          },
-          filename: `/users/user/projects/plugin-tests/src/${layer}/foo/bar.js`,
-          code: joinLines(
-            ...availableLayers.map<string>(
-              (availableLayer, index) =>
-                `import foo${index} from "@/${availableLayer}/foo";`,
-            ),
-            'import bar0 from "@scope/foo";',
-            'import bar1 from "next/foo";',
-          ),
-        },
-
-        // Aliased layer-level imports
-        {
-          name: 'aliased layer-level imports should be allowed',
-          settings: {
-            fsd: {
-              rootDir: '/users/user/projects/plugin-tests/src',
-              aliases: {
-                '@/*': './*',
-              },
-            },
-          },
-          filename: `/users/user/projects/plugin-tests/src/${layer}/foo/bar.js`,
-          code: joinLines(
-            ...availableLayers.map<string>(
-              (availableLayer, index) =>
-                `import foo${index} from "@/${availableLayer}";`,
-            ),
-            'import bar0 from "@scope";',
-            'import bar1 from "next";',
-          ),
-        },
-      ],
-      invalid: [],
-    });
-  });
-});
+            filename: `/users/user/projects/plugin/src/${layer}/qux/quux.js`,
+            code: `import foo from "${importPath}";`,
+            errors: [
+              deniedLayer === layer
+                ? {
+                    messageId: 'deniedSlice',
+                    data: { file_slice: 'qux', denied_slice: 'foo' },
+                  }
+                : {
+                    messageId: 'deniedLayer',
+                    data: { file_layer: layer, denied_layer: deniedLayer },
+                  },
+            ],
+          })),
+      },
+    );
+  },
+);
