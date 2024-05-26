@@ -80,8 +80,9 @@ describe('resolvePath', () => {
     )('$case', ({ dir }) =>
       // prettier-ignore
       {
-        expect(resolvePath(dir, '/')).toBe(''); // TODO: resolve to '/'
+        expect(resolvePath(dir, '/')).toBe('/');
         expect(resolvePath(dir, '/qux')).toBe('/qux');
+        expect(resolvePath(dir, '/qux/..')).toBe('/');
         expect(resolvePath(dir, '/qux/quux')).toBe('/qux/quux');
         expect(resolvePath(dir, '/qux/quux/quuux')).toBe('/qux/quux/quuux');
         expect(resolvePath(dir, '/qux/./quux/quuux')).toBe('/qux/quux/quuux');
@@ -102,7 +103,7 @@ describe('resolvePath', () => {
     it('absolute dir value without segments', () =>
       // prettier-ignore
       {
-        expect(resolvePath('/', './')).toBe('');
+        expect(resolvePath('/', './')).toBe('/');
         expect(resolvePath('/', './qux')).toBe('/qux');
         expect(resolvePath('/', './qux/quux')).toBe('/qux/quux');
         expect(resolvePath('/', './qux/quux/quuux')).toBe('/qux/quux/quuux');
@@ -116,7 +117,7 @@ describe('resolvePath', () => {
         expect(resolvePath('/', './qux/../quux///quuux//.././././///////./')).toBe('/quux');
         expect(resolvePath('/', './qux/../quux///quuux//.././././///////./.')).toBe('/quux');
         expect(resolvePath('/', '././qux/../quux///quuux//.././././///////./.')).toBe('/quux');
-        expect(resolvePath('/', './qux/../quux///quuux//.././././///////./..')).toBe(''); 
+        expect(resolvePath('/', './qux/../quux///quuux//.././././///////./..')).toBe('/'); 
       });
 
     it('absolute dir value with different first segment', () =>
@@ -138,10 +139,10 @@ describe('resolvePath', () => {
         expect(resolvePath('/foo', '././qux/../quux///quuux//.././././///////./.')).toBe('/foo/quux');
         expect(resolvePath('/foo', './qux/../quux///quuux//.././././///////./..')).toBe('/foo'); 
 
-        expect(resolvePath('/foo', '../')).toBe('');
+        expect(resolvePath('/foo', '../')).toBe('/');
         expect(resolvePath('/foo', '../qux')).toBe('/qux');
         expect(resolvePath('/foo', './qux/../quux/../.././quuux')).toBe('/quuux');
-        expect(resolvePath('/foo', './qux/quux/../.././../quuux/..')).toBe('');
+        expect(resolvePath('/foo', './qux/quux/../.././../quuux/..')).toBe('/');
       });
 
     it('absolute dir value with different first two segments', () =>
@@ -188,10 +189,10 @@ describe('resolvePath', () => {
         expect(resolvePath('/qux', '././qux/../quux///quuux//.././././///////./.')).toBe('/qux/quux');
         expect(resolvePath('/qux', './qux/../quux///quuux//.././././///////./..')).toBe('/qux'); 
 
-        expect(resolvePath('/qux', '../')).toBe('');
+        expect(resolvePath('/qux', '../')).toBe('/');
         expect(resolvePath('/qux', '../qux')).toBe('/qux');
         expect(resolvePath('/qux', './qux/../quux/../.././quuux')).toBe('/quuux');
-        expect(resolvePath('/qux', './qux/quux/../.././../quuux/..')).toBe('');
+        expect(resolvePath('/qux', './qux/quux/../.././../quuux/..')).toBe('/');
       });
 
     it('absolute dir value with identical first two segments', () =>

@@ -10,7 +10,7 @@ export const PATH_REGEXPS = {
   currentDirDotSegment: /(?<=(^|\/))\.(\/|$)/gu,
   prevDirSegmentPair: /(^|([^\\/]*\/))\.{2}(\/|$)/u,
   extraSlashes: /\/{2,}/gu,
-  endingSlashes: /\/+$/u,
+  endingSlashes: /(?<=[^\\/]+)\/+$/u,
 } satisfies Record<string, RegExp>;
 
 export const resolvePath = (dir: string, path: string) => {
@@ -27,5 +27,7 @@ export const resolvePath = (dir: string, path: string) => {
     resolvedPath = resolvedPath.replace(PATH_REGEXPS.prevDirSegmentPair, '');
   }
 
-  return resolvedPath.replace(PATH_REGEXPS.endingSlashes, '');
+  return resolvedPath
+    .replaceAll(PATH_REGEXPS.extraSlashes, '/')
+    .replace(PATH_REGEXPS.endingSlashes, '');
 };
