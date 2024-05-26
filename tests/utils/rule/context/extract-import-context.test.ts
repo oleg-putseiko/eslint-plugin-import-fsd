@@ -50,6 +50,7 @@ describe('extractImportContext', () => {
     'should return null if the node is $type',
     ({ node }) => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/features/foo/bar',
         layer: 'features',
@@ -66,6 +67,7 @@ describe('extractImportContext', () => {
   describe.each(LAYERS)('$name layer', (layer) => {
     it('should detect segment data in a relative segment-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
@@ -88,6 +90,7 @@ describe('extractImportContext', () => {
 
     it('should detect segment data in a relative slice-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
@@ -110,6 +113,7 @@ describe('extractImportContext', () => {
 
     it('should detect segment data in a relative layer-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
@@ -132,15 +136,16 @@ describe('extractImportContext', () => {
 
     it('should detect segment data in an aliased segment-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          '~/*': '../source/*',
-          '@/*': './*',
-          'qwe/*': '../qwe/*',
+          '~/*': './source/*',
+          '@/*': './src*',
+          'qwe/*': './qwe/*',
         },
         packages: {},
       };
@@ -158,15 +163,16 @@ describe('extractImportContext', () => {
 
     it('should detect segment data in an aliased slice-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          '~/*': '../source/*',
-          '@/*': './*',
-          'qwe/*': '../qwe/*',
+          '~/*': './source/*',
+          '@/*': './src/*',
+          'qwe/*': './qwe/*',
         },
         packages: {},
       };
@@ -184,15 +190,16 @@ describe('extractImportContext', () => {
 
     it('should detect segment data in an aliased layer-level import path', () => {
       const pathContext: PathContext = {
+        cwd: '/',
         rootDir: '/src',
         fullPath: '/src/foo/bar/baz',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          '~/*': '../source/*',
-          '@/*': './*',
-          'qwe/*': '../qwe/*',
+          '~/*': './source/*',
+          '@/*': './src/*',
+          'qwe/*': './qwe/*',
         },
         packages: {},
       };
@@ -211,6 +218,7 @@ describe('extractImportContext', () => {
 
   it('should not detect segment data in a relative root-level import path', () => {
     const pathContext: PathContext = {
+      cwd: '/',
       rootDir: '/src',
       fullPath: '/src/foo/bar/baz',
       layer: 'features',

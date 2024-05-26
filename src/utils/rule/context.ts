@@ -27,6 +27,7 @@ type SegmentsContext = {
 };
 
 type PathContext = ShallowNullable<Segments> & {
+  cwd: string;
   rootDir: string;
   fullPath: string;
   layerIndex: number;
@@ -84,7 +85,8 @@ const extractSegments = (
 export const extractPathContext = (
   ruleContext: RuleContext,
 ): PathContext | null => {
-  const rootDir = ruleContext.settings.fsd?.rootDir ?? ruleContext.cwd;
+  const cwd = ruleContext.cwd;
+  const rootDir = ruleContext.settings.fsd?.rootDir ?? cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
   const packages = ruleContext.settings.fsd?.packages ?? {};
 
@@ -99,7 +101,7 @@ export const extractPathContext = (
     segments.layer ? item.names.includes(segments.layer) : false,
   );
 
-  return { ...segments, rootDir, fullPath, layerIndex, aliases, packages };
+  return { ...segments, cwd, rootDir, fullPath, layerIndex, aliases, packages };
 };
 
 export const extractImportContext = (
@@ -124,7 +126,7 @@ export const extractImportContext = (
 
   if (alias?.replacement !== undefined) {
     resolvedPath = resolvePath(
-      pathContext.rootDir,
+      pathContext.cwd,
       pathContext.aliases[alias.name].replace('*', alias.replacement),
     );
   } else if (PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) {
