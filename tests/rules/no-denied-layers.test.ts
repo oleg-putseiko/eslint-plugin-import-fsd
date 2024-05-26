@@ -77,6 +77,12 @@ const tester = new RuleTester({
 
 const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
+const buildLayerImports = (prefix: string, layer: string) => [
+  { layer, importPath: `${prefix}${layer}/foo/bar`, hasSlice: true },
+  { layer, importPath: `${prefix}${layer}/foo`, hasSlice: true },
+  { layer, importPath: `${prefix}${layer}`, hasSlice: false },
+];
+
 describe.each(TEST_ITEMS)(
   '$layer layer',
   ({ layer, availableLayers, deniedLayers }) => {
@@ -86,12 +92,12 @@ describe.each(TEST_ITEMS)(
       {
         valid: availableLayers
           .flatMap((availableLayer) => [
-            `../../${availableLayer}/foo/bar`,
-            `@/${availableLayer}/foo/bar`,
-            `~/${availableLayer}/foo/bar`,
-            `prefix/${availableLayer}/foo/bar`,
+            ...buildLayerImports('../../', availableLayer),
+            ...buildLayerImports('@/', availableLayer),
+            ...buildLayerImports('~/', availableLayer),
+            ...buildLayerImports('prefix/', availableLayer),
           ])
-          .map((importPath) => ({
+          .map(({ importPath }) => ({
             settings: {
               fsd: {
                 rootDir: '/users/user/projects/plugin/src',
@@ -107,12 +113,12 @@ describe.each(TEST_ITEMS)(
           })),
         invalid: deniedLayers
           .flatMap((deniedLayer) => [
-            { deniedLayer, importPath: `../../${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `@/${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `~/${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `prefix/${deniedLayer}/foo/bar` },
+            ...buildLayerImports('../../', deniedLayer),
+            ...buildLayerImports('@/', deniedLayer),
+            ...buildLayerImports('~/', deniedLayer),
+            ...buildLayerImports('prefix/', deniedLayer),
           ])
-          .map(({ deniedLayer, importPath }) => ({
+          .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
             settings: {
               fsd: {
                 rootDir: '/users/user/projects/plugin/src',
@@ -126,7 +132,7 @@ describe.each(TEST_ITEMS)(
             filename: `/users/user/projects/plugin/src/${layer}/qux/quux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
-              deniedLayer === layer
+              deniedLayer === layer && hasSlice
                 ? {
                     messageId: 'deniedSlice',
                     data: { file_slice: 'qux', denied_slice: 'foo' },
@@ -146,12 +152,12 @@ describe.each(TEST_ITEMS)(
       {
         valid: availableLayers
           .flatMap((availableLayer) => [
-            `../${availableLayer}/foo/bar`,
-            `@/${availableLayer}/foo/bar`,
-            `~/${availableLayer}/foo/bar`,
-            `prefix/${availableLayer}/foo/bar`,
+            ...buildLayerImports('../', availableLayer),
+            ...buildLayerImports('@/', availableLayer),
+            ...buildLayerImports('~/', availableLayer),
+            ...buildLayerImports('prefix/', availableLayer),
           ])
-          .map((importPath) => ({
+          .map(({ importPath }) => ({
             settings: {
               fsd: {
                 rootDir: '/users/user/projects/plugin/src',
@@ -167,12 +173,12 @@ describe.each(TEST_ITEMS)(
           })),
         invalid: deniedLayers
           .flatMap((deniedLayer) => [
-            { deniedLayer, importPath: `../${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `@/${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `~/${deniedLayer}/foo/bar` },
-            { deniedLayer, importPath: `prefix/${deniedLayer}/foo/bar` },
+            ...buildLayerImports('../', deniedLayer),
+            ...buildLayerImports('@/', deniedLayer),
+            ...buildLayerImports('~/', deniedLayer),
+            ...buildLayerImports('prefix/', deniedLayer),
           ])
-          .map(({ deniedLayer, importPath }) => ({
+          .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
             settings: {
               fsd: {
                 rootDir: '/users/user/projects/plugin/src',
@@ -186,7 +192,7 @@ describe.each(TEST_ITEMS)(
             filename: `/users/user/projects/plugin/src/${layer}/qux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
-              deniedLayer === layer
+              deniedLayer === layer && hasSlice
                 ? {
                     messageId: 'deniedSlice',
                     data: { file_slice: 'qux', denied_slice: 'foo' },
