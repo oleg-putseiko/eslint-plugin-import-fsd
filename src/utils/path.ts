@@ -1,33 +1,47 @@
 export const PATH_REGEXPS = {
-  relativeStart: /^\.+\//u,
-  relativeOrAbsoluteStart: /^\.*\//u,
+  fileName: /\/[^\\/]*$/iu,
+  fileExtension: /(.+)(\.[^\\.]+$)/iu,
+  relativePath: /^\.+\//iu,
+  relativeOrAbsolutePath: /^\.*\//iu,
+  segments: /[^\\/]+/giu,
+} as const satisfies Record<string, RegExp>;
 
-  segments: /[^\\/]+/gu,
+export const resolve = (rootDir: string, path: string) => {
+  const inputStr = PATH_REGEXPS.relativePath.test(path)
+    ? `${rootDir}/${path}`
+    : path;
+  const inputSegments = inputStr.split('/');
+  const resultSegments: string[] = [];
 
-  fileName: /\/[^\\/]*$/u,
-  fileExtension: /(.+)(\.[^\\.]+$)/u,
+  const isAbsolute = inputStr.startsWith('/');
 
-  currentDirDotSegment: /(?<=(^|\/))\.(\/|$)/gu,
-  prevDirSegmentPair: /(^|([^\\/]*\/))\.{2}(\/|$)/u,
-  extraSlashes: /\/{2,}/gu,
-  endingSlashes: /(?<=[^\\/]+)\/+$/u,
-} satisfies Record<string, RegExp>;
+  while (inputSegments.length > 0) {
+    const segment = inputSegments[0];
 
-export const resolvePath = (dir: string, path: string) => {
-  if (!PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) return path;
+    switch (segment) {
+      case '':
+      case '.':
+        break;
 
-  let resolvedPath = (
-    PATH_REGEXPS.relativeStart.test(path) ? `${dir}/${path}` : path
-  )
-    .replaceAll(PATH_REGEXPS.currentDirDotSegment, '')
-    .replaceAll(PATH_REGEXPS.extraSlashes, '/')
-    .replace(PATH_REGEXPS.endingSlashes, '');
+      case '..': {
+        const isResultSegmentRemovable =
+          resultSegments.length > 0 && !resultSegments.at(-1)?.match(/^\.+$/iu);
 
-  while (PATH_REGEXPS.prevDirSegmentPair.test(resolvedPath)) {
-    resolvedPath = resolvedPath.replace(PATH_REGEXPS.prevDirSegmentPair, '');
+        if (isAbsolute || isResultSegmentRemovable) resultSegments.pop();
+        else if (!isAbsolute) resultSegments.push(segment);
+
+        break;
+      }
+
+      default:
+        resultSegments.push(segment);
+        break;
+    }
+
+    inputSegments.shift();
   }
 
-  return resolvedPath
-    .replaceAll(PATH_REGEXPS.extraSlashes, '/')
-    .replace(PATH_REGEXPS.endingSlashes, '');
+  const joinedSegments = resultSegments.join('/');
+
+  return isAbsolute ? `/${joinedSegments}` : joinedSegments || '.';
 };

@@ -3,7 +3,7 @@ import { type ImportDeclaration } from 'estree';
 
 import { isObject, isString } from '../guards';
 import { LAYERS } from '../layers';
-import { PATH_REGEXPS, resolvePath } from '../path';
+import { PATH_REGEXPS, resolve } from '../path';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown>
   ? { [X in K]: T[K] | null }
@@ -125,12 +125,12 @@ export const extractImportContext = (
   let resolvedPath = path;
 
   if (alias?.replacement !== undefined) {
-    resolvedPath = resolvePath(
+    resolvedPath = resolve(
       pathContext.cwd,
       pathContext.aliases[alias.name].replace('*', alias.replacement),
     );
-  } else if (PATH_REGEXPS.relativeOrAbsoluteStart.test(path)) {
-    resolvedPath = resolvePath(fileDir, path);
+  } else if (PATH_REGEXPS.relativeOrAbsolutePath.test(path)) {
+    resolvedPath = resolve(fileDir, path);
   }
 
   const segments = extractSegments(resolvedPath, pathContext);
