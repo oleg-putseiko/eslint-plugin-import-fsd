@@ -50,8 +50,8 @@ describe('extractImportContext', () => {
     'should return null if the node is $type',
     ({ node }) => {
       const pathContext: PathContext = {
-        rootDir: '/user/project/src',
-        fullPath: '/user/project/src/features/foo/bar',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -121,6 +121,84 @@ describe('extractImportContext', () => {
 
       const node: ImportNode = {
         source: { type: 'Literal', value: `../../${layer.name}` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: null,
+      });
+    });
+
+    it('should detect segment data in an aliased segment-level import path', () => {
+      const pathContext: PathContext = {
+        rootDir: '/src',
+        fullPath: '/src/foo/bar/baz',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '~/*': '../source/*',
+          '@/*': './*',
+          'qwe/*': '../qwe/*',
+        },
+        packages: {},
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `@/${layer.name}/qux/quux` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'qux',
+      });
+    });
+
+    it('should detect segment data in an aliased slice-level import path', () => {
+      const pathContext: PathContext = {
+        rootDir: '/src',
+        fullPath: '/src/foo/bar/baz',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '~/*': '../source/*',
+          '@/*': './*',
+          'qwe/*': '../qwe/*',
+        },
+        packages: {},
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `@/${layer.name}/qux` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'qux',
+      });
+    });
+
+    it('should detect segment data in an aliased layer-level import path', () => {
+      const pathContext: PathContext = {
+        rootDir: '/src',
+        fullPath: '/src/foo/bar/baz',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '~/*': '../source/*',
+          '@/*': './*',
+          'qwe/*': '../qwe/*',
+        },
+        packages: {},
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `@/${layer.name}` },
       };
 
       expect(extractImportContext(node, pathContext)).toEqual({
