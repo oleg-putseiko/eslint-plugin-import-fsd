@@ -25,6 +25,16 @@ describe('rootDir context property', () => {
     expect(extractPathContext(ruleContext)?.rootDir).toBe('/foo/bar');
   });
 
+  it('should be resolved based on cwd', () => {
+    const ruleContext: RuleContext = {
+      cwd: '/foo',
+      filename: '',
+      settings: { fsd: { rootDir: './bar' } },
+    };
+
+    expect(extractPathContext(ruleContext)?.rootDir).toBe('/foo/bar');
+  });
+
   it('should give priority to rootDir from settings over cwd', () => {
     const ruleContext: RuleContext = {
       cwd: '/foo/bar',
@@ -38,20 +48,6 @@ describe('rootDir context property', () => {
   it.each([
     { rootDir: null, type: 'null' },
     { rootDir: undefined, type: 'undefined' },
-  ])(
-    'should give priority to cwd over rootDir from settings if rootDir is $type',
-    ({ rootDir }) => {
-      const ruleContext: RuleContext = {
-        cwd: '/foo/bar',
-        filename: '',
-        settings: { fsd: { rootDir } },
-      };
-
-      expect(extractPathContext(ruleContext)?.rootDir).toBe('/foo/bar');
-    },
-  );
-
-  it.each([
     { rootDir: 0, type: 'falsy number' },
     { rootDir: 123, type: 'truthy number' },
     { rootDir: 123n, type: 'bigint' },
@@ -63,7 +59,7 @@ describe('rootDir context property', () => {
     { rootDir: {}, type: 'object' },
     { rootDir: ['foo', 'bar'], type: 'array' },
   ])(
-    'context should be null if the rootDir property from settings is $type',
+    'should give priority to cwd over rootDir from settings if rootDir is $type',
     ({ rootDir }) => {
       const ruleContext: RuleContext = {
         cwd: '/foo/bar',
@@ -71,7 +67,7 @@ describe('rootDir context property', () => {
         settings: { fsd: { rootDir } },
       };
 
-      expect(extractPathContext(ruleContext)).toBeNull();
+      expect(extractPathContext(ruleContext)?.rootDir).toBe('/foo/bar');
     },
   );
 });

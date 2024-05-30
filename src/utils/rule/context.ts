@@ -86,13 +86,12 @@ export const extractPathContext = (
   ruleContext: RuleContext,
 ): PathContext | null => {
   const cwd = ruleContext.cwd;
-  const rootDir = ruleContext.settings.fsd?.rootDir ?? cwd;
+  const rootDirSetting = ruleContext.settings.fsd?.rootDir;
+  const rootDir = isString(rootDirSetting) ? resolve(cwd, rootDirSetting) : cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
   const packages = ruleContext.settings.fsd?.packages ?? {};
 
-  if (!isString(rootDir) || !isAliases(aliases) || !isPackages(packages)) {
-    return null;
-  }
+  if (!isAliases(aliases) || !isPackages(packages)) return null;
 
   const fullPath = ruleContext.filename;
   const segments = extractSegments(fullPath, { rootDir, packages });
