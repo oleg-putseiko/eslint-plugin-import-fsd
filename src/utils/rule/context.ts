@@ -1,9 +1,9 @@
 import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
+import * as path from 'node:path';
 
 import { isObject, isString } from '../guards';
 import { LAYERS } from '../layers';
-import { PATH_REGEXPS, resolve } from '../path';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown>
   ? { [X in K]: T[K] | null }
@@ -38,6 +38,13 @@ type PathContext = ShallowNullable<Segments> & {
 type ImportContext = ShallowNullable<Segments> & {
   layerIndex: number;
 };
+
+const PATH_REGEXPS = {
+  fileName: /\/[^\\/]*$/iu,
+  fileExtension: /(.+)(\.[^\\.]+$)/iu,
+  relativeOrAbsolutePath: /^\.*\//iu,
+  segments: /[^\\/]+/giu,
+} as const satisfies Record<string, RegExp>;
 
 const isAliases = (value: unknown): value is Aliases =>
   isObject(value) &&
@@ -87,7 +94,9 @@ export const extractPathContext = (
 ): PathContext | null => {
   const cwd = ruleContext.cwd;
   const rootDirSetting = ruleContext.settings.fsd?.rootDir;
-  const rootDir = isString(rootDirSetting) ? resolve(cwd, rootDirSetting) : cwd;
+  const rootDir = isString(rootDirSetting)
+    ? path.resolve(cwd, rootDirSetting)
+    : cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
   const packages = ruleContext.settings.fsd?.packages ?? {};
 
@@ -107,29 +116,29 @@ export const extractImportContext = (
   node: ImportNode,
   pathContext: PathContext,
 ): ImportContext | null => {
-  const path = node.source.value;
+  const importPath = node.source.value;
 
-  if (!isString(path)) return null;
+  if (!isString(importPath)) return null;
 
   const fileDir = pathContext.fullPath.replace(PATH_REGEXPS.fileName, '');
   const alias = Object.keys(pathContext.aliases)
     .map((alias) => ({
       name: alias,
       replacement: RegExp(`^${alias.replace('*', '(.*)')}$`, 'u')
-        .exec(path)
+        .exec(importPath)
         ?.at(1),
     }))
     .find(({ replacement }) => replacement !== undefined);
 
-  let resolvedPath = path;
+  let resolvedPath = importPath;
 
   if (alias?.replacement !== undefined) {
-    resolvedPath = resolve(
+    resolvedPath = path.resolve(
       pathContext.cwd,
       pathContext.aliases[alias.name].replace('*', alias.replacement),
     );
-  } else if (PATH_REGEXPS.relativeOrAbsolutePath.test(path)) {
-    resolvedPath = resolve(fileDir, path);
+  } else if (PATH_REGEXPS.relativeOrAbsolutePath.test(importPath)) {
+    resolvedPath = path.resolve(fileDir, importPath);
   }
 
   const segments = extractSegments(resolvedPath, pathContext);
