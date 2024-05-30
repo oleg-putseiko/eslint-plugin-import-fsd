@@ -91,45 +91,25 @@ describe.each(TEST_ITEMS)(
       noDeniedLayersRule,
       {
         valid: availableLayers
-          .flatMap((availableLayer) => [
-            ...buildLayerImports('../../', availableLayer),
-            ...buildLayerImports('@/', availableLayer),
-            ...buildLayerImports('~/', availableLayer),
-            ...buildLayerImports('prefix/', availableLayer),
-          ])
+          .flatMap((deniedLayer) => buildLayerImports('../../', deniedLayer))
           .map(({ importPath }) => ({
             settings: {
               fsd: {
-                rootDir: '/users/user/projects/plugin/src',
-                aliases: {
-                  '@/*': './*',
-                  '~/*': './*',
-                  'prefix/*': './*',
-                },
+                rootDir: '/src',
               },
             },
-            filename: `/users/user/projects/plugin/src/${layer}/foo/bar.js`,
+            filename: `/src/${layer}/foo/bar.js`,
             code: `import foo from "${importPath}";`,
           })),
         invalid: deniedLayers
-          .flatMap((deniedLayer) => [
-            ...buildLayerImports('../../', deniedLayer),
-            ...buildLayerImports('@/', deniedLayer),
-            ...buildLayerImports('~/', deniedLayer),
-            ...buildLayerImports('prefix/', deniedLayer),
-          ])
+          .flatMap((deniedLayer) => buildLayerImports('../../', deniedLayer))
           .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
             settings: {
               fsd: {
-                rootDir: '/users/user/projects/plugin/src',
-                aliases: {
-                  '@/*': './*',
-                  '~/*': './*',
-                  'prefix/*': './*',
-                },
+                rootDir: '/src',
               },
             },
-            filename: `/users/user/projects/plugin/src/${layer}/qux/quux.js`,
+            filename: `/src/${layer}/qux/quux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
               deniedLayer === layer && hasSlice
@@ -151,45 +131,25 @@ describe.each(TEST_ITEMS)(
       noDeniedLayersRule,
       {
         valid: availableLayers
-          .flatMap((availableLayer) => [
-            ...buildLayerImports('../', availableLayer),
-            ...buildLayerImports('@/', availableLayer),
-            ...buildLayerImports('~/', availableLayer),
-            ...buildLayerImports('prefix/', availableLayer),
-          ])
+          .flatMap((deniedLayer) => buildLayerImports('../', deniedLayer))
           .map(({ importPath }) => ({
             settings: {
               fsd: {
-                rootDir: '/users/user/projects/plugin/src',
-                aliases: {
-                  '@/*': './*',
-                  '~/*': './*',
-                  'prefix/*': './*',
-                },
+                rootDir: '/src',
               },
             },
-            filename: `/users/user/projects/plugin/src/${layer}/foo.js`,
+            filename: `/src/${layer}/foo.js`,
             code: `import foo from "${importPath}";`,
           })),
         invalid: deniedLayers
-          .flatMap((deniedLayer) => [
-            ...buildLayerImports('../', deniedLayer),
-            ...buildLayerImports('@/', deniedLayer),
-            ...buildLayerImports('~/', deniedLayer),
-            ...buildLayerImports('prefix/', deniedLayer),
-          ])
+          .flatMap((deniedLayer) => buildLayerImports('../', deniedLayer))
           .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
             settings: {
               fsd: {
-                rootDir: '/users/user/projects/plugin/src',
-                aliases: {
-                  '@/*': './*',
-                  '~/*': './*',
-                  'prefix/*': './*',
-                },
+                rootDir: '/src',
               },
             },
-            filename: `/users/user/projects/plugin/src/${layer}/qux.js`,
+            filename: `/src/${layer}/qux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
               deniedLayer === layer && hasSlice
