@@ -43,7 +43,6 @@ const PATH_REGEXPS = {
   fileName: /\/[^\\/]*$/iu,
   fileExtension: /(.+)(\.[^\\.]+$)/iu,
   relativeOrAbsolutePath: /^\.*\//iu,
-  segments: /[^\\/]+/giu,
 } as const satisfies Record<string, RegExp>;
 
 const isAliases = (value: unknown): value is Aliases =>
@@ -76,9 +75,10 @@ const extractSegments = (
   }
 
   const pathFromRoot = fullPath.substring(rootDir.length);
-  const pathSegments = [...pathFromRoot.matchAll(PATH_REGEXPS.segments)].map(
-    (matches) => matches.at(0),
-  );
+  const pathSegments = path
+    .normalize(pathFromRoot)
+    .split(path.sep)
+    .filter((segment) => segment.length > 0);
 
   const layer = pathSegments.at(0) || null;
   const slice =
