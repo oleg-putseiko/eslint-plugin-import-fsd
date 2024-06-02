@@ -4,6 +4,7 @@ export type Aliases = { [alias: string]: string };
 
 export const isAliases = (value: unknown): value is Aliases =>
   isObject(value) &&
+  !Array.isArray(value) &&
   Object.keys(value).every((key) => isString(key) && isString(value[key]));
 
 export const resolveAliasedPath = (aliases: Aliases, path: string) => {

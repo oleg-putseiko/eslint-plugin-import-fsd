@@ -11,6 +11,7 @@ describe('aliases context property', () => {
     { aliases: false, type: 'false' },
     { aliases: Symbol(), type: 'symbol' },
     { aliases: () => 'fooBar', type: 'function' },
+    { aliases: [], type: 'array' },
     {
       aliases: {
         '@/src/*': {},
@@ -21,30 +22,13 @@ describe('aliases context property', () => {
       },
       type: 'object with non-string replacements',
     },
-  ])(
-    'context should be null if the aliases property from settings is $type',
-    ({ aliases }) => {
-      const ruleContext: RuleContext = {
-        cwd: '/foo/bar',
-        filename: '/baz/qux',
-        settings: { fsd: { aliases } },
-      };
+  ])('context should be null if the aliases is $type', ({ aliases }) => {
+    const ruleContext: RuleContext = {
+      cwd: '/',
+      filename: '/foo/bar.js',
+      settings: { fsd: { aliases } },
+    };
 
-      expect(extractPathContext(ruleContext)).toBeNull();
-    },
-  );
-
-  // TODO: remove `failing` and merge with the same tests
-  it.failing.each([{ aliases: ['foo', 'bar'], type: 'string array' }])(
-    'context should be null if the aliases property from settings is $type',
-    ({ aliases }) => {
-      const ruleContext: RuleContext = {
-        cwd: '/foo/bar',
-        filename: '/baz/qux',
-        settings: { fsd: { aliases } },
-      };
-
-      expect(extractPathContext(ruleContext)).toBeNull();
-    },
-  );
+    expect(extractPathContext(ruleContext)).toBeNull();
+  });
 });
