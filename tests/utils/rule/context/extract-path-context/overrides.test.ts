@@ -11,7 +11,7 @@ describe('overrides context property', () => {
   ])('should be empty object if it is $type', ({ overrides }) => {
     const ruleContext: RuleContext = {
       cwd: '/foo/bar',
-      filename: '/baz/qux',
+      filename: '/baz/qux.js',
       settings: { fsd: { overrides } },
     };
 
@@ -31,7 +31,7 @@ describe('overrides context property', () => {
   ])('should be the same as passed if it is $type', ({ overrides }) => {
     const ruleContext: RuleContext = {
       cwd: '/foo/bar',
-      filename: '/baz/qux',
+      filename: '/baz/qux.js',
       settings: { fsd: { overrides } },
     };
 
@@ -55,12 +55,13 @@ describe('overrides context property', () => {
       overrides: { fooBar: { slice: 'foo' } },
       type: 'object without layer segment',
     },
+    { overrides: [], type: 'empty array' },
   ])(
     'context should be null if the overrides property from settings is $type',
     ({ overrides }) => {
       const ruleContext: RuleContext = {
         cwd: '/foo/bar',
-        filename: '/baz/qux',
+        filename: '/baz/qux.js',
         settings: { fsd: { overrides } },
       };
 
@@ -69,15 +70,12 @@ describe('overrides context property', () => {
   );
 
   // TODO: remove `failing` and merge with the same tests
-  it.failing.each([
-    { overrides: new TestClass(), type: 'class instance' },
-    { overrides: [], type: 'empty array' },
-  ])(
+  it.failing.each([{ overrides: new TestClass(), type: 'class instance' }])(
     'context should be null if the overrides property from settings is $type',
     ({ overrides }) => {
       const ruleContext: RuleContext = {
         cwd: '/foo/bar',
-        filename: '/baz/qux',
+        filename: '/baz/qux.js',
         settings: { fsd: { overrides } },
       };
 

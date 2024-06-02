@@ -9,6 +9,7 @@ export type Overrides = { [pattern: string]: Segments };
 
 export const isOverrides = (value: unknown): value is Overrides =>
   isObject(value) &&
+  !Array.isArray(value) &&
   Object.values(value).every(
     (item) => isObject(item) && isString(item.layer) && isString(item.slice),
   );
