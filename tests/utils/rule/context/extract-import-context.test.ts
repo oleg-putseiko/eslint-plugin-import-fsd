@@ -52,7 +52,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/features/foo/bar',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -69,7 +69,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -92,7 +92,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -115,7 +115,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -138,13 +138,13 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
         aliases: {
           '~/*': './source/*',
-          '@/*': './src*',
+          '@/*': './src/*',
           'qwe/*': './qwe/*',
         },
         packages: {},
@@ -165,7 +165,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -192,7 +192,7 @@ describe('extractImportContext', () => {
       const pathContext: PathContext = {
         cwd: '/',
         rootDir: '/src',
-        fullPath: '/src/foo/bar/baz',
+        fullPath: '/src/features/foo/bar.js',
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
@@ -220,7 +220,7 @@ describe('extractImportContext', () => {
     const pathContext: PathContext = {
       cwd: '/',
       rootDir: '/src',
-      fullPath: '/src/foo/bar/baz',
+      fullPath: '/src/features/foo/bar.js',
       layer: 'features',
       layerIndex: 4,
       slice: 'foo',

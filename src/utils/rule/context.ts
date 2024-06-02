@@ -74,11 +74,14 @@ const extractSegments = (
     return { layer: null, slice: null };
   }
 
-  const pathFromRoot = fullPath.substring(rootDir.length);
-  const pathSegments = path
-    .normalize(pathFromRoot)
-    .split(path.sep)
-    .filter((segment) => segment.length > 0);
+  const pathFromRoot = path.relative(rootDir, fullPath);
+  const pathSegments =
+    pathFromRoot !== ''
+      ? path
+          .normalize(pathFromRoot)
+          .split(path.sep)
+          .filter((segment) => segment.length > 0)
+      : [];
 
   const layer = pathSegments.at(0) || null;
   const slice =
@@ -120,7 +123,7 @@ export const extractImportContext = (
 
   if (!isString(importPath)) return null;
 
-  const fileDir = pathContext.fullPath.replace(PATH_REGEXPS.fileName, '');
+  const fileDir = path.dirname(pathContext.fullPath);
   const alias = Object.keys(pathContext.aliases)
     .map((alias) => ({
       name: alias,

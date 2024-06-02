@@ -94,48 +94,6 @@ describe('segment context properties', () => {
       expect(extractPathContext(ruleContext)).toEqual(expected);
     });
 
-    it('should not detect segment data in a root path with rootDir passed through cwd', () => {
-      const ruleContext: RuleContext = {
-        cwd: '/',
-        filename: '/',
-        settings: {},
-      };
-
-      const expected: PathContext = {
-        layer: null,
-        layerIndex: -1,
-        slice: null,
-        cwd: '/',
-        rootDir: '/',
-        fullPath: '/',
-        aliases: {},
-        packages: {},
-      };
-
-      expect(extractPathContext(ruleContext)).toEqual(expected);
-    });
-
-    it('should not detect segment data in a path outside a root directory with rootDir passed through cwd', () => {
-      const ruleContext: RuleContext = {
-        cwd: '/src',
-        filename: '/sources',
-        settings: {},
-      };
-
-      const expected: PathContext = {
-        layer: null,
-        layerIndex: -1,
-        slice: null,
-        cwd: '/src',
-        rootDir: '/src',
-        fullPath: '/sources',
-        aliases: {},
-        packages: {},
-      };
-
-      expect(extractPathContext(ruleContext)).toEqual(expected);
-    });
-
     it('should detect segment data in a segment-level path with rootDir passed through settings', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
@@ -198,47 +156,89 @@ describe('segment context properties', () => {
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
     });
+  });
 
-    it('should not detect segment data in a root path with rootDir passed through settings', () => {
-      const ruleContext: RuleContext = {
-        cwd: '/',
-        filename: '/src',
-        settings: { fsd: { rootDir: '/src' } },
-      };
+  it('should not detect segment data in a root path with rootDir passed through cwd', () => {
+    const ruleContext: RuleContext = {
+      cwd: '/',
+      filename: '/',
+      settings: {},
+    };
 
-      const expected: PathContext = {
-        layer: null,
-        layerIndex: -1,
-        slice: null,
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src',
-        aliases: {},
-        packages: {},
-      };
+    const expected: PathContext = {
+      layer: null,
+      layerIndex: -1,
+      slice: null,
+      cwd: '/',
+      rootDir: '/',
+      fullPath: '/',
+      aliases: {},
+      packages: {},
+    };
 
-      expect(extractPathContext(ruleContext)).toEqual(expected);
-    });
+    expect(extractPathContext(ruleContext)).toEqual(expected);
+  });
 
-    it('should not detect segment data in a path outside a root directory with rootDir passed through settings', () => {
-      const ruleContext: RuleContext = {
-        cwd: '/',
-        filename: '/sources',
-        settings: { fsd: { rootDir: '/src' } },
-      };
+  it('should not detect segment data in a path outside a root directory with rootDir passed through cwd', () => {
+    const ruleContext: RuleContext = {
+      cwd: '/src',
+      filename: '/sources',
+      settings: {},
+    };
 
-      const expected: PathContext = {
-        layer: null,
-        layerIndex: -1,
-        slice: null,
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/sources',
-        aliases: {},
-        packages: {},
-      };
+    const expected: PathContext = {
+      layer: null,
+      layerIndex: -1,
+      slice: null,
+      cwd: '/src',
+      rootDir: '/src',
+      fullPath: '/sources',
+      aliases: {},
+      packages: {},
+    };
 
-      expect(extractPathContext(ruleContext)).toEqual(expected);
-    });
+    expect(extractPathContext(ruleContext)).toEqual(expected);
+  });
+
+  it('should not detect segment data in a root path with rootDir passed through settings', () => {
+    const ruleContext: RuleContext = {
+      cwd: '/',
+      filename: '/src',
+      settings: { fsd: { rootDir: '/src' } },
+    };
+
+    const expected: PathContext = {
+      layer: null,
+      layerIndex: -1,
+      slice: null,
+      cwd: '/',
+      rootDir: '/src',
+      fullPath: '/src',
+      aliases: {},
+      packages: {},
+    };
+
+    expect(extractPathContext(ruleContext)).toEqual(expected);
+  });
+
+  it('should not detect segment data in a path outside a root directory with rootDir passed through settings', () => {
+    const ruleContext: RuleContext = {
+      cwd: '/',
+      filename: '/sources',
+      settings: { fsd: { rootDir: '/src' } },
+    };
+
+    const expected: PathContext = {
+      layer: null,
+      layerIndex: -1,
+      slice: null,
+      cwd: '/',
+      rootDir: '/src',
+      fullPath: '/sources',
+      aliases: {},
+      packages: {},
+    };
+
+    expect(extractPathContext(ruleContext)).toEqual(expected);
   });
 });
