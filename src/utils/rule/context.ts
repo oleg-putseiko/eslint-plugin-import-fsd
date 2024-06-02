@@ -2,6 +2,7 @@ import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 import * as path from 'node:path';
 
+import { type Aliases, isAliases, resolveAliasedPath } from './aliases';
 import { isObject, isString } from '../guards';
 import { LAYERS } from '../layers';
 
@@ -14,7 +15,6 @@ type Segments = {
   slice: string;
 };
 
-type Aliases = { [alias: string]: string };
 type Packages = { [packagePattern: string]: Segments };
 
 type ImportNode = Pick<ImportDeclaration, 'source'>;
@@ -40,14 +40,9 @@ type ImportContext = ShallowNullable<Segments> & {
 };
 
 const PATH_REGEXPS = {
-  fileName: /\/[^\\/]*$/iu,
   fileExtension: /(.+)(\.[^\\.]+$)/iu,
   relativeOrAbsolutePath: /^\.*\//iu,
 } as const satisfies Record<string, RegExp>;
-
-const isAliases = (value: unknown): value is Aliases =>
-  isObject(value) &&
-  Object.keys(value).every((key) => isString(key) && isString(value[key]));
 
 const isPackages = (value: unknown): value is Packages =>
   isObject(value) &&
@@ -120,28 +115,17 @@ export const extractImportContext = (
   pathContext: PathContext,
 ): ImportContext | null => {
   const importPath = node.source.value;
+  const { cwd, aliases, fullPath } = pathContext;
 
   if (!isString(importPath)) return null;
 
-  const fileDir = path.dirname(pathContext.fullPath);
-  const alias = Object.keys(pathContext.aliases)
-    .map((alias) => ({
-      name: alias,
-      replacement: RegExp(`^${alias.replace('*', '(.*)')}$`, 'u')
-        .exec(importPath)
-        ?.at(1),
-    }))
-    .find(({ replacement }) => replacement !== undefined);
-
+  const resolvedAliasedPath = resolveAliasedPath(aliases, importPath);
   let resolvedPath = importPath;
 
-  if (alias?.replacement !== undefined) {
-    resolvedPath = path.resolve(
-      pathContext.cwd,
-      pathContext.aliases[alias.name].replace('*', alias.replacement),
-    );
+  if (resolvedAliasedPath !== null) {
+    resolvedPath = path.resolve(cwd, resolvedAliasedPath);
   } else if (PATH_REGEXPS.relativeOrAbsolutePath.test(importPath)) {
-    resolvedPath = path.resolve(fileDir, importPath);
+    resolvedPath = path.resolve(path.dirname(fullPath), importPath);
   }
 
   const segments = extractSegments(resolvedPath, pathContext);
