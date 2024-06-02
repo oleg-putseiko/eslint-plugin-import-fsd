@@ -3,28 +3,18 @@ import { type ImportDeclaration } from 'estree';
 import * as path from 'node:path';
 
 import { type Aliases, isAliases, resolveAliasedPath } from './aliases';
-import { isObject, isString } from '../guards';
+import { isString } from '../guards';
 import { LAYERS } from '../layers';
+import { isPackages, type Packages } from './packages';
+import { extractSegments, type Segments } from './segments';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown>
   ? { [X in K]: T[K] | null }
   : T | null;
 
-type Segments = {
-  layer: string;
-  slice: string;
-};
-
-type Packages = { [packagePattern: string]: Segments };
-
 type ImportNode = Pick<ImportDeclaration, 'source'>;
 
 type RuleContext = Pick<Rule.RuleContext, 'cwd' | 'filename' | 'settings'>;
-
-type SegmentsContext = {
-  rootDir: string;
-  packages: Packages;
-};
 
 type PathContext = ShallowNullable<Segments> & {
   cwd: string;
@@ -39,53 +29,8 @@ type ImportContext = ShallowNullable<Segments> & {
   layerIndex: number;
 };
 
-const PATH_REGEXPS = {
-  fileExtension: /(.+)(\.[^\\.]+$)/iu,
-  relativeOrAbsolutePath: /^\.*\//iu,
-} as const satisfies Record<string, RegExp>;
-
-const isPackages = (value: unknown): value is Packages =>
-  isObject(value) &&
-  Object.values(value).every(
-    (entry) =>
-      isObject(entry) && isString(entry.layer) && isString(entry.slice),
-  );
-
-const extractSegments = (
-  fullPath: string,
-  segmentsContext: SegmentsContext,
-): ShallowNullable<Segments> => {
-  const { rootDir, packages } = segmentsContext;
-
-  const matchedPattern = Object.keys(packages).find((pattern) =>
-    new RegExp(`^${pattern.replaceAll('*', '(.*)')}$`, 'gu').test(fullPath),
-  );
-
-  if (matchedPattern) {
-    return packages[matchedPattern];
-  }
-
-  if (!fullPath.startsWith(rootDir)) {
-    return { layer: null, slice: null };
-  }
-
-  const pathFromRoot = path.relative(rootDir, fullPath);
-  const pathSegments =
-    pathFromRoot !== ''
-      ? path
-          .normalize(pathFromRoot)
-          .split(path.sep)
-          .filter((segment) => segment.length > 0)
-      : [];
-
-  const layer = pathSegments.at(0) || null;
-  const slice =
-    (pathSegments.length > 2
-      ? pathSegments.at(1)
-      : pathSegments.at(1)?.replace(PATH_REGEXPS.fileExtension, '$1')) || null;
-
-  return { layer, slice };
-};
+const isPathRelativeOrAbsolute = (value: string) =>
+  path.isAbsolute(value) || /^\.+\//iu.test(value);
 
 export const extractPathContext = (
   ruleContext: RuleContext,
@@ -124,7 +69,7 @@ export const extractImportContext = (
 
   if (resolvedAliasedPath !== null) {
     resolvedPath = path.resolve(cwd, resolvedAliasedPath);
-  } else if (PATH_REGEXPS.relativeOrAbsolutePath.test(importPath)) {
+  } else if (isPathRelativeOrAbsolute(importPath)) {
     resolvedPath = path.resolve(path.dirname(fullPath), importPath);
   }
 
