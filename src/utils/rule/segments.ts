@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 
-import { matchPackageSegments, type Packages } from './packages';
+import { matchOverriddenSegments, type Overrides } from './overrides';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown>
   ? { [X in K]: T[K] | null }
@@ -13,7 +13,7 @@ export type Segments = {
 
 export type SegmentsContext = {
   rootDir: string;
-  packages: Packages;
+  overrides: Overrides;
 };
 
 const FILE_EXT_REGEXP = /(.+)(\.[^\\.]+$)/iu;
@@ -22,11 +22,11 @@ export const extractSegments = (
   fullPath: string,
   segmentsContext: SegmentsContext,
 ): ShallowNullable<Segments> => {
-  const { rootDir, packages } = segmentsContext;
+  const { rootDir, overrides } = segmentsContext;
 
-  const packageSegments = matchPackageSegments(packages, fullPath);
+  const overriddenSegments = matchOverriddenSegments(overrides, fullPath);
 
-  if (packageSegments !== null) return packageSegments;
+  if (overriddenSegments !== null) return overriddenSegments;
 
   if (!fullPath.startsWith(rootDir)) {
     return { layer: null, slice: null };

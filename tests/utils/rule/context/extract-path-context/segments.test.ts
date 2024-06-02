@@ -46,7 +46,7 @@ describe('segment context properties', () => {
         rootDir: '/',
         fullPath: `/${layer.name}/foo/bar`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -67,7 +67,7 @@ describe('segment context properties', () => {
         rootDir: '/',
         fullPath: `/${layer.name}/foo`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -88,7 +88,7 @@ describe('segment context properties', () => {
         rootDir: '/',
         fullPath: `/${layer.name}`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -109,7 +109,7 @@ describe('segment context properties', () => {
         rootDir: '/src',
         fullPath: `/src/${layer.name}/foo/bar`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -130,7 +130,7 @@ describe('segment context properties', () => {
         rootDir: '/src',
         fullPath: `/src/${layer.name}/foo`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -151,7 +151,7 @@ describe('segment context properties', () => {
         rootDir: '/src',
         fullPath: `/src/${layer.name}`,
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -173,7 +173,7 @@ describe('segment context properties', () => {
       rootDir: '/',
       fullPath: '/',
       aliases: {},
-      packages: {},
+      overrides: {},
     };
 
     expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -194,7 +194,7 @@ describe('segment context properties', () => {
       rootDir: '/src',
       fullPath: '/sources',
       aliases: {},
-      packages: {},
+      overrides: {},
     };
 
     expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -215,7 +215,7 @@ describe('segment context properties', () => {
       rootDir: '/src',
       fullPath: '/src',
       aliases: {},
-      packages: {},
+      overrides: {},
     };
 
     expect(extractPathContext(ruleContext)).toEqual(expected);
@@ -236,7 +236,7 @@ describe('segment context properties', () => {
       rootDir: '/src',
       fullPath: '/sources',
       aliases: {},
-      packages: {},
+      overrides: {},
     };
 
     expect(extractPathContext(ruleContext)).toEqual(expected);

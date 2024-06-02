@@ -57,7 +57,7 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       expect(extractImportContext(node, pathContext)).toBeNull();
@@ -74,7 +74,7 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -97,7 +97,7 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -120,7 +120,7 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {},
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -147,7 +147,7 @@ describe('extractImportContext', () => {
           '@/*': './src/*',
           'qwe/*': './qwe/*',
         },
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -174,7 +174,7 @@ describe('extractImportContext', () => {
           '@/*': './src/*',
           'qwe/*': './qwe/*',
         },
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -201,7 +201,7 @@ describe('extractImportContext', () => {
           '@/*': './src/*',
           'qwe/*': './qwe/*',
         },
-        packages: {},
+        overrides: {},
       };
 
       const node: ImportNode = {
@@ -225,7 +225,7 @@ describe('extractImportContext', () => {
       layerIndex: 4,
       slice: 'foo',
       aliases: {},
-      packages: {},
+      overrides: {},
     };
 
     const node: ImportNode = {

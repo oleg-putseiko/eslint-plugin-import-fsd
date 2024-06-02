@@ -5,7 +5,7 @@ import * as path from 'node:path';
 import { type Aliases, isAliases, resolveAliasedPath } from './aliases';
 import { isString } from '../guards';
 import { LAYERS } from '../layers';
-import { isPackages, type Packages } from './packages';
+import { isOverrides, type Overrides } from './overrides';
 import { extractSegments, type Segments } from './segments';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown>
@@ -22,7 +22,7 @@ type PathContext = ShallowNullable<Segments> & {
   fullPath: string;
   layerIndex: number;
   aliases: Aliases;
-  packages: Packages;
+  overrides: Overrides;
 };
 
 type ImportContext = ShallowNullable<Segments> & {
@@ -41,18 +41,26 @@ export const extractPathContext = (
     ? path.resolve(cwd, rootDirSetting)
     : cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
-  const packages = ruleContext.settings.fsd?.packages ?? {};
+  const overrides = ruleContext.settings.fsd?.overrides ?? {};
 
-  if (!isAliases(aliases) || !isPackages(packages)) return null;
+  if (!isAliases(aliases) || !isOverrides(overrides)) return null;
 
   const fullPath = ruleContext.filename;
-  const segments = extractSegments(fullPath, { rootDir, packages });
+  const segments = extractSegments(fullPath, { rootDir, overrides });
 
   const layerIndex = LAYERS.findIndex((item) =>
     segments.layer ? item.names.includes(segments.layer) : false,
   );
 
-  return { ...segments, cwd, rootDir, fullPath, layerIndex, aliases, packages };
+  return {
+    ...segments,
+    cwd,
+    rootDir,
+    fullPath,
+    layerIndex,
+    aliases,
+    overrides: overrides,
+  };
 };
 
 export const extractImportContext = (
