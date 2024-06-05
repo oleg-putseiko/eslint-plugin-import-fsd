@@ -93,22 +93,14 @@ describe.each(TEST_ITEMS)(
         valid: availableLayers
           .flatMap((deniedLayer) => buildLayerImports('../../', deniedLayer))
           .map(({ importPath }) => ({
-            settings: {
-              fsd: {
-                rootDir: '/src',
-              },
-            },
+            settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${layer}/foo/bar.js`,
             code: `import foo from "${importPath}";`,
           })),
         invalid: deniedLayers
           .flatMap((deniedLayer) => buildLayerImports('../../', deniedLayer))
           .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
-            settings: {
-              fsd: {
-                rootDir: '/src',
-              },
-            },
+            settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${layer}/qux/quux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
@@ -133,22 +125,14 @@ describe.each(TEST_ITEMS)(
         valid: availableLayers
           .flatMap((deniedLayer) => buildLayerImports('../', deniedLayer))
           .map(({ importPath }) => ({
-            settings: {
-              fsd: {
-                rootDir: '/src',
-              },
-            },
+            settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${layer}/foo.js`,
             code: `import foo from "${importPath}";`,
           })),
         invalid: deniedLayers
           .flatMap((deniedLayer) => buildLayerImports('../', deniedLayer))
           .map(({ layer: deniedLayer, importPath, hasSlice }) => ({
-            settings: {
-              fsd: {
-                rootDir: '/src',
-              },
-            },
+            settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${layer}/qux.js`,
             code: `import foo from "${importPath}";`,
             errors: [

@@ -7,12 +7,12 @@ import {
   extractImportContext,
 } from '../utils/rule/context';
 import {
-  Declaration,
-  isDeclaration,
-  isFileDeclaration,
-  isImportDeclaration,
-} from '../utils/rule/declarations';
-import { DECLARED_SCHEMA } from '../utils/rule/schema';
+  Scope,
+  isScope,
+  isFileScope,
+  isImportScope,
+} from '../utils/rule/scope';
+import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
 const DEPRECATED_FILE_LAYER_MESSAGE =
   "File layer '{{ deprecated_layer }}' is deprecated.";
@@ -34,16 +34,15 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-deprecated-layers',
     },
-    schema: [DECLARED_SCHEMA],
+    schema: [SCOPED_SCHEMA],
   },
   create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const declaration =
-      ruleContext.options.at(0)?.declaration ?? Declaration.All;
+    const scope = ruleContext.options.at(0)?.scope ?? Scope.All;
     const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
-    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
+    if (!isScope(scope) || !isStringArray(ignoredLayers)) {
       return listener;
     }
 
@@ -52,7 +51,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
     if (!pathContext?.layer) return listener;
 
     if (
-      isFileDeclaration(declaration) &&
+      isFileScope(scope) &&
       DEPRECATED_LAYER_NAMES.includes(pathContext.layer) &&
       !ignoredLayers.includes(pathContext.layer)
     ) {
@@ -77,7 +76,7 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       };
     }
 
-    if (isImportDeclaration(declaration)) {
+    if (isImportScope(scope)) {
       listener.ImportDeclaration = (node) => {
         const importContext = extractImportContext(node, pathContext);
 

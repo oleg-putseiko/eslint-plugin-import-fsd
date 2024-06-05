@@ -7,12 +7,12 @@ import {
   extractImportContext,
 } from '../utils/rule/context';
 import {
-  Declaration,
-  isDeclaration,
-  isFileDeclaration,
-  isImportDeclaration,
-} from '../utils/rule/declarations';
-import { DECLARED_SCHEMA } from '../utils/rule/schema';
+  Scope,
+  isScope,
+  isFileScope,
+  isImportScope,
+} from '../utils/rule/scope';
+import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
 const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
 const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
@@ -27,16 +27,15 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
-    schema: [DECLARED_SCHEMA],
+    schema: [SCOPED_SCHEMA],
   },
   create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const declaration =
-      ruleContext.options.at(0)?.declaration ?? Declaration.All;
+    const scope = ruleContext.options.at(0)?.scope ?? Scope.All;
     const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
-    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
+    if (!isScope(scope) || !isStringArray(ignoredLayers)) {
       return listener;
     }
 
@@ -45,7 +44,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
     if (!pathContext?.layer) return listener;
 
     if (
-      isFileDeclaration(declaration) &&
+      isFileScope(scope) &&
       pathContext.layerIndex < 0 &&
       !ignoredLayers.includes(pathContext.layer)
     ) {
@@ -60,7 +59,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       };
     }
 
-    if (isImportDeclaration(declaration)) {
+    if (isImportScope(scope)) {
       listener.ImportDeclaration = (node) => {
         const importContext = extractImportContext(node, pathContext);
 

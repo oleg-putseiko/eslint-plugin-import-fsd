@@ -1,6 +1,6 @@
 import { type JSONSchema4 } from 'json-schema';
 
-import { DECLARATIONS } from './declarations';
+import { SCOPES } from './scope';
 
 export const BASE_SCHEMA: JSONSchema4 = {
   type: 'object',
@@ -15,12 +15,10 @@ export const BASE_SCHEMA: JSONSchema4 = {
   additionalProperties: false,
 };
 
-export const DECLARED_SCHEMA: JSONSchema4 = {
+export const SCOPED_SCHEMA: JSONSchema4 = {
   ...BASE_SCHEMA,
   properties: {
     ...BASE_SCHEMA.properties,
-    declaration: {
-      enum: DECLARATIONS,
-    },
+    scope: { enum: SCOPES },
   },
 };
