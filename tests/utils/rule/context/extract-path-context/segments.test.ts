@@ -34,7 +34,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a segment-level path with rootDir passed through cwd', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/${layer.name}/foo/bar`,
+        filename: `/${layer.name}/foo/bar.js`,
         settings: {},
       };
 
@@ -44,7 +44,7 @@ describe('segment context properties', () => {
         slice: 'foo',
         cwd: '/',
         rootDir: '/',
-        fullPath: `/${layer.name}/foo/bar`,
+        fullPath: `/${layer.name}/foo/bar.js`,
         aliases: {},
         overrides: {},
       };
@@ -55,7 +55,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a slice-level path with rootDir passed through cwd', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/${layer.name}/foo`,
+        filename: `/${layer.name}/foo.js`,
         settings: {},
       };
 
@@ -65,7 +65,7 @@ describe('segment context properties', () => {
         slice: 'foo',
         cwd: '/',
         rootDir: '/',
-        fullPath: `/${layer.name}/foo`,
+        fullPath: `/${layer.name}/foo.js`,
         aliases: {},
         overrides: {},
       };
@@ -76,7 +76,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a layer-level path with rootDir passed through cwd', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/${layer.name}`,
+        filename: `/${layer.name}.js`,
         settings: {},
       };
 
@@ -86,7 +86,7 @@ describe('segment context properties', () => {
         slice: null,
         cwd: '/',
         rootDir: '/',
-        fullPath: `/${layer.name}`,
+        fullPath: `/${layer.name}.js`,
         aliases: {},
         overrides: {},
       };
@@ -97,7 +97,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a segment-level path with rootDir passed through settings', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/src/${layer.name}/foo/bar`,
+        filename: `/src/${layer.name}/foo/bar.js`,
         settings: { fsd: { rootDir: '/src' } },
       };
 
@@ -107,7 +107,7 @@ describe('segment context properties', () => {
         slice: 'foo',
         cwd: '/',
         rootDir: '/src',
-        fullPath: `/src/${layer.name}/foo/bar`,
+        fullPath: `/src/${layer.name}/foo/bar.js`,
         aliases: {},
         overrides: {},
       };
@@ -118,7 +118,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a slice-level path with rootDir passed through settings', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/src/${layer.name}/foo`,
+        filename: `/src/${layer.name}/foo.js`,
         settings: { fsd: { rootDir: '/src' } },
       };
 
@@ -128,7 +128,7 @@ describe('segment context properties', () => {
         slice: 'foo',
         cwd: '/',
         rootDir: '/src',
-        fullPath: `/src/${layer.name}/foo`,
+        fullPath: `/src/${layer.name}/foo.js`,
         aliases: {},
         overrides: {},
       };
@@ -139,7 +139,7 @@ describe('segment context properties', () => {
     it('should detect segment data in a layer-level path with rootDir passed through settings', () => {
       const ruleContext: RuleContext = {
         cwd: '/',
-        filename: `/src/${layer.name}`,
+        filename: `/src/${layer.name}.js`,
         settings: { fsd: { rootDir: '/src' } },
       };
 
@@ -149,7 +149,7 @@ describe('segment context properties', () => {
         slice: null,
         cwd: '/',
         rootDir: '/src',
-        fullPath: `/src/${layer.name}`,
+        fullPath: `/src/${layer.name}.js`,
         aliases: {},
         overrides: {},
       };

@@ -49,13 +49,15 @@ export const noDeniedLayersRule: Rule.RuleModule = {
           return;
         }
 
-        const areSlicesExist = importContext.slice && pathContext.slice;
+        const areSlicesExist = !!importContext.slice && !!pathContext.slice;
         const areSlicesSame =
+          areSlicesExist &&
           pathContext.layer === importContext.layer &&
           pathContext.slice === importContext.slice;
 
-        if (areSlicesSame || !deniedLayers.includes(importContext.layer))
+        if (areSlicesSame || !deniedLayers.includes(importContext.layer)) {
           return;
+        }
 
         if (pathContext.layer !== importContext.layer || !areSlicesExist) {
           ruleContext.report({

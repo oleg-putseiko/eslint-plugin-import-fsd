@@ -16,13 +16,11 @@ export type SegmentsContext = {
   overrides: Overrides;
 };
 
-const FILE_EXT_REGEXP = /(.+)(\.[^\\.]+$)/iu;
-
 export const extractSegments = (
   fullPath: string,
-  segmentsContext: SegmentsContext,
+  context: SegmentsContext,
 ): ShallowNullable<Segments> => {
-  const { rootDir, overrides } = segmentsContext;
+  const { rootDir, overrides } = context;
 
   const overriddenSegments = matchOverriddenSegments(overrides, fullPath);
 
@@ -33,19 +31,18 @@ export const extractSegments = (
   }
 
   const pathFromRoot = path.relative(rootDir, fullPath);
-  const pathSegments =
-    pathFromRoot !== ''
+  const segments =
+    pathFromRoot.length > 0
       ? path
           .normalize(pathFromRoot)
           .split(path.sep)
           .filter((segment) => segment.length > 0)
       : [];
 
-  const layer = pathSegments.at(0) || null;
+  const layer =
+    segments.length > 0 ? path.parse(segments[0]).name || null : null;
   const slice =
-    (pathSegments.length > 2
-      ? pathSegments.at(1)
-      : pathSegments.at(1)?.replace(FILE_EXT_REGEXP, '$1')) || null;
+    segments.length > 1 ? path.parse(segments[1]).name || null : null;
 
   return { layer, slice };
 };
