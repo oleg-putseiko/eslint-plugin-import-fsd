@@ -19,7 +19,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
-      'unknown-layer', 'qwe'
+      'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
   },
@@ -33,7 +33,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
-      'unknown-layer', 'qwe'
+      'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
   },
@@ -47,7 +47,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
-      'unknown-layer', 'qwe'
+      'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
   },
@@ -61,9 +61,522 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
-      'unknown-layer', 'qwe'
+      'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
+  },
+  {
+    layer: 'process',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'processes',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'flow',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'flows',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'workflow',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'workflows',
+    // prettier-ignore
+    availableLayers: [
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+    ],
+  },
+  {
+    layer: 'page',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'pages',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'screen',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'screens',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'view',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'views',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'layout',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'layouts',
+    // prettier-ignore
+    availableLayers: [
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+    ],
+  },
+  {
+    layer: 'widget',
+    // prettier-ignore
+    availableLayers: [
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+    ],
+  },
+  {
+    layer: 'widgets',
+    // prettier-ignore
+    availableLayers: [
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+    ],
+  },
+  {
+    layer: 'feature',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'features',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'component',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'components',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'container',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'containers',
+    // prettier-ignore
+    availableLayers: [
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+    ],
+  },
+  {
+    layer: 'entity',
+    // prettier-ignore
+    availableLayers: [
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+    ],
+  },
+  {
+    layer: 'entities',
+    // prettier-ignore
+    availableLayers: [
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+    ],
+  },
+  {
+    layer: 'model',
+    // prettier-ignore
+    availableLayers: [
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+    ],
+  },
+  {
+    layer: 'models',
+    // prettier-ignore
+    availableLayers: [
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer'
+    ],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+    ],
+  },
+  {
+    layer: 'shared',
+    availableLayers: ['unknown-layer'],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+    ],
+  },
+  {
+    layer: 'common',
+    availableLayers: ['unknown-layer'],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+    ],
+  },
+  {
+    layer: 'lib',
+    availableLayers: ['unknown-layer'],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+    ],
+  },
+  {
+    layer: 'libs',
+    availableLayers: ['unknown-layer'],
+    // prettier-ignore
+    deniedLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+    ],
+  },
+  {
+    layer: 'unknown-layer',
+    // prettier-ignore
+    availableLayers: [
+      'app', 'apps', 'core', 'init', 
+      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
+      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
+      'widget', 'widgets',
+      'feature', 'features', 'component', 'components', 'container', 'containers',
+      'entity', 'entities', 'model', 'models',
+      'shared', 'common', 'lib', 'libs',
+      'unknown-layer', 'other-unknown-layer'
+    ],
+    deniedLayers: [],
   },
 ];
 
