@@ -1,4 +1,4 @@
-import { type Rule, type ESLint } from 'eslint';
+import { type Rule, type ESLint, type Linter } from 'eslint';
 
 import { noDeniedLayersRule } from './rules/no-denied-layers';
 import { noUnknownLayersRule } from './rules/no-unknown-layers';
@@ -10,15 +10,21 @@ type Rules = Record<
 >;
 
 type Configs = {
-  recommended: ESLint.ConfigData;
+  recommended: Linter.FlatConfig;
+  'recommended-legacy': ESLint.ConfigData;
 };
 
 type Plugin = {
+  meta: ESLint.ObjectMetaProperties['meta'];
   rules: Rules;
   configs: Configs;
 };
 
 const plugin: Plugin = {
+  meta: {
+    name: 'eslint-plugin-import-fsd',
+    version: '2.0.0',
+  },
   rules: {
     'no-denied-layers': noDeniedLayersRule,
     'no-unknown-layers': noUnknownLayersRule,
@@ -32,8 +38,23 @@ const plugin: Plugin = {
         'import-fsd/no-deprecated-layers': 'warn',
       },
     },
+    'recommended-legacy': {
+      plugins: ['import-fsd'],
+      rules: {
+        'import-fsd/no-denied-layers': 'error',
+        'import-fsd/no-unknown-layers': 'error',
+        'import-fsd/no-deprecated-layers': 'warn',
+      },
+    },
   },
 } satisfies ESLint.Plugin;
+
+Object.assign(plugin.configs.recommended, {
+  ...plugin.configs.recommended,
+  plugins: {
+    'import-fsd': plugin,
+  },
+});
 
 // eslint-disable-next-line no-restricted-exports
 export default plugin;
