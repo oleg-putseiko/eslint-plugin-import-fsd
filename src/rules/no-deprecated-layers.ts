@@ -14,16 +14,6 @@ import {
 } from '../utils/rule/scope';
 import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
-const DEPRECATED_FILE_LAYER_MESSAGE =
-  "File layer '{{ deprecated_layer }}' is deprecated.";
-const REPLACEABLE_DEPRECATED_FILE_LAYER_MESSAGE =
-  "File layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.";
-
-const DEPRECATED_IMPORT_LAYER_MESSAGE =
-  "Layer '{{ deprecated_layer }}' is deprecated.";
-const REPLACEABLE_DEPRECATED_IMPORT_LAYER_MESSAGE =
-  "Layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.";
-
 const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
 
 export const noDeprecatedLayersRule: Rule.RuleModule = {
@@ -35,6 +25,14 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-deprecated-layers',
     },
     schema: [SCOPED_SCHEMA],
+    messages: {
+      deprecatedFileLayer: "File layer '{{ deprecated_layer }}' is deprecated.",
+      replaceableDeprecatedFileLayer:
+        "File layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.",
+      deprecatedImportLayer: "Layer '{{ deprecated_layer }}' is deprecated.",
+      replaceableDeprecatedImportLayer:
+        "Layer '{{ deprecated_layer }}' is deprecated, use {{ recommended_layers }} instead.",
+    },
   },
   create(ruleContext) {
     const listener: Rule.RuleListener = {};
@@ -63,9 +61,9 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
 
         ruleContext.report({
           node,
-          message: isReplaceable
-            ? REPLACEABLE_DEPRECATED_FILE_LAYER_MESSAGE
-            : DEPRECATED_FILE_LAYER_MESSAGE,
+          messageId: isReplaceable
+            ? 'replaceableDeprecatedFileLayer'
+            : 'deprecatedFileLayer',
           data: {
             deprecated_layer: pathContext.layer,
             recommended_layers: listNames(
@@ -92,9 +90,9 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
 
           ruleContext.report({
             node,
-            message: isReplaceable
-              ? REPLACEABLE_DEPRECATED_IMPORT_LAYER_MESSAGE
-              : DEPRECATED_IMPORT_LAYER_MESSAGE,
+            messageId: isReplaceable
+              ? 'replaceableDeprecatedImportLayer'
+              : 'deprecatedImportLayer',
             data: {
               deprecated_layer: importContext.layer,
               recommended_layers: listNames(
