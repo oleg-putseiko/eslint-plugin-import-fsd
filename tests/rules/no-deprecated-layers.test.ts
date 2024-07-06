@@ -200,6 +200,18 @@ describe.each(DEPRECATED_LAYERS)('deprecated %s file layer', (fileLayer) => {
           options: [{ scope: 'import' }],
           code: 'import foo from "bar"',
         },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux/quux.js`,
+          options: [{ scope: 'file', ignores: [fileLayer] }],
+          code: 'import foo from "bar"',
+        },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux/quux.js`,
+          options: [{ scope: 'all', ignores: [fileLayer] }],
+          code: 'import foo from "bar"',
+        },
       ],
       invalid: [
         {
@@ -231,6 +243,18 @@ describe.each(DEPRECATED_LAYERS)('deprecated %s file layer', (fileLayer) => {
           options: [{ scope: 'import' }],
           code: 'import foo from "bar"',
         },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux.js`,
+          options: [{ scope: 'file', ignores: [fileLayer] }],
+          code: 'import foo from "bar"',
+        },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux.js`,
+          options: [{ scope: 'all', ignores: [fileLayer] }],
+          code: 'import foo from "bar"',
+        },
       ],
       invalid: [
         {
@@ -260,6 +284,18 @@ describe.each(DEPRECATED_LAYERS)('deprecated %s file layer', (fileLayer) => {
           settings: { fsd: { rootDir: '/src' } },
           filename: `/src/${fileLayer}.js`,
           options: [{ scope: 'import' }],
+          code: 'import foo from "bar"',
+        },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux.js`,
+          options: [{ scope: 'file', ignores: [fileLayer] }],
+          code: 'import foo from "bar"',
+        },
+        {
+          settings: { fsd: { rootDir: '/src' } },
+          filename: `/src/${fileLayer}/qux.js`,
+          options: [{ scope: 'all', ignores: [fileLayer] }],
           code: 'import foo from "bar"',
         },
       ],
