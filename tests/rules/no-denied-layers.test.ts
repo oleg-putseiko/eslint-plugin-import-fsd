@@ -598,10 +598,10 @@ describe.each(TEST_ITEMS)(
       noDeniedLayersRule,
       {
         valid: availableLayers
-          .flatMap((availableLayer) => [
-            `../../${availableLayer}/foo/bar`,
-            `../../${availableLayer}/foo`,
-            `../../${availableLayer}`,
+          .flatMap((layer) => [
+            `../../${layer}/foo/bar`,
+            `../../${layer}/foo`,
+            `../../${layer}`,
           ])
           .map((importPath) => ({
             settings: { fsd: { rootDir: '/src' } },
