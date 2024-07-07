@@ -14,9 +14,6 @@ import {
 } from '../utils/rule/scope';
 import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
-const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
-const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
-
 const KNOWN_LAYER_NAMES = LAYERS.flatMap((item) => item.names);
 
 export const noUnknownLayersRule: Rule.RuleModule = {
@@ -28,6 +25,10 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
     schema: [SCOPED_SCHEMA],
+    messages: {
+      unknownFileLayer: "Unknown file layer '{{ layer }}'.",
+      unknownImportLayer: "Unknown layer '{{ layer }}'.",
+    },
   },
   create(ruleContext) {
     const listener: Rule.RuleListener = {};
@@ -53,7 +54,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
 
         ruleContext.report({
           node,
-          message: UNKNOWN_FILE_LAYER_MESSAGE,
+          messageId: 'unknownFileLayer',
           data: { layer: pathContext.layer },
         });
       };
@@ -70,7 +71,7 @@ export const noUnknownLayersRule: Rule.RuleModule = {
         ) {
           ruleContext.report({
             node,
-            message: UNKNOWN_IMPORT_LAYER_MESSAGE,
+            messageId: 'unknownImportLayer',
             data: { layer: importContext.layer },
           });
         }
