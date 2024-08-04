@@ -30,30 +30,50 @@ describe.each(KNOWN_LAYERS)('file layer "%s"', (fileLayer) => {
     'import from a segment-level file should be allowed',
     noUnknownLayersRule,
     {
-      valid: KNOWN_LAYERS.flatMap((layer) => [
-        `../../${layer}/foo/bar`,
-        `../../${layer}/foo`,
-        `../../${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'file' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-        },
-      ]),
+      valid: [
+        ...KNOWN_LAYERS.flatMap((layer) => [
+          `../../${layer}/foo/bar`,
+          `../../${layer}/foo`,
+          `../../${layer}`,
+        ]).flatMap((importPath) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux/quux.js`,
+            options: [{ scope: 'file' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux/quux.js`,
+            options: [{ scope: 'import' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux/quux.js`,
+            options: [{ scope: 'all' }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+        ...UNKNOWN_LAYERS.flatMap((layer) => [
+          { layer, path: `../../${layer}/foo/bar` },
+          { layer, path: `../../${layer}/foo` },
+          { layer, path: `../../${layer}` },
+        ]).flatMap(({ layer: importLayer, path: importPath }) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux/quux.js`,
+            options: [{ scope: 'import', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux/quux.js`,
+            options: [{ scope: 'all', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+      ],
       invalid: UNKNOWN_LAYERS.flatMap((layer) => [
         `../../${layer}/foo/bar`,
         `../../${layer}/foo`,
@@ -81,30 +101,50 @@ describe.each(KNOWN_LAYERS)('file layer "%s"', (fileLayer) => {
     'import from a slice-level file should be allowed',
     noUnknownLayersRule,
     {
-      valid: KNOWN_LAYERS.flatMap((layer) => [
-        `../${layer}/foo/bar`,
-        `../${layer}/foo`,
-        `../${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'file' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-        },
-      ]),
+      valid: [
+        ...KNOWN_LAYERS.flatMap((layer) => [
+          `../${layer}/foo/bar`,
+          `../${layer}/foo`,
+          `../${layer}`,
+        ]).flatMap((importPath) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux.js`,
+            options: [{ scope: 'file' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux.js`,
+            options: [{ scope: 'import' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux.js`,
+            options: [{ scope: 'all' }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+        ...UNKNOWN_LAYERS.flatMap((layer) => [
+          { layer, path: `../${layer}/foo/bar` },
+          { layer, path: `../${layer}/foo` },
+          { layer, path: `../${layer}` },
+        ]).flatMap(({ layer: importLayer, path: importPath }) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux.js`,
+            options: [{ scope: 'import', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}/qux.js`,
+            options: [{ scope: 'all', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+      ],
       invalid: UNKNOWN_LAYERS.flatMap((layer) => [
         `../${layer}/foo/bar`,
         `../${layer}/foo`,
@@ -132,30 +172,50 @@ describe.each(KNOWN_LAYERS)('file layer "%s"', (fileLayer) => {
     'import from a layer-level file should be allowed',
     noUnknownLayersRule,
     {
-      valid: KNOWN_LAYERS.flatMap((layer) => [
-        `./${layer}/foo/bar`,
-        `./${layer}/foo`,
-        `./${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'file' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-        },
-      ]),
+      valid: [
+        ...KNOWN_LAYERS.flatMap((layer) => [
+          `./${layer}/foo/bar`,
+          `./${layer}/foo`,
+          `./${layer}`,
+        ]).flatMap((importPath) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}.js`,
+            options: [{ scope: 'file' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}.js`,
+            options: [{ scope: 'import' }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}.js`,
+            options: [{ scope: 'all' }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+        ...UNKNOWN_LAYERS.flatMap((layer) => [
+          { layer, path: `./${layer}/foo/bar` },
+          { layer, path: `./${layer}/foo` },
+          { layer, path: `./${layer}` },
+        ]).flatMap(({ layer: importLayer, path: importPath }) => [
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}.js`,
+            options: [{ scope: 'import', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+          {
+            settings: { fsd: { rootDir: '/src' } },
+            filename: `/src/${fileLayer}.js`,
+            options: [{ scope: 'all', ignores: [importLayer] }],
+            code: `import foo from "${importPath}"`,
+          },
+        ]),
+      ],
       invalid: UNKNOWN_LAYERS.flatMap((layer) => [
         `./${layer}/foo/bar`,
         `./${layer}/foo`,
