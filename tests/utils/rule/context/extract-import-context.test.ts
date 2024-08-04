@@ -214,6 +214,35 @@ describe('extractImportContext', () => {
         slice: null,
       });
     });
+
+    it('should override import path data', () => {
+      const pathContext: PathContext = {
+        cwd: '/',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar.js',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '~/*': './source/*',
+          '@/*': './src/*',
+          'qwe/*': './qwe/*',
+        },
+        overrides: {
+          '@foo/bar': { layer: layer.name, slice: 'baz' },
+        },
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `@foo/bar` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'baz',
+      });
+    });
   });
 
   it('should not detect segment data in a relative root-level import path', () => {
