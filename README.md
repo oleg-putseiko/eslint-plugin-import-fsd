@@ -23,6 +23,7 @@ ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.desig
   - [no-unknown-layers](#no-unknown-layers)
 - [Configs](#configs)
   - [recommended](#recommended)
+  - [recommended-legacy](#recommended-legacy)
 - [Migration to FSD](#migration-to-fsd)
 
 ## Getting started
@@ -343,12 +344,37 @@ Contains recommended plugin rules configuration:
 | `no-deprecated-layers` | warn     | —       |
 | `no-unknown-layers`    | error    | —       |
 
-To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended` to the list of extensions in your ESLint configuration file:
+To include the recommended configuration in yours, you need to add it to the list of configurations in your ESLint configuration file:
 
 ```js
-module.exports = {
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  importFsdPlugin.configs.recommended,
   // ...
+];
+```
+
+### recommended-legacy
+
+Contains recommended plugin rules configuration:
+
+| Rule                   | Severity | Options |
+| ---------------------- | -------- | ------- |
+| `no-denied-layers`     | error    | —       |
+| `no-deprecated-layers` | warn     | —       |
+| `no-unknown-layers`    | error    | —       |
+
+To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended-legacy` to the list of extensions in your ESLint configuration file:
+
+```js
+/* .eslintrc.js */
+
+module.exports = {
   extends: ['plugin:import-fsd/recommended'],
+  // ...
 };
 ```
 
