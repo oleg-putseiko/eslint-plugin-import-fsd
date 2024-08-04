@@ -590,6 +590,7 @@ const tester = new RuleTester({
 
 const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
+// TODO: add `ignores` options tests
 describe.each(TEST_ITEMS)(
   '$layer layer',
   ({ layer: fileLayer, availableLayers, deniedLayers }) => {
@@ -597,17 +598,31 @@ describe.each(TEST_ITEMS)(
       'import from a segment-level file should be allowed',
       noDeniedLayersRule,
       {
-        valid: availableLayers
-          .flatMap((layer) => [
-            `../../${layer}/foo/bar`,
-            `../../${layer}/foo`,
-            `../../${layer}`,
-          ])
-          .map((importPath) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/foo/bar.js`,
-            code: `import foo from "${importPath}";`,
-          })),
+        valid: [
+          ...availableLayers
+            .flatMap((layer) => [
+              `../../${layer}/foo/bar`,
+              `../../${layer}/foo`,
+              `../../${layer}`,
+            ])
+            .map((importPath) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}/foo/bar.js`,
+              code: `import foo from "${importPath}";`,
+            })),
+          ...deniedLayers
+            .flatMap((layer) => [
+              { layer, path: `../../${layer}/foo/bar` },
+              { layer, path: `../../${layer}/foo` },
+              { layer, path: `../../${layer}` },
+            ])
+            .map(({ layer: importLayer, path: importPath }) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}/foo/bar.js`,
+              options: [{ ignores: [importLayer] }],
+              code: `import foo from "${importPath}";`,
+            })),
+        ],
         invalid: deniedLayers
           .flatMap((layer) => [
             { layer, path: `../../${layer}/foo/bar`, hasSlice: true },
@@ -637,17 +652,31 @@ describe.each(TEST_ITEMS)(
       'import from a slice-level file should be allowed',
       noDeniedLayersRule,
       {
-        valid: availableLayers
-          .flatMap((layer) => [
-            `../${layer}/foo/bar`,
-            `../${layer}/foo`,
-            `../${layer}`,
-          ])
-          .map((importPath) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/foo.js`,
-            code: `import foo from "${importPath}";`,
-          })),
+        valid: [
+          ...availableLayers
+            .flatMap((layer) => [
+              `../${layer}/foo/bar`,
+              `../${layer}/foo`,
+              `../${layer}`,
+            ])
+            .map((importPath) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}/foo.js`,
+              code: `import foo from "${importPath}";`,
+            })),
+          ...deniedLayers
+            .flatMap((layer) => [
+              { layer, path: `../${layer}/foo/bar` },
+              { layer, path: `../${layer}/foo` },
+              { layer, path: `../${layer}` },
+            ])
+            .map(({ layer: importLayer, path: importPath }) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}/foo.js`,
+              options: [{ ignores: [importLayer] }],
+              code: `import foo from "${importPath}";`,
+            })),
+        ],
         invalid: deniedLayers
           .flatMap((layer) => [
             { layer, path: `../${layer}/foo/bar`, hasSlice: true },
@@ -677,17 +706,31 @@ describe.each(TEST_ITEMS)(
       'import from a layer-level file should be allowed',
       noDeniedLayersRule,
       {
-        valid: availableLayers
-          .flatMap((layer) => [
-            `./${layer}/foo/bar`,
-            `./${layer}/foo`,
-            `./${layer}`,
-          ])
-          .map((importPath) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            code: `import foo from "${importPath}";`,
-          })),
+        valid: [
+          ...availableLayers
+            .flatMap((layer) => [
+              `./${layer}/foo/bar`,
+              `./${layer}/foo`,
+              `./${layer}`,
+            ])
+            .map((importPath) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}.js`,
+              code: `import foo from "${importPath}";`,
+            })),
+          ...deniedLayers
+            .flatMap((layer) => [
+              { layer, path: `./${layer}/foo/bar` },
+              { layer, path: `./${layer}/foo` },
+              { layer, path: `./${layer}` },
+            ])
+            .map(({ layer: importLayer, path: importPath }) => ({
+              settings: { fsd: { rootDir: '/src' } },
+              filename: `/src/${fileLayer}.js`,
+              options: [{ ignores: [importLayer] }],
+              code: `import foo from "${importPath}";`,
+            })),
+        ],
         invalid: deniedLayers
           .flatMap((layer) => [
             { layer, path: `./${layer}/foo/bar`, hasSlice: true },
