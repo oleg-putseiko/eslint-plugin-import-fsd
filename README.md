@@ -378,7 +378,7 @@ export default [
       fsd: {
         rootDir: `${__dirname}/src`,
         aliases: {
-          '@/*': './*',
+          '@/*': './src/*',
         },
       },
     },
@@ -390,17 +390,17 @@ export default [
 ```
 
 ```js
-/* @/widgets/foo/bar/qwe.js */
+/* src/widgets/foo/bar/qwe.js */
 
 // 📛 Error
-import foo from '@/qwe/bar/baz';
-import foo from '@/feature-1/bar/baz';
-import foo from '@/cores/bar/baz';
+import foo from '@/qwe/foo/bar';
+import foo from '@/some-feature/foo/bar';
+import foo from '@/cores/foo/bar';
 
 // ✅ OK
-import foo from '@/feature/bar/baz';
-import foo from '@/features/bar/baz';
-import foo from '@/entities/bar/baz';
+import foo from '@/feature/foo/bar';
+import foo from '@/features/foo/bar';
+import foo from '@/entities/foo/bar';
 ```
 
 #### Options
