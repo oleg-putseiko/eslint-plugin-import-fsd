@@ -83,9 +83,9 @@ module.exports = {
 
 ### aliases
 
-Tells the plugin which aliases are using in your project.
+Tells the plugin which aliases used in your project should be handled.
 
-The path associated with an alias can be absolute or relative to the root directory specified using the option `rootDir`. Other values will not be resolved and will be used as is, because it's possible to identify a third-party package as a layer when it's not.
+The path associated with an alias can be absolute or relative to the project root directory. Other values will not be resolved and will be used as is.
 
 Alias patterns can contain the `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
 
@@ -97,21 +97,22 @@ Example:
 module.exports = {
   settings: {
     fsd: {
-      rootDir: __dirname,
+      rootDir: `${__dirname}/src`,
       aliases: {
-        // @/foo/bar -> <rootDir>/src/foo/bar
+        // @/features/foo/bar -> <__dirname>/src/features/foo/bar
         '@/*': './src/*',
 
-        // bar -> <rootDir>/vendor/bar
-        bar: './vendor/bar',
+        // foo -> <__dirname>/vendor/foo
+        foo: './vendor/foo',
 
-        // baz -> /baz
-        baz: '/baz',
+        // bar -> /bar
+        bar: '/bar',
 
-        // qux -> <rootDir>/src/qux-1
-        '*': './src/qux-1',
-        qux: './src/qux-2',
-        'qux/*': './src/qux-3',
+        // baz -> baz/qwe
+        // qux -> qwe/qwe
+        baz: 'baz/qwe',
+        '*': 'qwe/qwe',
+        qux: 'qux/qwe',
       },
     },
   },
