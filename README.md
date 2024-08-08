@@ -471,9 +471,34 @@ import foo from '@/entities/foo/bar';
   - `file` - the rule will only check files to see if they are in an unknown layer
   - `all` (default) - the rule will check both imports and files
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
 
   Possible value is an array consisting of a layer names.
+
+  Example:
+
+  ```js
+  /* eslint.config.js */
+
+  import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+  export default [
+    {
+      // ...
+
+      rules: {
+        'import-fsd/no-unknown-layers': ['error', { ignores: ['qwe'] }],
+      },
+    },
+  ];
+  ```
+
+  ```js
+  /* src/widgets/foo/bar/qwe.js */
+
+  // ✅ OK
+  import foo from '@/qwe/foo/bar'; // Ignored unknown layer
+  ```
 
 ## Configs
 
