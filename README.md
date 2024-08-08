@@ -17,6 +17,7 @@ ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.desig
 - [Settings](#settings)
   - [rootDir](#rootdir)
   - [aliases](#aliases)
+  - [overrides](#overrides)
 - [Rules](#rules)
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
@@ -140,6 +141,44 @@ export default [
           baz: 'baz/qwe',
           '*': 'qwe/qwe',
           qux: 'qux/qwe',
+        },
+      },
+    },
+  },
+];
+```
+
+### overrides
+
+Assigns a layer and slice to a specified import path.
+
+Once a layer and slice are assigned to an import path, it will be considered part of the project's FSD file structure.
+
+Path patterns can contain the `*` wildcard that matches any string.
+
+If an import path matches multiple overrides, the first match will be applied.
+
+Example:
+
+```js
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    settings: {
+      fsd: {
+        overrides: {
+          // foo -> features/foo
+          foo: { layer: 'features', slice: 'foo' },
+
+          // bar/baz -> features/bar
+          'bar/*': { layer: 'features', slice: 'bar' },
+
+          // @baz -> features/qwe
+          '*': { layer: 'features', slice: 'qwe' },
+          '@baz': { layer: 'features', slice: 'baz' },
         },
       },
     },
