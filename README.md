@@ -421,6 +421,8 @@ import foo from '@/entities/foo/bar';
 
 ### recommended
 
+Compatible with flat configuration format.
+
 Contains recommended plugin rules configuration:
 
 | Rule                   | Severity | Options |
@@ -444,6 +446,8 @@ export default [
 
 ### recommended-legacy
 
+Compatible with eslintrc configuration format.
+
 Contains recommended plugin rules configuration:
 
 | Rule                   | Severity | Options |
@@ -458,7 +462,7 @@ To include the recommended configuration in yours, you need to add `plugin:impor
 /* .eslintrc.js */
 
 module.exports = {
-  extends: ['plugin:import-fsd/recommended'],
+  extends: ['plugin:import-fsd/recommended-legacy'],
   // ...
 };
 ```
