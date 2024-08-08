@@ -173,7 +173,7 @@ A module of each layer has access only to layers located strictly lower in the h
 | `widgets`   | `features`, `entities`, `shared`                                  |
 | `features`  | `entities`, `shared`                                              |
 | `entities`  | `shared`                                                          |
-| `shared`    | no one                                                            |
+| `shared`    | —                                                                 |
 
 Each segment module on a slice has access to other segments, but not to other slices on the same layer.
 
@@ -193,7 +193,7 @@ export default [
       fsd: {
         rootDir: `${__dirname}/src`,
         aliases: {
-          '@/*': './*',
+          '@/*': './src/*',
         },
       },
     },
@@ -205,24 +205,23 @@ export default [
 ```
 
 ```js
-/* @/features/foo/bar/qwe.js */
+/* src/features/foo/bar/qwe.js */
 
 // 📛 Error (denied layers)
-import foo from '@/app/bar/baz';
-import foo from '@/processes/bar/baz';
-import foo from '@/pages/bar/baz';
-import foo from '@/widgets/bar/baz';
+import foo from '@/app/foo/bar';
+import foo from '@/processes/foo/bar';
+import foo from '@/pages/foo/bar';
+import foo from '@/widgets/foo/bar';
 
 // ✅ OK
-import foo from '@/entities/bar/baz';
-import foo from '@/shared/bar/baz';
+import foo from '@/entities/foo/bar';
+import foo from '@/shared/foo/bar';
 
-// 📛 Error (denied slices)
-import foo from '@/features/bar/baz';
-import foo from '@/features/qux/baz';
+// 📛 Error (denied slice)
+import foo from '@/features/baz/qux';
 
 // ✅ OK
-import foo from '@/features/foo/baz';
+import foo from '@/features/foo/qux';
 ```
 
 #### Options
