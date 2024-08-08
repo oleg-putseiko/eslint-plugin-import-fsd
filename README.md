@@ -41,22 +41,38 @@ yarn add eslint-plugin-import-fsd --dev
 In your ESLint configuration file, add `eslint-plugin-import-fsd` to the list of plugins:
 
 ```js
-module.exports = {
-  plugins: ['import-fsd'],
-};
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+  },
+];
 ```
 
 Specify the directory where your FSD layers are located:
 
 ```js
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+      },
     },
   },
-};
+];
 ```
 
 Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
@@ -72,13 +88,19 @@ The value must be an absolute path to a folder with the layers. Files and folder
 For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the `rootDir` option should be set as follows:
 
 ```js
-module.exports = {
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+      },
     },
   },
-};
+];
 ```
 
 ### aliases
@@ -94,29 +116,35 @@ If an import path matches multiple aliases, the first match will be applied.
 Example:
 
 ```js
-module.exports = {
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        // @/features/foo/bar -> <__dirname>/src/features/foo/bar
-        '@/*': './src/*',
+/* eslint.config.js */
 
-        // foo -> <__dirname>/vendor/foo
-        foo: './vendor/foo',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
 
-        // bar -> /bar
-        bar: '/bar',
+export default [
+  {
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          // @/features/foo/bar -> <__dirname>/src/features/foo/bar
+          '@/*': './src/*',
 
-        // baz -> baz/qwe
-        // qux -> qwe/qwe
-        baz: 'baz/qwe',
-        '*': 'qwe/qwe',
-        qux: 'qux/qwe',
+          // foo -> <__dirname>/vendor/foo
+          foo: './vendor/foo',
+
+          // bar -> /bar
+          bar: '/bar',
+
+          // baz -> baz/qwe
+          // qux -> qwe/qwe
+          baz: 'baz/qwe',
+          '*': 'qwe/qwe',
+          qux: 'qux/qwe',
+        },
       },
     },
   },
-};
+];
 ```
 
 ## Rules
@@ -152,22 +180,28 @@ Each segment module on a slice has access to other segments, but not to other sl
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-denied-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-denied-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
@@ -218,22 +252,28 @@ If you are using FSD version 2.0.0 or higher, it's recommended to add this rule 
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-deprecated-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-deprecated-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
@@ -287,22 +327,28 @@ All other layer names are considered unknown.
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-unknown-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-unknown-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
@@ -388,34 +434,38 @@ The option value must be an array consisting of layer names.
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  // ...
+import importFsdPlugin from 'eslint-plugin-import-fsd';
 
-  rules: {
-    'import-fsd/no-denied-layers': [
-      'error',
-      {
-        ignores: ['pages', 'widgets'],
-      },
-    ],
+export default [
+  {
+    // ...
 
-    'import-fsd/no-deprecated-layers': [
-      'error',
-      {
-        ignores: ['components', 'models'],
-      },
-    ],
+    rules: {
+      'import-fsd/no-denied-layers': [
+        'error',
+        {
+          ignores: ['pages', 'widgets'],
+        },
+      ],
 
-    'import-fsd/no-unknown-layers': [
-      'error',
-      {
-        ignores: ['qwe'],
-      },
-    ],
+      'import-fsd/no-deprecated-layers': [
+        'error',
+        {
+          ignores: ['components', 'models'],
+        },
+      ],
+
+      'import-fsd/no-unknown-layers': [
+        'error',
+        {
+          ignores: ['qwe'],
+        },
+      ],
+    },
   },
-};
+];
 ```
 
 ```js
