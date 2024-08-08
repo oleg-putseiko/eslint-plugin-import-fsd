@@ -265,9 +265,38 @@ import foo from '@/features/foo/qux';
 
 #### Options
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
 
   Possible value is an array consisting of a layer names.
+
+  Example:
+
+  ```js
+  /* eslint.config.js */
+
+  import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+  export default [
+    {
+      // ...
+
+      rules: {
+        'import-fsd/no-denied-layers': [
+          'error',
+          { ignores: ['pages', 'widgets'] },
+        ],
+      },
+    },
+  ];
+  ```
+
+  ```js
+  /* src/widgets/foo/bar/qwe.js */
+
+  // ✅ OK
+  import foo from '@/pages/foo/bar'; // Ignored denied layer
+  import foo from '@/widgets/foo/baz'; // Ignored denied slice
+  ```
 
 ### no-deprecated-layers
 
