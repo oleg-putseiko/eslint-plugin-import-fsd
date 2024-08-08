@@ -224,12 +224,37 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          '~/*': './source/*',
           '@/*': './src/*',
-          'qwe/*': './qwe/*',
         },
         overrides: {
           '@foo/bar': { layer: layer.name, slice: 'baz' },
+        },
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `@foo/bar` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'baz',
+      });
+    });
+
+    it('should override import template path data', () => {
+      const pathContext: PathContext = {
+        cwd: '/',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar.js',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '@/*': './src/*',
+        },
+        overrides: {
+          '@foo/*': { layer: layer.name, slice: 'baz' },
         },
       };
 
