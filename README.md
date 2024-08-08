@@ -25,7 +25,6 @@ ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.desig
 - [Configs](#configs)
   - [recommended](#recommended)
   - [recommended-legacy](#recommended-legacy)
-- [Migration to FSD](#migration-to-fsd)
 
 ## Getting started
 
@@ -548,62 +547,4 @@ module.exports = {
   extends: ['plugin:import-fsd/recommended-legacy'],
   // ...
 };
-```
-
-## Migration to FSD
-
-For ease of migration to FSD, it's recommended to do this layer by layer. Therefore, an `ignores` option is provided for each rule. This option allows you to exclude the import from listed layers from being checked by the rule for which it's configured.
-
-The option value must be an array consisting of layer names.
-
-Example:
-
-```js
-/* eslint.config.js */
-
-import importFsdPlugin from 'eslint-plugin-import-fsd';
-
-export default [
-  {
-    // ...
-
-    rules: {
-      'import-fsd/no-denied-layers': [
-        'error',
-        {
-          ignores: ['pages', 'widgets'],
-        },
-      ],
-
-      'import-fsd/no-deprecated-layers': [
-        'error',
-        {
-          ignores: ['components', 'models'],
-        },
-      ],
-
-      'import-fsd/no-unknown-layers': [
-        'error',
-        {
-          ignores: ['qwe'],
-        },
-      ],
-    },
-  },
-];
-```
-
-```js
-/* @/widgets/foo/bar/qwe.js */
-
-// ✅ OK
-import foo from '@/pages/bar/baz'; // Ignored denied layer
-import foo from '@/widgets/bar/baz'; // Ignored denied slice
-
-// ✅ OK
-import foo from '@/components/bar/baz'; // Ignored deprecated layer
-import foo from '@/models/bar/baz'; // Ignored deprecated layer
-
-// ✅ OK
-import foo from '@/qwe/bar/baz'; // Ignored unknown layer
 ```
