@@ -59,7 +59,7 @@ export const extractPathContext = (
     fullPath,
     layerIndex,
     aliases,
-    overrides: overrides,
+    overrides,
   };
 };
 

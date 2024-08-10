@@ -1,6 +1,33 @@
 import { extractPathContext } from '../../../../../src/utils/rule/context';
 
 type RuleContext = Parameters<typeof extractPathContext>[0];
+type PathContext = ReturnType<typeof extractPathContext>;
+
+type GroupedLayer = {
+  names: string[];
+  index: number;
+};
+
+type Layer = {
+  name: string;
+  index: number;
+};
+
+// prettier-ignore
+const GROUPED_LAYERS: GroupedLayer[] = [
+  { names: ['qwe'], index: -1 },
+  { names: ['app', 'apps', 'core', 'init'], index: 0 },
+  { names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'], index: 1 },
+  { names: ['page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts'], index: 2 },
+  { names: ['widget', 'widgets'], index: 3 },
+  { names: ['feature', 'features', 'component', 'components', 'container', 'containers'], index: 4 },
+  { names: ['entity', 'entities', 'model', 'models'], index: 5 },
+  { names: ['shared', 'common', 'lib', 'libs'], index: 6 },
+];
+
+const LAYERS: Layer[] = GROUPED_LAYERS.flatMap((layer) =>
+  layer.names.map((name) => ({ name, index: layer.index })),
+);
 
 describe('overrides context property', () => {
   it.each([
@@ -32,4 +59,33 @@ describe('overrides context property', () => {
       expect(extractPathContext(ruleContext)).toBeNull();
     },
   );
+
+  it.each(LAYERS)('should override file path with "%s" layer data', (layer) => {
+    const ruleContext: RuleContext = {
+      cwd: '/',
+      filename: '/foo/bar/baz.js',
+      settings: {
+        fsd: {
+          overrides: {
+            '/foo/bar/baz.js': { layer: layer.name, slice: 'qux' },
+          },
+        },
+      },
+    };
+
+    const expected: PathContext = {
+      cwd: '/',
+      rootDir: '/',
+      fullPath: `/foo/bar/baz.js`,
+      layer: layer.name,
+      layerIndex: layer.index,
+      slice: 'qux',
+      aliases: {},
+      overrides: {
+        '/foo/bar/baz.js': { layer: layer.name, slice: 'qux' },
+      },
+    };
+
+    expect(extractPathContext(ruleContext)).toEqual(expected);
+  });
 });
