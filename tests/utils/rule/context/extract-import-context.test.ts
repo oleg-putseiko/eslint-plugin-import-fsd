@@ -293,6 +293,31 @@ describe('extractImportContext', () => {
         slice: 'qux',
       });
     });
+
+    it('should not match regexp special characters in an override pattern', () => {
+      const pathContext: PathContext = {
+        cwd: '/',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar.js',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {},
+        overrides: {
+          '^()[]{}\\.|?*+$': { layer: layer.name, slice: 'quux' },
+        },
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `^()[]{}\\.|?qux+$` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'quux',
+      });
+    });
   });
 
   it('should not detect segment data in a relative root-level import path', () => {
