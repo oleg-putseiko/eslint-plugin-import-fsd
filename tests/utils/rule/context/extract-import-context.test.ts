@@ -268,6 +268,31 @@ describe('extractImportContext', () => {
         slice: 'baz',
       });
     });
+
+    it('should not match regexp special characters in an alias pattern', () => {
+      const pathContext: PathContext = {
+        cwd: '/',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar.js',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          '^()[]{}\\.|?*+$': `/src/${layer.name}/*`,
+        },
+        overrides: {},
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `^()[]{}\\.|?qux+$` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'qux',
+      });
+    });
   });
 
   it('should not detect segment data in a relative root-level import path', () => {
