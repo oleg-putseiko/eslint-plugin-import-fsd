@@ -7,6 +7,22 @@ type Segments = {
 
 export type Overrides = { [pattern: string]: Segments };
 
+const ESCAPED_CHARACTERS: string[] = [
+  '\\',
+  '[',
+  ']',
+  '{',
+  '}',
+  '(',
+  ')',
+  '^',
+  '$',
+  '.',
+  '|',
+  '?',
+  '+',
+];
+
 export const isOverrides = (value: unknown): value is Overrides =>
   isObject(value) &&
   !Array.isArray(value) &&
@@ -15,9 +31,16 @@ export const isOverrides = (value: unknown): value is Overrides =>
   );
 
 export const matchOverriddenSegments = (overrides: Overrides, path: string) => {
-  const matchedPattern = Object.keys(overrides).find((pattern) =>
-    new RegExp(`^${pattern.replaceAll('*', '(.*)')}$`, 'gu').test(path),
-  );
+  const matchedPattern = Object.keys(overrides).find((pattern) => {
+    const escapedPattern = ESCAPED_CHARACTERS.reduce(
+      (acc, character) => acc.replaceAll(character, `\\${character}`),
+      pattern,
+    );
+
+    return new RegExp(`^${escapedPattern.replaceAll('*', '(.*)')}$`, 'gu').test(
+      path,
+    );
+  });
 
   return matchedPattern !== undefined ? overrides[matchedPattern] : null;
 };
