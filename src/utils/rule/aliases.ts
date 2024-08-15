@@ -31,12 +31,19 @@ export const resolveAliasedPath = (aliases: Aliases, path: string) => {
       (acc, character) => acc.replaceAll(character, `\\${character}`),
       pattern,
     );
-    const replacement = RegExp(`^${escapedPattern.replace('*', '(.*)')}$`, 'iu')
-      .exec(path)
-      ?.at(1);
+
+    const pathSearchResults = RegExp(
+      `^${escapedPattern.replaceAll('*', '(.*)')}$`,
+      'giu',
+    ).exec(path);
+    const replacement = pathSearchResults?.at(1);
 
     if (replacement !== undefined) {
-      return aliases[pattern].replace('*', replacement);
+      return aliases[pattern].replaceAll('*', replacement);
+    }
+
+    if (pathSearchResults !== null) {
+      return aliases[pattern];
     }
   }
 

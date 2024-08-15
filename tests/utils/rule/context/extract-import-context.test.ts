@@ -249,15 +249,15 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          foo: '/src/entities/baz/qux',
+          qwe: '/src/entities/baz/qux.js',
         },
         overrides: {
-          '/src/entities/baz/qux': { layer: layer.name, slice: 'quux' },
+          '/src/entities/baz/qux.js': { layer: layer.name, slice: 'quux' },
         },
       };
 
       const node: ImportNode = {
-        source: { type: 'Literal', value: `foo` },
+        source: { type: 'Literal', value: 'qwe' },
       };
 
       expect(extractImportContext(node, pathContext)).toEqual({
