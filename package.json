@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-import-fsd",
-  "version": "2.0.0-canary.0",
+  "version": "2.0.0-canary.1",
   "description": "ESLint plugin for following FSD methodology in imports and file locations",
   "license": "MIT",
   "author": "Oleg Putseiko <oleg.putseiko@gmail.com> (https://github.com/oleg-putseiko)",
