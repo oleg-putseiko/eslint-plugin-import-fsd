@@ -1,21 +1,60 @@
-import { type ESLint } from 'eslint';
+import { type Rule, type ESLint, type Linter } from 'eslint';
 
 import { noDeniedLayersRule } from './rules/no-denied-layers';
 import { noUnknownLayersRule } from './rules/no-unknown-layers';
 import { noDeprecatedLayersRule } from './rules/no-deprecated-layers';
 
-export const rules: ESLint.Plugin['rules'] = {
-  'no-denied-layers': noDeniedLayersRule,
-  'no-unknown-layers': noUnknownLayersRule,
-  'no-deprecated-layers': noDeprecatedLayersRule,
+type Rules = Record<
+  'no-denied-layers' | 'no-unknown-layers' | 'no-deprecated-layers',
+  Rule.RuleModule
+>;
+
+type Configs = {
+  recommended: Linter.FlatConfig;
+  'recommended-legacy': ESLint.ConfigData;
 };
 
-export const configs: ESLint.Plugin['configs'] = {
-  recommended: {
-    rules: {
-      'import-fsd/no-denied-layers': 'error',
-      'import-fsd/no-unknown-layers': 'error',
-      'import-fsd/no-deprecated-layers': 'warn',
+type Plugin = {
+  meta: ESLint.ObjectMetaProperties['meta'];
+  rules: Rules;
+  configs: Configs;
+};
+
+const plugin: Plugin = {
+  meta: {
+    name: 'eslint-plugin-import-fsd',
+    version: '2.0.0',
+  },
+  rules: {
+    'no-denied-layers': noDeniedLayersRule,
+    'no-unknown-layers': noUnknownLayersRule,
+    'no-deprecated-layers': noDeprecatedLayersRule,
+  },
+  configs: {
+    recommended: {
+      rules: {
+        'import-fsd/no-denied-layers': 'error',
+        'import-fsd/no-unknown-layers': 'error',
+        'import-fsd/no-deprecated-layers': 'warn',
+      },
+    },
+    'recommended-legacy': {
+      plugins: ['import-fsd'],
+      rules: {
+        'import-fsd/no-denied-layers': 'error',
+        'import-fsd/no-unknown-layers': 'error',
+        'import-fsd/no-deprecated-layers': 'warn',
+      },
     },
   },
-};
+} satisfies ESLint.Plugin;
+
+Object.assign(plugin.configs.recommended, {
+  ...plugin.configs.recommended,
+  plugins: {
+    'import-fsd': plugin,
+  },
+});
+
+// eslint-disable-next-line no-restricted-exports
+export default plugin;

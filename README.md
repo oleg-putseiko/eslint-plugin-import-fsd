@@ -17,13 +17,14 @@ ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.desig
 - [Settings](#settings)
   - [rootDir](#rootdir)
   - [aliases](#aliases)
+  - [overrides](#overrides)
 - [Rules](#rules)
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
   - [no-unknown-layers](#no-unknown-layers)
 - [Configs](#configs)
   - [recommended](#recommended)
-- [Migration to FSD](#migration-to-fsd)
+  - [recommended-legacy](#recommended-legacy)
 
 ## Getting started
 
@@ -40,22 +41,38 @@ yarn add eslint-plugin-import-fsd --dev
 In your ESLint configuration file, add `eslint-plugin-import-fsd` to the list of plugins:
 
 ```js
-module.exports = {
-  plugins: ['import-fsd'],
-};
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+  },
+];
 ```
 
 Specify the directory where your FSD layers are located:
 
 ```js
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+      },
     },
   },
-};
+];
 ```
 
 Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
@@ -71,20 +88,26 @@ The value must be an absolute path to a folder with the layers. Files and folder
 For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the `rootDir` option should be set as follows:
 
 ```js
-module.exports = {
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+      },
     },
   },
-};
+];
 ```
 
 ### aliases
 
-Tells the plugin which aliases are using in your project.
+Tells the plugin which aliases used in your project should be handled.
 
-The path associated with an alias can be absolute or relative to the root directory specified using the option `rootDir`. Other values will not be resolved and will be used as is, because it's possible to identify a third-party package as a layer when it's not.
+The path associated with an alias can be absolute or relative to the project root directory. Other values will not be resolved and will be used as is.
 
 Alias patterns can contain the `*` wildcard that matches any string. If it's present, the matching part will be substituted into the path associated with the alias.
 
@@ -93,28 +116,73 @@ If an import path matches multiple aliases, the first match will be applied.
 Example:
 
 ```js
-module.exports = {
-  settings: {
-    fsd: {
-      rootDir: __dirname,
-      aliases: {
-        // @/foo/bar -> <rootDir>/src/foo/bar
-        '@/*': './src/*',
+/* eslint.config.js */
 
-        // bar -> <rootDir>/vendor/bar
-        bar: './vendor/bar',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
 
-        // baz -> /baz
-        baz: '/baz',
+export default [
+  {
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          // @/features/foo/bar -> <__dirname>/src/features/foo/bar
+          '@/*': './src/*',
 
-        // qux -> <rootDir>/src/qux-1
-        '*': './src/qux-1',
-        qux: './src/qux-2',
-        'qux/*': './src/qux-3',
+          // foo -> <__dirname>/vendor/foo
+          foo: './vendor/foo',
+
+          // bar -> /bar
+          bar: '/bar',
+
+          // baz -> baz/qwe
+          // qux -> qwe/qwe
+          baz: 'baz/qwe',
+          '*': 'qwe/qwe',
+          qux: 'qux/qwe',
+        },
       },
     },
   },
-};
+];
+```
+
+### overrides
+
+Assigns a layer and slice to a specified import path.
+
+Once a layer and slice are assigned to an import path, it will be considered part of the project's FSD file structure.
+
+Path patterns can contain the `*` wildcard that matches any string.
+
+If an import path matches multiple overrides, the first match will be applied.
+
+Example:
+
+```js
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    settings: {
+      fsd: {
+        overrides: {
+          // foo -> features/foo
+          foo: { layer: 'features', slice: 'foo' },
+
+          // bar/baz -> features/bar
+          'bar/*': { layer: 'features', slice: 'bar' },
+
+          // @baz -> features/qwe
+          '*': { layer: 'features', slice: 'qwe' },
+          '@baz': { layer: 'features', slice: 'baz' },
+        },
+      },
+    },
+  },
+];
 ```
 
 ## Rules
@@ -143,57 +211,91 @@ A module of each layer has access only to layers located strictly lower in the h
 | `widgets`   | `features`, `entities`, `shared`                                  |
 | `features`  | `entities`, `shared`                                              |
 | `entities`  | `shared`                                                          |
-| `shared`    | no one                                                            |
+| `shared`    | —                                                                 |
 
 Each segment module on a slice has access to other segments, but not to other slices on the same layer.
 
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './src/*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-denied-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-denied-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
-/* @/features/foo/bar/qwe.js */
+/* src/features/foo/bar/qwe.js */
 
 // 📛 Error (denied layers)
-import foo from '@/app/bar/baz';
-import foo from '@/processes/bar/baz';
-import foo from '@/pages/bar/baz';
-import foo from '@/widgets/bar/baz';
+import foo from '@/app/foo/bar';
+import foo from '@/processes/foo/bar';
+import foo from '@/pages/foo/bar';
+import foo from '@/widgets/foo/bar';
 
 // ✅ OK
-import foo from '@/entities/bar/baz';
-import foo from '@/shared/bar/baz';
+import foo from '@/entities/foo/bar';
+import foo from '@/shared/foo/bar';
 
-// 📛 Error (denied slices)
-import foo from '@/features/bar/baz';
-import foo from '@/features/qux/baz';
+// 📛 Error (denied slice)
+import foo from '@/features/baz/qux';
 
 // ✅ OK
-import foo from '@/features/foo/baz';
+import foo from '@/features/foo/qux';
 ```
 
 #### Options
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
 
   Possible value is an array consisting of a layer names.
+
+  Example:
+
+  ```js
+  /* eslint.config.js */
+
+  import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+  export default [
+    {
+      // ...
+
+      rules: {
+        'import-fsd/no-denied-layers': [
+          'error',
+          { ignores: ['pages', 'widgets'] },
+        ],
+      },
+    },
+  ];
+  ```
+
+  ```js
+  /* src/widgets/foo/bar/qwe.js */
+
+  // ✅ OK
+  import foo from '@/pages/foo/bar'; // Ignored denied layer
+  import foo from '@/widgets/foo/baz'; // Ignored denied slice
+  ```
 
 ### no-deprecated-layers
 
@@ -216,36 +318,42 @@ If you are using FSD version 2.0.0 or higher, it's recommended to add this rule 
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './src/*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-deprecated-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-deprecated-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
-/* @/widgets/foo/bar/qwe.js */
+/* src/widgets/foo/bar/qwe.js */
 
 // 📛 Error
-import foo from '@/components/bar/baz';
-import foo from '@/models/bar/baz';
-import foo from '@/lib/bar/baz';
+import foo from '@/components/foo/bar';
+import foo from '@/models/foo/bar';
+import foo from '@/lib/foo/bar';
 
 // ✅ OK
-import foo from '@/features/bar/baz';
-import foo from '@/entities/bar/baz';
-import foo from '@/shared/bar/baz';
+import foo from '@/features/foo/bar';
+import foo from '@/entities/foo/bar';
+import foo from '@/shared/foo/bar';
 ```
 
 #### Options
@@ -258,9 +366,38 @@ import foo from '@/shared/bar/baz';
   - `file` - the rule will only check files to see if they are in a deprecated layer
   - `all` (default) - the rule will check both imports and files
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
 
   Possible value is an array consisting of a layer names.
+
+  Example:
+
+  ```js
+  /* eslint.config.js */
+
+  import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+  export default [
+    {
+      // ...
+
+      rules: {
+        'import-fsd/no-deprecated-layers': [
+          'error',
+          { ignores: ['components', 'models'] },
+        ],
+      },
+    },
+  ];
+  ```
+
+  ```js
+  /* src/widgets/foo/bar/qwe.js */
+
+  // ✅ OK
+  import foo from '@/components/foo/bar'; // Ignored deprecated layer
+  import foo from '@/models/foo/bar'; // Ignored deprecated layer
+  ```
 
 ### no-unknown-layers
 
@@ -285,36 +422,42 @@ All other layer names are considered unknown.
 Example:
 
 ```js
-/* .eslintrc.js */
+/* eslint.config.js */
 
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-      aliases: {
-        '@/*': './*',
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  {
+    plugins: {
+      'import-fsd': importFsdPlugin,
+    },
+    settings: {
+      fsd: {
+        rootDir: `${__dirname}/src`,
+        aliases: {
+          '@/*': './src/*',
+        },
       },
     },
+    rules: {
+      'import-fsd/no-unknown-layers': 'error',
+    },
   },
-  rules: {
-    'import-fsd/no-unknown-layers': 'error',
-  },
-};
+];
 ```
 
 ```js
-/* @/widgets/foo/bar/qwe.js */
+/* src/widgets/foo/bar/qwe.js */
 
 // 📛 Error
-import foo from '@/qwe/bar/baz';
-import foo from '@/feature-1/bar/baz';
-import foo from '@/cores/bar/baz';
+import foo from '@/qwe/foo/bar';
+import foo from '@/some-feature/foo/bar';
+import foo from '@/cores/foo/bar';
 
 // ✅ OK
-import foo from '@/feature/bar/baz';
-import foo from '@/features/bar/baz';
-import foo from '@/entities/bar/baz';
+import foo from '@/feature/foo/bar';
+import foo from '@/features/foo/bar';
+import foo from '@/entities/foo/bar';
 ```
 
 #### Options
@@ -327,13 +470,40 @@ import foo from '@/entities/bar/baz';
   - `file` - the rule will only check files to see if they are in an unknown layer
   - `all` (default) - the rule will check both imports and files
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule. For more information, see [Migration to FSD](#migration-to-fsd) section.
+- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
 
   Possible value is an array consisting of a layer names.
+
+  Example:
+
+  ```js
+  /* eslint.config.js */
+
+  import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+  export default [
+    {
+      // ...
+
+      rules: {
+        'import-fsd/no-unknown-layers': ['error', { ignores: ['qwe'] }],
+      },
+    },
+  ];
+  ```
+
+  ```js
+  /* src/widgets/foo/bar/qwe.js */
+
+  // ✅ OK
+  import foo from '@/qwe/foo/bar'; // Ignored unknown layer
+  ```
 
 ## Configs
 
 ### recommended
+
+Compatible with flat configuration format.
 
 Contains recommended plugin rules configuration:
 
@@ -343,65 +513,38 @@ Contains recommended plugin rules configuration:
 | `no-deprecated-layers` | warn     | —       |
 | `no-unknown-layers`    | error    | —       |
 
-To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended` to the list of extensions in your ESLint configuration file:
+To include the recommended configuration in yours, you need to add it to the list of configurations in your ESLint configuration file:
 
 ```js
-module.exports = {
+/* eslint.config.js */
+
+import importFsdPlugin from 'eslint-plugin-import-fsd';
+
+export default [
+  importFsdPlugin.configs.recommended,
   // ...
-  extends: ['plugin:import-fsd/recommended'],
-};
+];
 ```
 
-## Migration to FSD
+### recommended-legacy
 
-For ease of migration to FSD, it's recommended to do this layer by layer. Therefore, an `ignores` option is provided for each rule. This option allows you to exclude the import from listed layers from being checked by the rule for which it's configured.
+Compatible with eslintrc configuration format.
 
-The option value must be an array consisting of layer names.
+Contains recommended plugin rules configuration:
 
-Example:
+| Rule                   | Severity | Options |
+| ---------------------- | -------- | ------- |
+| `no-denied-layers`     | error    | —       |
+| `no-deprecated-layers` | warn     | —       |
+| `no-unknown-layers`    | error    | —       |
+
+To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended-legacy` to the list of extensions in your ESLint configuration file:
 
 ```js
 /* .eslintrc.js */
 
 module.exports = {
+  extends: ['plugin:import-fsd/recommended-legacy'],
   // ...
-
-  rules: {
-    'import-fsd/no-denied-layers': [
-      'error',
-      {
-        ignores: ['pages', 'widgets'],
-      },
-    ],
-
-    'import-fsd/no-deprecated-layers': [
-      'error',
-      {
-        ignores: ['components', 'models'],
-      },
-    ],
-
-    'import-fsd/no-unknown-layers': [
-      'error',
-      {
-        ignores: ['qwe'],
-      },
-    ],
-  },
 };
-```
-
-```js
-/* @/widgets/foo/bar/qwe.js */
-
-// ✅ OK
-import foo from '@/pages/bar/baz'; // Ignored denied layer
-import foo from '@/widgets/bar/baz'; // Ignored denied slice
-
-// ✅ OK
-import foo from '@/components/bar/baz'; // Ignored deprecated layer
-import foo from '@/models/bar/baz'; // Ignored deprecated layer
-
-// ✅ OK
-import foo from '@/qwe/bar/baz'; // Ignored unknown layer
 ```

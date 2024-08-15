@@ -3,19 +3,16 @@ import { type Rule } from 'eslint';
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
 import {
-  Declaration,
-  isDeclaration,
-  isFileDeclaration,
-  isImportDeclaration,
-} from '../utils/rule/declarations';
+  extractPathContext,
+  extractImportContext,
+} from '../utils/rule/context';
 import {
-  extractFileDataFromContext,
-  extractImportDataFromNode,
-} from '../utils/rule/parsers';
-import { DECLARED_SCHEMA } from '../utils/rule/schema';
-
-const UNKNOWN_FILE_LAYER_MESSAGE = "Unknown file layer '{{ layer }}'.";
-const UNKNOWN_IMPORT_LAYER_MESSAGE = "Unknown layer '{{ layer }}'.";
+  Scope,
+  isScope,
+  isFileScope,
+  isImportScope,
+} from '../utils/rule/scope';
+import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap((item) => item.names);
 
@@ -27,51 +24,55 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/oleg-putseiko/eslint-plugin-import-fsd?tab=readme-ov-file#no-unknown-layers',
     },
-    schema: [DECLARED_SCHEMA],
+    schema: [SCOPED_SCHEMA],
+    messages: {
+      unknownFileLayer: "Unknown file layer '{{ layer }}'.",
+      unknownImportLayer: "Unknown layer '{{ layer }}'.",
+    },
   },
-  create(context) {
+  create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const declaration = context.options.at(0)?.declaration ?? Declaration.All;
-    const ignoredLayers = context.options.at(0)?.ignores ?? [];
+    const scope = ruleContext.options.at(0)?.scope ?? Scope.All;
+    const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
 
-    if (!isDeclaration(declaration) || !isStringArray(ignoredLayers)) {
+    if (!isScope(scope) || !isStringArray(ignoredLayers)) {
       return listener;
     }
 
-    const fileData = extractFileDataFromContext(context);
+    const pathContext = extractPathContext(ruleContext);
 
-    if (!fileData?.layer) return listener;
+    if (!pathContext?.layer) return listener;
 
     if (
-      isFileDeclaration(declaration) &&
-      fileData.layerIndex < 0 &&
-      !ignoredLayers.includes(fileData.layer)
+      isFileScope(scope) &&
+      pathContext.layerIndex < 0 &&
+      !ignoredLayers.includes(pathContext.layer)
     ) {
       listener.Program = (node) => {
-        if (!fileData?.layer) return;
+        if (!pathContext?.layer) return;
 
-        context.report({
+        ruleContext.report({
           node,
-          message: UNKNOWN_FILE_LAYER_MESSAGE,
-          data: { layer: fileData.layer },
+          messageId: 'unknownFileLayer',
+          data: { layer: pathContext.layer },
         });
       };
     }
 
-    if (isImportDeclaration(declaration)) {
+    if (isImportScope(scope)) {
       listener.ImportDeclaration = (node) => {
-        const importData = extractImportDataFromNode(node, fileData);
+        const importContext = extractImportContext(node, pathContext);
 
         if (
-          importData?.layer &&
-          !ignoredLayers.includes(importData.layer) &&
-          !KNOWN_LAYER_NAMES.includes(importData.layer)
+          importContext?.layer &&
+          !ignoredLayers.includes(importContext.layer) &&
+          !KNOWN_LAYER_NAMES.includes(importContext.layer)
         ) {
-          context.report({
+          ruleContext.report({
             node,
-            message: UNKNOWN_IMPORT_LAYER_MESSAGE,
-            data: { layer: importData.layer },
+            messageId: 'unknownImportLayer',
+            data: { layer: importContext.layer },
           });
         }
       };
