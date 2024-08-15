@@ -223,9 +223,7 @@ describe('extractImportContext', () => {
         layer: 'features',
         layerIndex: 4,
         slice: 'foo',
-        aliases: {
-          '@/*': './src/*',
-        },
+        aliases: {},
         overrides: {
           '@foo/bar': { layer: layer.name, slice: 'baz' },
         },
@@ -239,6 +237,33 @@ describe('extractImportContext', () => {
         layer: layer.name,
         layerIndex: layer.index,
         slice: 'baz',
+      });
+    });
+
+    it('should override aliased import path data', () => {
+      const pathContext: PathContext = {
+        cwd: '/',
+        rootDir: '/src',
+        fullPath: '/src/features/foo/bar.js',
+        layer: 'features',
+        layerIndex: 4,
+        slice: 'foo',
+        aliases: {
+          foo: '/src/entities/baz/qux',
+        },
+        overrides: {
+          '/src/entities/baz/qux': { layer: layer.name, slice: 'quux' },
+        },
+      };
+
+      const node: ImportNode = {
+        source: { type: 'Literal', value: `foo` },
+      };
+
+      expect(extractImportContext(node, pathContext)).toEqual({
+        layer: layer.name,
+        layerIndex: layer.index,
+        slice: 'quux',
       });
     });
 
@@ -278,13 +303,13 @@ describe('extractImportContext', () => {
         layerIndex: 4,
         slice: 'foo',
         aliases: {
-          '^()[]{}\\.|?*+$': `/src/${layer.name}/*`,
+          '^()[]{}\\d\\.|?*+$': `/src/${layer.name}/*`,
         },
         overrides: {},
       };
 
       const node: ImportNode = {
-        source: { type: 'Literal', value: `^()[]{}\\.|?qux+$` },
+        source: { type: 'Literal', value: `^()[]{}\\d\\.|?qux+$` },
       };
 
       expect(extractImportContext(node, pathContext)).toEqual({
@@ -304,12 +329,12 @@ describe('extractImportContext', () => {
         slice: 'foo',
         aliases: {},
         overrides: {
-          '^()[]{}\\.|?*+$': { layer: layer.name, slice: 'quux' },
+          '^()[]{}\\d\\.|?*+$': { layer: layer.name, slice: 'quux' },
         },
       };
 
       const node: ImportNode = {
-        source: { type: 'Literal', value: `^()[]{}\\.|?qux+$` },
+        source: { type: 'Literal', value: `^()[]{}\\d\\.|?qux+$` },
       };
 
       expect(extractImportContext(node, pathContext)).toEqual({
