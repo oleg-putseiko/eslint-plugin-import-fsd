@@ -358,7 +358,7 @@ import foo from '@/shared/foo/bar';
 
 #### Options
 
-- `declaration` - defines the target scope of the rule check.
+- `scope` - defines the target scope of the rule check.
 
   Possible values:
 
@@ -462,7 +462,7 @@ import foo from '@/entities/foo/bar';
 
 #### Options
 
-- `declaration` - defines the target scope of the rule check.
+- `scope` - defines the target scope of the rule check.
 
   Possible values:
 
