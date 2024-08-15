@@ -20,10 +20,16 @@ jobs:
           node-version: 18.x
           registry-url: https://registry.npmjs.org/
 
-      - name: Run tests
-        run: npm test
+      - name: Install dependencies
+        run: npm install
 
-      - name: Publish package
+      - name: Build
+        run: npm run build
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Publish
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

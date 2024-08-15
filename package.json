@@ -34,7 +34,6 @@
     "lint:fix": "eslint ./src/**/*.{js,ts,json} --fix && yarn format:fix",
     "lint:strict": "eslint ./src/**/*.{js,ts,json} --max-warnings=0 && yarn format",
     "prepare": "husky install | chmod +x ./.husky/*",
-    "prepublishOnly": "npm install && npm run build",
     "test": "jest",
     "typecheck": "tsc --noEmit --incremental false"
   },
