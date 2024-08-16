@@ -1,6 +1,6 @@
 import { RuleTester } from 'eslint';
 
-import plugin from '../../dist';
+import plugin from '../../src';
 
 const UNKNOWN_LAYERS: string[] = ['unknown-layer'];
 

@@ -1,6 +1,6 @@
 import { RuleTester } from 'eslint';
 
-import plugin from '../../dist';
+import plugin from '../../src';
 
 type TestItem = {
   layer: string;
@@ -590,7 +590,6 @@ const tester = new RuleTester({
 
 const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
-// TODO: add `ignores` options tests
 describe.each(TEST_ITEMS)(
   '$layer layer',
   ({ layer: fileLayer, availableLayers, deniedLayers }) => {

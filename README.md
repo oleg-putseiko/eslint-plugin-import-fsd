@@ -77,6 +77,23 @@ export default [
 
 Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
 
+---
+
+The plugin supports both the eslintrc configuration format and the flat configuration format. Example plugin configuration in eslintrc format:
+
+```js
+/* .eslintrc.js */
+
+module.exports = {
+  plugins: ['import-fsd'],
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+    },
+  },
+};
+```
+
 ## Settings
 
 ### rootDir
@@ -358,7 +375,7 @@ import foo from '@/shared/foo/bar';
 
 #### Options
 
-- `declaration` - defines the target scope of the rule check.
+- `scope` - defines the target scope of the rule check.
 
   Possible values:
 
@@ -462,7 +479,7 @@ import foo from '@/entities/foo/bar';
 
 #### Options
 
-- `declaration` - defines the target scope of the rule check.
+- `scope` - defines the target scope of the rule check.
 
   Possible values:
 

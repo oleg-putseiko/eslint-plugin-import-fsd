@@ -4,8 +4,8 @@ const config: Config = {
   clearMocks: true,
   collectCoverage: true,
   collectCoverageFrom: [
-    'dist/rules/**/*.{js,ts}',
-    'dist/index.{js,ts}',
+    'src/rules/**/*.{js,ts}',
+    'src/index.{js,ts}',
     'src/utils/**/*.{js,ts}',
     '!**/*.d.ts',
     '!**/node_modules/**',

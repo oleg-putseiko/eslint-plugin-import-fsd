@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "declaration": true,
+    "declaration": false,
+    "esModuleInterop": true,
     "module": "commonjs",
     "outDir": "dist",
+    "resolveJsonModule": true,
     "rootDir": "src",
     "strictNullChecks": true,
     "target": "es2021"
