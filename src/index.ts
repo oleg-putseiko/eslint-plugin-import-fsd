@@ -4,6 +4,8 @@ import { noDeniedLayersRule } from './rules/no-denied-layers';
 import { noUnknownLayersRule } from './rules/no-unknown-layers';
 import { noDeprecatedLayersRule } from './rules/no-deprecated-layers';
 
+import { name, version } from '../package.json';
+
 type Rules = Record<
   'no-denied-layers' | 'no-unknown-layers' | 'no-deprecated-layers',
   Rule.RuleModule
@@ -22,8 +24,8 @@ type Plugin = {
 
 const plugin: Plugin = {
   meta: {
-    name: 'eslint-plugin-import-fsd',
-    version: '2.0.0-canary.1',
+    name,
+    version,
   },
   rules: {
     'no-denied-layers': noDeniedLayersRule,
