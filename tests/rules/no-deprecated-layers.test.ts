@@ -1,6 +1,6 @@
 import { RuleTester } from 'eslint';
 
-import plugin from '../../dist';
+import plugin from '../../src';
 
 // prettier-ignore
 const NON_DEPRECATED_LAYERS: string[] = [

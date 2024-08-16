@@ -1,4 +1,4 @@
-import plugin from '../../dist/index';
+import plugin from '../../src';
 
 const { configs } = plugin;
 
@@ -10,9 +10,9 @@ describe('recommended config', () => {
   });
 
   it('should have plugin as a dependency', () => {
-    const rules = configs.recommended.plugins ?? {};
+    const plugins = configs.recommended.plugins ?? {};
 
-    expect(rules?.['import-fsd']).toEqual(plugin);
+    expect(plugins?.['import-fsd']).toEqual(plugin);
   });
 
   it.each([
