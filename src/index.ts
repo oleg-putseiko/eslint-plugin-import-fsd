@@ -23,7 +23,7 @@ type Plugin = {
 const plugin: Plugin = {
   meta: {
     name: 'eslint-plugin-import-fsd',
-    version: '2.0.0',
+    version: '2.0.0-canary.1',
   },
   rules: {
     'no-denied-layers': noDeniedLayersRule,
@@ -56,5 +56,4 @@ Object.assign(plugin.configs.recommended, {
   },
 });
 
-// eslint-disable-next-line no-restricted-exports
-export default plugin;
+export = plugin;
