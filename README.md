@@ -77,6 +77,23 @@ export default [
 
 Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
 
+---
+
+The plugin supports both the eslintrc configuration format and the flat configuration format. Example plugin configuration in eslintrc format:
+
+```js
+/* .eslintrc.js */
+
+module.exports = {
+  plugins: ['import-fsd'],
+  settings: {
+    fsd: {
+      rootDir: `${__dirname}/src`,
+    },
+  },
+};
+```
+
 ## Settings
 
 ### rootDir
