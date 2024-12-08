@@ -2,6 +2,7 @@ export type Layer = {
   names: string[];
   displayedActualNames: string[];
   deprecatedNames: string[];
+  hasSlices: boolean;
 };
 
 export const LAYERS: Layer[] = [
@@ -9,6 +10,7 @@ export const LAYERS: Layer[] = [
     names: ['app', 'apps', 'core', 'init'],
     deprecatedNames: ['core', 'init'],
     displayedActualNames: ['app'],
+    hasSlices: false,
   },
   {
     names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'],
@@ -21,6 +23,7 @@ export const LAYERS: Layer[] = [
       'workflows',
     ],
     displayedActualNames: ['app', 'features'],
+    hasSlices: true,
   },
   {
     names: [
@@ -42,11 +45,13 @@ export const LAYERS: Layer[] = [
       'layouts',
     ],
     displayedActualNames: ['pages'],
+    hasSlices: true,
   },
   {
     names: ['widget', 'widgets'],
     deprecatedNames: [],
     displayedActualNames: ['widgets'],
+    hasSlices: true,
   },
   {
     names: [
@@ -59,16 +64,19 @@ export const LAYERS: Layer[] = [
     ],
     deprecatedNames: ['component', 'components', 'container', 'containers'],
     displayedActualNames: ['features'],
+    hasSlices: true,
   },
   {
     names: ['entity', 'entities', 'model', 'models'],
     deprecatedNames: ['model', 'models'],
     displayedActualNames: ['entities'],
+    hasSlices: true,
   },
   {
     names: ['shared', 'common', 'lib', 'libs'],
     deprecatedNames: ['common', 'lib', 'libs'],
     displayedActualNames: ['shared'],
+    hasSlices: false,
   },
 ];
 

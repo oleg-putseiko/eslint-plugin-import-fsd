@@ -46,14 +46,19 @@ export const extractPathContext = (
   if (!isAliases(aliases) || !isOverrides(overrides)) return null;
 
   const fullPath = ruleContext.filename;
-  const segments = extractSegments(fullPath, { rootDir, overrides });
+  const fullPathSegments = extractSegments(fullPath, { rootDir, overrides });
 
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? item.names.includes(segments.layer) : false,
+    fullPathSegments.layer
+      ? item.names.includes(fullPathSegments.layer)
+      : false,
   );
+  const layerDetails = LAYERS[layerIndex];
+  const hasSlices = layerDetails?.hasSlices ?? true;
 
   return {
-    ...segments,
+    layer: fullPathSegments.layer,
+    slice: hasSlices ? fullPathSegments.slice : null,
     cwd,
     rootDir,
     fullPath,
@@ -81,10 +86,18 @@ export const extractImportContext = (
     resolvedPath = path.resolve(path.dirname(fullPath), importPath);
   }
 
-  const segments = extractSegments(resolvedPath, pathContext);
+  const resolvedPathSegments = extractSegments(resolvedPath, pathContext);
   const layerIndex = LAYERS.findIndex((item) =>
-    segments.layer ? item.names.includes(segments.layer) : false,
+    resolvedPathSegments.layer
+      ? item.names.includes(resolvedPathSegments.layer)
+      : false,
   );
+  const layerDetails = LAYERS[layerIndex];
+  const hasSlices = layerDetails?.hasSlices ?? true;
 
-  return { ...segments, layerIndex };
+  return {
+    layer: resolvedPathSegments.layer,
+    slice: hasSlices ? resolvedPathSegments.slice : null,
+    layerIndex,
+  };
 };

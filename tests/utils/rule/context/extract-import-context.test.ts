@@ -12,11 +12,13 @@ type NodeItem = {
 type GroupedLayer = {
   names: string[];
   index: number;
+  hasSlices: boolean;
 };
 
 type Layer = {
   name: string;
   index: number;
+  hasSlices: boolean;
 };
 
 // prettier-ignore
@@ -31,18 +33,22 @@ const INVALID_NODE_ITEMS: NodeItem[] = [
 
 // prettier-ignore
 const GROUPED_LAYERS: GroupedLayer[] = [
-  { names: ['qwe'], index: -1 },
-  { names: ['app', 'apps', 'core', 'init'], index: 0 },
-  { names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'], index: 1 },
-  { names: ['page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts'], index: 2 },
-  { names: ['widget', 'widgets'], index: 3 },
-  { names: ['feature', 'features', 'component', 'components', 'container', 'containers'], index: 4 },
-  { names: ['entity', 'entities', 'model', 'models'], index: 5 },
-  { names: ['shared', 'common', 'lib', 'libs'], index: 6 },
+  { names: ['qwe'], index: -1, hasSlices: true },
+  { names: ['app', 'apps', 'core', 'init'], index: 0, hasSlices: false },
+  { names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'], index: 1, hasSlices: true },
+  { names: ['page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts'], index: 2, hasSlices: true },
+  { names: ['widget', 'widgets'], index: 3, hasSlices: true },
+  { names: ['feature', 'features', 'component', 'components', 'container', 'containers'], index: 4, hasSlices: true },
+  { names: ['entity', 'entities', 'model', 'models'], index: 5, hasSlices: true },
+  { names: ['shared', 'common', 'lib', 'libs'], index: 6, hasSlices: false },
 ];
 
 const LAYERS: Layer[] = GROUPED_LAYERS.flatMap((layer) =>
-  layer.names.map((name) => ({ name, index: layer.index })),
+  layer.names.map((name) => ({
+    name,
+    index: layer.index,
+    hasSlices: layer.hasSlices,
+  })),
 );
 
 describe('extractImportContext', () => {
@@ -84,7 +90,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'qux',
+        slice: layer.hasSlices ? 'qux' : null,
       });
     });
 
@@ -107,7 +113,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'qux',
+        slice: layer.hasSlices ? 'qux' : null,
       });
     });
 
@@ -157,7 +163,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'qux',
+        slice: layer.hasSlices ? 'qux' : null,
       });
     });
 
@@ -184,7 +190,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'qux',
+        slice: layer.hasSlices ? 'qux' : null,
       });
     });
 
@@ -236,7 +242,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'baz',
+        slice: layer.hasSlices ? 'baz' : null,
       });
     });
 
@@ -263,7 +269,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'quux',
+        slice: layer.hasSlices ? 'quux' : null,
       });
     });
 
@@ -290,7 +296,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'baz',
+        slice: layer.hasSlices ? 'baz' : null,
       });
     });
 
@@ -315,7 +321,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'qux',
+        slice: layer.hasSlices ? 'qux' : null,
       });
     });
 
@@ -340,7 +346,7 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: 'quux',
+        slice: layer.hasSlices ? 'quux' : null,
       });
     });
   });

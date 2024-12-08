@@ -6,6 +6,7 @@ type TestItem = {
   layer: string;
   availableLayers: string[];
   deniedLayers: string[];
+  hasSlices: boolean;
 };
 
 const TEST_ITEMS: TestItem[] = [
@@ -22,6 +23,7 @@ const TEST_ITEMS: TestItem[] = [
       'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
+    hasSlices: false,
   },
   {
     layer: 'apps',
@@ -36,6 +38,7 @@ const TEST_ITEMS: TestItem[] = [
       'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
+    hasSlices: false,
   },
   {
     layer: 'core',
@@ -50,6 +53,7 @@ const TEST_ITEMS: TestItem[] = [
       'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
+    hasSlices: false,
   },
   {
     layer: 'init',
@@ -64,6 +68,7 @@ const TEST_ITEMS: TestItem[] = [
       'unknown-layer'
     ],
     deniedLayers: ['app', 'apps', 'core', 'init'],
+    hasSlices: false,
   },
   {
     layer: 'process',
@@ -81,6 +86,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'processes',
@@ -98,6 +104,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'flow',
@@ -115,6 +122,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'flows',
@@ -132,6 +140,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'workflow',
@@ -149,6 +158,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'workflows',
@@ -166,6 +176,7 @@ const TEST_ITEMS: TestItem[] = [
       'app', 'apps', 'core', 'init', 
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
     ],
+    hasSlices: true,
   },
   {
     layer: 'page',
@@ -183,6 +194,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'pages',
@@ -200,6 +212,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'screen',
@@ -217,6 +230,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'screens',
@@ -234,6 +248,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'view',
@@ -251,6 +266,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'views',
@@ -268,6 +284,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'layout',
@@ -285,6 +302,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'layouts',
@@ -302,6 +320,7 @@ const TEST_ITEMS: TestItem[] = [
       'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
     ],
+    hasSlices: true,
   },
   {
     layer: 'widget',
@@ -319,6 +338,7 @@ const TEST_ITEMS: TestItem[] = [
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
       'widget', 'widgets',
     ],
+    hasSlices: true,
   },
   {
     layer: 'widgets',
@@ -336,6 +356,7 @@ const TEST_ITEMS: TestItem[] = [
       'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
       'widget', 'widgets',
     ],
+    hasSlices: true,
   },
   {
     layer: 'feature',
@@ -353,6 +374,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'features',
@@ -370,6 +392,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'component',
@@ -387,6 +410,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'components',
@@ -404,6 +428,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'container',
@@ -421,6 +446,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'containers',
@@ -438,6 +464,7 @@ const TEST_ITEMS: TestItem[] = [
       'widget', 'widgets',
       'feature', 'features', 'component', 'components', 'container', 'containers',
     ],
+    hasSlices: true,
   },
   {
     layer: 'entity',
@@ -455,6 +482,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
     ],
+    hasSlices: true,
   },
   {
     layer: 'entities',
@@ -472,6 +500,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
     ],
+    hasSlices: true,
   },
   {
     layer: 'model',
@@ -489,6 +518,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
     ],
+    hasSlices: true,
   },
   {
     layer: 'models',
@@ -506,6 +536,7 @@ const TEST_ITEMS: TestItem[] = [
       'feature', 'features', 'component', 'components', 'container', 'containers',
       'entity', 'entities', 'model', 'models',
     ],
+    hasSlices: true,
   },
   {
     layer: 'shared',
@@ -520,6 +551,7 @@ const TEST_ITEMS: TestItem[] = [
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
     ],
+    hasSlices: false,
   },
   {
     layer: 'common',
@@ -534,6 +566,7 @@ const TEST_ITEMS: TestItem[] = [
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
     ],
+    hasSlices: false,
   },
   {
     layer: 'lib',
@@ -548,6 +581,7 @@ const TEST_ITEMS: TestItem[] = [
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
     ],
+    hasSlices: false,
   },
   {
     layer: 'libs',
@@ -562,6 +596,7 @@ const TEST_ITEMS: TestItem[] = [
       'entity', 'entities', 'model', 'models',
       'shared', 'common', 'lib', 'libs',
     ],
+    hasSlices: false,
   },
   {
     layer: 'unknown-layer',
@@ -577,6 +612,7 @@ const TEST_ITEMS: TestItem[] = [
       'unknown-layer', 'other-unknown-layer'
     ],
     deniedLayers: [],
+    hasSlices: true,
   },
 ];
 
@@ -592,7 +628,7 @@ const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
 describe.each(TEST_ITEMS)(
   '$layer layer',
-  ({ layer: fileLayer, availableLayers, deniedLayers }) => {
+  ({ layer: fileLayer, availableLayers, deniedLayers, hasSlices }) => {
     tester.run(
       'import from a segment-level file should be allowed',
       noDeniedLayersRule,
@@ -624,16 +660,16 @@ describe.each(TEST_ITEMS)(
         ],
         invalid: deniedLayers
           .flatMap((layer) => [
-            { layer, path: `../../${layer}/foo/bar`, hasSlice: true },
-            { layer, path: `../../${layer}/foo`, hasSlice: true },
-            { layer, path: `../../${layer}`, hasSlice: false },
+            { layer, path: `../../${layer}/foo/bar`, hasPathSlice: true },
+            { layer, path: `../../${layer}/foo`, hasPathSlice: true },
+            { layer, path: `../../${layer}`, hasPathSlice: false },
           ])
-          .map(({ layer, path: importPath, hasSlice }) => ({
+          .map(({ layer, path: importPath, hasPathSlice }) => ({
             settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${fileLayer}/qux/quux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
-              layer === fileLayer && hasSlice
+              layer === fileLayer && hasSlices && hasPathSlice
                 ? {
                     messageId: 'deniedSlice',
                     data: { file_slice: 'qux', denied_slice: 'foo' },
@@ -678,16 +714,16 @@ describe.each(TEST_ITEMS)(
         ],
         invalid: deniedLayers
           .flatMap((layer) => [
-            { layer, path: `../${layer}/foo/bar`, hasSlice: true },
-            { layer, path: `../${layer}/foo`, hasSlice: true },
-            { layer, path: `../${layer}`, hasSlice: false },
+            { layer, path: `../${layer}/foo/bar`, hasPathSlice: true },
+            { layer, path: `../${layer}/foo`, hasPathSlice: true },
+            { layer, path: `../${layer}`, hasPathSlice: false },
           ])
-          .map(({ layer, path: importPath, hasSlice }) => ({
+          .map(({ layer, path: importPath, hasPathSlice }) => ({
             settings: { fsd: { rootDir: '/src' } },
             filename: `/src/${fileLayer}/qux.js`,
             code: `import foo from "${importPath}";`,
             errors: [
-              layer === fileLayer && hasSlice
+              layer === fileLayer && hasSlices && hasPathSlice
                 ? {
                     messageId: 'deniedSlice',
                     data: { file_slice: 'qux', denied_slice: 'foo' },
@@ -732,9 +768,9 @@ describe.each(TEST_ITEMS)(
         ],
         invalid: deniedLayers
           .flatMap((layer) => [
-            { layer, path: `./${layer}/foo/bar`, hasSlice: true },
-            { layer, path: `./${layer}/foo`, hasSlice: true },
-            { layer, path: `./${layer}`, hasSlice: false },
+            { layer, path: `./${layer}/foo/bar` },
+            { layer, path: `./${layer}/foo` },
+            { layer, path: `./${layer}` },
           ])
           .map(({ layer, path: importPath }) => ({
             settings: { fsd: { rootDir: '/src' } },
