@@ -38,7 +38,7 @@
     "typecheck": "tsc --noEmit --incremental false"
   },
   "peerDependencies": {
-    "eslint": ">=0.8.0"
+    "eslint": "^9.0.0 || ^10.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.2.0",
