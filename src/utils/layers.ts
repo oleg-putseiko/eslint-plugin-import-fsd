@@ -50,7 +50,7 @@ export const LAYERS: Layer[] = [
   },
 ];
 
-export const listNames = (names: string[]): string =>
+export const joinNames = (names: string[]): string =>
   names.reduce((acc, name, index) => {
     if (index <= 0) return `'${name}'`;
     if (index !== names.length - 1) return `${acc}, '${name}'`;
