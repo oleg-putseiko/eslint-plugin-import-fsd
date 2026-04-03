@@ -12,8 +12,7 @@ type Rules = Record<
 >;
 
 type Configs = {
-  recommended: Linter.FlatConfig;
-  'recommended-legacy': ESLint.ConfigData;
+  recommended: Linter.Config;
 };
 
 type Plugin = {
@@ -40,22 +39,12 @@ const plugin: Plugin = {
         'import-fsd/no-deprecated-layers': 'warn',
       },
     },
-    'recommended-legacy': {
-      plugins: ['import-fsd'],
-      rules: {
-        'import-fsd/no-denied-layers': 'error',
-        'import-fsd/no-unknown-layers': 'error',
-        'import-fsd/no-deprecated-layers': 'warn',
-      },
-    },
   },
 } satisfies ESLint.Plugin;
 
 Object.assign(plugin.configs.recommended, {
   ...plugin.configs.recommended,
-  plugins: {
-    'import-fsd': plugin,
-  },
+  plugins: { 'import-fsd': plugin },
 });
 
 export = plugin;
