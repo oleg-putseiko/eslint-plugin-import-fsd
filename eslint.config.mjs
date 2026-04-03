@@ -60,10 +60,7 @@ export default [
     rules: {
       'array-callback-return': ['error', { checkForEach: true }],
       eqeqeq: 'error',
-      'no-restricted-exports': [
-        'error',
-        { restrictDefaultExports: { direct: true, named: true } },
-      ],
+      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true, named: true } }],
       'no-console': 'warn',
       'no-duplicate-imports': ['error', { includeExports: true }],
       'max-classes-per-file': ['error', { ignoreExpressions: true }],

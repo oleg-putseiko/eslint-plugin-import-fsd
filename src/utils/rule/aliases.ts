@@ -32,10 +32,9 @@ export const resolveAliasedPath = (aliases: Aliases, path: string) => {
       pattern,
     );
 
-    const pathSearchResults = RegExp(
-      `^${escapedPattern.replaceAll('*', '(.*)')}$`,
-      'giu',
-    ).exec(path);
+    const pathSearchResults = RegExp(`^${escapedPattern.replaceAll('*', '(.*)')}$`, 'giu').exec(
+      path,
+    );
     const replacement = pathSearchResults?.at(1);
 
     if (replacement !== undefined) {

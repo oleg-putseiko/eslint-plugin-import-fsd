@@ -37,9 +37,7 @@ export const matchOverriddenSegments = (overrides: Overrides, path: string) => {
       pattern,
     );
 
-    return new RegExp(`^${escapedPattern.replaceAll('*', '(.*)')}$`, 'gu').test(
-      path,
-    );
+    return new RegExp(`^${escapedPattern.replaceAll('*', '(.*)')}$`, 'gu').test(path);
   });
 
   return matchedPattern !== undefined ? overrides[matchedPattern] : null;

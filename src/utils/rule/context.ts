@@ -8,9 +8,7 @@ import { LAYERS } from '../layers';
 import { isOverrides, type Overrides } from './overrides';
 import { extractSegments, type Segments } from './segments';
 
-type ShallowNullable<T> = T extends Record<infer K, unknown>
-  ? { [X in K]: T[K] | null }
-  : T | null;
+type ShallowNullable<T> = T extends Record<infer K, unknown> ? { [X in K]: T[K] | null } : T | null;
 
 type ImportNode = Pick<ImportDeclaration, 'source'>;
 
@@ -32,14 +30,10 @@ type ImportContext = ShallowNullable<Segments> & {
 const isPathRelativeOrAbsolute = (value: string) =>
   path.isAbsolute(value) || /^\.+\//iu.test(value);
 
-export const extractPathContext = (
-  ruleContext: RuleContext,
-): PathContext | null => {
+export const extractPathContext = (ruleContext: RuleContext): PathContext | null => {
   const cwd = ruleContext.cwd;
   const rootDirSetting = ruleContext.settings.fsd?.rootDir;
-  const rootDir = isString(rootDirSetting)
-    ? path.resolve(cwd, rootDirSetting)
-    : cwd;
+  const rootDir = isString(rootDirSetting) ? path.resolve(cwd, rootDirSetting) : cwd;
   const aliases = ruleContext.settings.fsd?.aliases ?? {};
   const overrides = ruleContext.settings.fsd?.overrides ?? {};
 
@@ -49,9 +43,7 @@ export const extractPathContext = (
   const fullPathSegments = extractSegments(fullPath, { rootDir, overrides });
 
   const layerIndex = LAYERS.findIndex((item) =>
-    fullPathSegments.layer
-      ? item.names.includes(fullPathSegments.layer)
-      : false,
+    fullPathSegments.layer ? item.names.includes(fullPathSegments.layer) : false,
   );
   const layerDetails = LAYERS[layerIndex];
   const hasSlices = layerDetails?.hasSlices ?? true;
@@ -88,9 +80,7 @@ export const extractImportContext = (
 
   const resolvedPathSegments = extractSegments(resolvedPath, pathContext);
   const layerIndex = LAYERS.findIndex((item) =>
-    resolvedPathSegments.layer
-      ? item.names.includes(resolvedPathSegments.layer)
-      : false,
+    resolvedPathSegments.layer ? item.names.includes(resolvedPathSegments.layer) : false,
   );
   const layerDetails = LAYERS[layerIndex];
   const hasSlices = layerDetails?.hasSlices ?? true;

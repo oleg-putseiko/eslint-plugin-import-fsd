@@ -2,16 +2,8 @@ import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
 import { LAYERS } from '../utils/layers';
-import {
-  extractPathContext,
-  extractImportContext,
-} from '../utils/rule/context';
-import {
-  Scope,
-  isScope,
-  isFileScope,
-  isImportScope,
-} from '../utils/rule/scope';
+import { extractPathContext, extractImportContext } from '../utils/rule/context';
+import { Scope, isScope, isFileScope, isImportScope } from '../utils/rule/scope';
 import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
 const KNOWN_LAYER_NAMES = LAYERS.flatMap((item) => item.names);

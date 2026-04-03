@@ -2,16 +2,8 @@ import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
 import { LAYERS, listNames } from '../utils/layers';
-import {
-  extractPathContext,
-  extractImportContext,
-} from '../utils/rule/context';
-import {
-  Scope,
-  isScope,
-  isFileScope,
-  isImportScope,
-} from '../utils/rule/scope';
+import { extractPathContext, extractImportContext } from '../utils/rule/context';
+import { Scope, isScope, isFileScope, isImportScope } from '../utils/rule/scope';
 import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
 const DEPRECATED_LAYER_NAMES = LAYERS.flatMap((item) => item.deprecatedNames);
@@ -61,14 +53,10 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
 
         ruleContext.report({
           node,
-          messageId: isReplaceable
-            ? 'replaceableDeprecatedFileLayer'
-            : 'deprecatedFileLayer',
+          messageId: isReplaceable ? 'replaceableDeprecatedFileLayer' : 'deprecatedFileLayer',
           data: {
             deprecated_layer: pathContext.layer,
-            recommended_layers: listNames(
-              replacementLayer.displayedActualNames,
-            ),
+            recommended_layers: listNames(replacementLayer.displayedActualNames),
           },
         });
       };
@@ -85,19 +73,14 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
           DEPRECATED_LAYER_NAMES.includes(importContext.layer)
         ) {
           const replacementLayer = LAYERS[importContext.layerIndex];
-          const isReplaceable =
-            replacementLayer.displayedActualNames.length > 0;
+          const isReplaceable = replacementLayer.displayedActualNames.length > 0;
 
           ruleContext.report({
             node,
-            messageId: isReplaceable
-              ? 'replaceableDeprecatedImportLayer'
-              : 'deprecatedImportLayer',
+            messageId: isReplaceable ? 'replaceableDeprecatedImportLayer' : 'deprecatedImportLayer',
             data: {
               deprecated_layer: importContext.layer,
-              recommended_layers: listNames(
-                replacementLayer.displayedActualNames,
-              ),
+              recommended_layers: listNames(replacementLayer.displayedActualNames),
             },
           });
         }

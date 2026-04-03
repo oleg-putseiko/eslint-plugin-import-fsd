@@ -297,10 +297,7 @@ import foo from '@/features/foo/qux';
       // ...
 
       rules: {
-        'import-fsd/no-denied-layers': [
-          'error',
-          { ignores: ['pages', 'widgets'] },
-        ],
+        'import-fsd/no-denied-layers': ['error', { ignores: ['pages', 'widgets'] }],
       },
     },
   ];
@@ -378,7 +375,6 @@ import foo from '@/shared/foo/bar';
 - `scope` - defines the target scope of the rule check.
 
   Possible values:
-
   - `import` - the rule will only check imports
   - `file` - the rule will only check files to see if they are in a deprecated layer
   - `all` (default) - the rule will check both imports and files
@@ -399,10 +395,7 @@ import foo from '@/shared/foo/bar';
       // ...
 
       rules: {
-        'import-fsd/no-deprecated-layers': [
-          'error',
-          { ignores: ['components', 'models'] },
-        ],
+        'import-fsd/no-deprecated-layers': ['error', { ignores: ['components', 'models'] }],
       },
     },
   ];
@@ -482,7 +475,6 @@ import foo from '@/entities/foo/bar';
 - `scope` - defines the target scope of the rule check.
 
   Possible values:
-
   - `import` - the rule will only check imports
   - `file` - the rule will only check files to see if they are in an unknown layer
   - `all` (default) - the rule will check both imports and files
