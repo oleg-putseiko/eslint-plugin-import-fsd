@@ -3,7 +3,7 @@ import { type ImportDeclaration } from 'estree';
 import * as path from 'node:path';
 
 import { type Aliases, isAliases, resolveAliasedPath } from './aliases';
-import { isString } from '../guards';
+import { hasProperty, isString } from '../guards';
 import { LAYERS } from '../layers';
 import { isOverrides, type Overrides } from './overrides';
 import { extractSegments, type Segments } from './segments';
@@ -14,10 +14,10 @@ type ImportNode = Pick<ImportDeclaration, 'source'>;
 
 type RuleContext = Pick<Rule.RuleContext, 'cwd' | 'filename' | 'settings'>;
 
-type PathContext = ShallowNullable<Segments> & {
+type FileContext = ShallowNullable<Segments> & {
   cwd: string;
   rootDir: string;
-  fullPath: string;
+  path: string;
   layerIndex: number;
   aliases: Aliases;
   overrides: Overrides;
@@ -30,64 +30,97 @@ type ImportContext = ShallowNullable<Segments> & {
 const isPathRelativeOrAbsolute = (value: string) =>
   path.isAbsolute(value) || /^\.+\//iu.test(value);
 
-export const extractPathContext = (ruleContext: RuleContext): PathContext | null => {
-  const cwd = ruleContext.cwd;
-  const rootDirSetting = ruleContext.settings.fsd?.rootDir;
-  const rootDir = isString(rootDirSetting) ? path.resolve(cwd, rootDirSetting) : cwd;
-  const aliases = ruleContext.settings.fsd?.aliases ?? {};
-  const overrides = ruleContext.settings.fsd?.overrides ?? {};
+const extractRootDir = (context: RuleContext): string => {
+  const cwd = context.cwd;
+  const settings = context.settings.fsd;
 
-  if (!isAliases(aliases) || !isOverrides(overrides)) return null;
+  if (hasProperty(settings, 'rootDir', isString)) return path.resolve(cwd, settings.rootDir);
+  return cwd;
+};
 
-  const fullPath = ruleContext.filename;
-  const fullPathSegments = extractSegments(fullPath, { rootDir, overrides });
+const extractAliases = (context: RuleContext): Aliases => {
+  const settings = context.settings.fsd;
+
+  if (hasProperty(settings, 'aliases', isAliases)) return settings.aliases;
+  return {};
+};
+
+const extractOverrides = (context: RuleContext): Overrides => {
+  const settings = context.settings.fsd;
+
+  if (hasProperty(settings, 'overrides', isOverrides)) return settings.overrides;
+  return {};
+};
+
+const extractSegmentContext = (
+  path: string,
+  context: Pick<FileContext, 'rootDir' | 'overrides'>,
+) => {
+  const segments = extractSegments(path, context);
 
   const layerIndex = LAYERS.findIndex((item) =>
-    fullPathSegments.layer ? item.names.includes(fullPathSegments.layer) : false,
+    segments.layer ? item.names.includes(segments.layer) : false,
   );
-  const layerDetails = LAYERS[layerIndex];
-  const hasSlices = layerDetails?.hasSlices ?? true;
+
+  const hasSlices = LAYERS[layerIndex]?.hasSlices ?? false;
 
   return {
-    layer: fullPathSegments.layer,
-    slice: hasSlices ? fullPathSegments.slice : null,
-    cwd,
-    rootDir,
-    fullPath,
+    layer: segments.layer,
     layerIndex,
+    slice: hasSlices ? segments.slice : null,
+  };
+};
+
+const resolvePath = (node: ImportNode, fileCtx: FileContext): string | null => {
+  const importPath = node.source.value;
+
+  if (!isString(importPath)) return null;
+
+  const resolvedAliasedPath = resolveAliasedPath(fileCtx.aliases, importPath);
+
+  if (resolvedAliasedPath !== null) {
+    return path.resolve(fileCtx.cwd, resolvedAliasedPath);
+  }
+
+  if (isPathRelativeOrAbsolute(importPath)) {
+    return path.resolve(path.dirname(fileCtx.path), importPath);
+  }
+
+  return importPath;
+};
+
+export const extractFileContext = (context: RuleContext): FileContext | null => {
+  const cwd = context.cwd;
+
+  const path = context.filename;
+
+  const rootDir = extractRootDir(context);
+  const aliases = extractAliases(context);
+  const overrides = extractOverrides(context);
+
+  const segmentCtx = extractSegmentContext(path, { rootDir, overrides });
+
+  return {
+    cwd,
+    path,
+
+    rootDir,
     aliases,
     overrides,
+
+    ...segmentCtx,
   };
 };
 
 export const extractImportContext = (
   node: ImportNode,
-  pathContext: PathContext,
+  fileCtx: FileContext,
 ): ImportContext | null => {
-  const importPath = node.source.value;
-  const { cwd, aliases, fullPath } = pathContext;
+  const path = resolvePath(node, fileCtx);
 
-  if (!isString(importPath)) return null;
+  if (!path) return null;
 
-  const resolvedAliasedPath = resolveAliasedPath(aliases, importPath);
-  let resolvedPath = importPath;
+  const segmentCtx = extractSegmentContext(path, fileCtx);
 
-  if (resolvedAliasedPath !== null) {
-    resolvedPath = path.resolve(cwd, resolvedAliasedPath);
-  } else if (isPathRelativeOrAbsolute(importPath)) {
-    resolvedPath = path.resolve(path.dirname(fullPath), importPath);
-  }
-
-  const resolvedPathSegments = extractSegments(resolvedPath, pathContext);
-  const layerIndex = LAYERS.findIndex((item) =>
-    resolvedPathSegments.layer ? item.names.includes(resolvedPathSegments.layer) : false,
-  );
-  const layerDetails = LAYERS[layerIndex];
-  const hasSlices = layerDetails?.hasSlices ?? true;
-
-  return {
-    layer: resolvedPathSegments.layer,
-    slice: hasSlices ? resolvedPathSegments.slice : null,
-    layerIndex,
-  };
+  return { ...segmentCtx };
 };

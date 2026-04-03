@@ -4,621 +4,67 @@ import plugin from '../../src';
 
 type TestItem = {
   layer: string;
-  availableLayers: string[];
+  layersBelow: string[];
   deniedLayers: string[];
   hasSlices: boolean;
 };
 
-const TEST_ITEMS: TestItem[] = [
+// prettier-ignore
+const LAYER_GROUPS = [
+  { name: 'app', items: ['app', 'apps', 'core', 'init'], hasSlices: false },
+  { name: 'process', items: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'], hasSlices: true },
+  { name: 'page', items: ['page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts'], hasSlices: true },
+  { name: 'widget', items: ['widget', 'widgets'], hasSlices: true },
+  { name: 'feature', items: ['feature', 'features', 'component', 'components', 'container', 'containers'], hasSlices: true },
+  { name: 'entity', items: ['entity', 'entities', 'model', 'models'], hasSlices: true },
+  { name: 'shared', items: ['shared', 'common', 'lib', 'libs'], hasSlices: false },
+];
+
+const TEST_ITEMS: TestItem[] = LAYER_GROUPS.flatMap((group, index) => {
+  const layersAbove = LAYER_GROUPS.slice(0, index).flatMap((g) => g.items);
+  const layersBelow = LAYER_GROUPS.slice(index + 1).flatMap((g) => g.items);
+
+  return group.items.map((layer) => ({
+    layer,
+    hasSlices: group.hasSlices,
+    layersBelow: [...layersBelow, 'unknown-layer'],
+    deniedLayers: layersAbove,
+  }));
+});
+
+TEST_ITEMS.push({
+  layer: 'unknown-layer',
+  layersBelow: [...LAYER_GROUPS.flatMap((g) => g.items), 'other-unknown-layer'],
+  deniedLayers: [],
+  hasSlices: false,
+});
+
+const IMPORT_LEVELS = [
   {
-    layer: 'app',
-    // prettier-ignore
-    availableLayers: [
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    deniedLayers: ['app', 'apps', 'core', 'init'],
-    hasSlices: false,
+    description: 'segment-level',
+    prefix: '../../',
+    getValidFilename: (layer: string) => `/src/${layer}/foo/bar.js`, // slice: 'foo'
+    getInvalidFilename: (layer: string) => `/src/${layer}/qux/quux.js`, // slice: 'qux'
+    hasFileSlice: true,
   },
   {
-    layer: 'apps',
-    // prettier-ignore
-    availableLayers: [
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    deniedLayers: ['app', 'apps', 'core', 'init'],
-    hasSlices: false,
+    description: 'slice-level',
+    prefix: '../',
+    getValidFilename: (layer: string) => `/src/${layer}/foo.js`, // slice: 'foo'
+    getInvalidFilename: (layer: string) => `/src/${layer}/qux.js`, // slice: 'qux'
+    hasFileSlice: true,
   },
   {
-    layer: 'core',
-    // prettier-ignore
-    availableLayers: [
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    deniedLayers: ['app', 'apps', 'core', 'init'],
-    hasSlices: false,
-  },
-  {
-    layer: 'init',
-    // prettier-ignore
-    availableLayers: [
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    deniedLayers: ['app', 'apps', 'core', 'init'],
-    hasSlices: false,
-  },
-  {
-    layer: 'process',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'processes',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'flow',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'flows',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'workflow',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'workflows',
-    // prettier-ignore
-    availableLayers: [
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'page',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'pages',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'screen',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'screens',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'view',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'views',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'layout',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'layouts',
-    // prettier-ignore
-    availableLayers: [
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'widget',
-    // prettier-ignore
-    availableLayers: [
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'widgets',
-    // prettier-ignore
-    availableLayers: [
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'feature',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'features',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'component',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'components',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'container',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'containers',
-    // prettier-ignore
-    availableLayers: [
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'entity',
-    // prettier-ignore
-    availableLayers: [
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'entities',
-    // prettier-ignore
-    availableLayers: [
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'model',
-    // prettier-ignore
-    availableLayers: [
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'models',
-    // prettier-ignore
-    availableLayers: [
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer'
-    ],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-    ],
-    hasSlices: true,
-  },
-  {
-    layer: 'shared',
-    availableLayers: ['unknown-layer'],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-    ],
-    hasSlices: false,
-  },
-  {
-    layer: 'common',
-    availableLayers: ['unknown-layer'],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-    ],
-    hasSlices: false,
-  },
-  {
-    layer: 'lib',
-    availableLayers: ['unknown-layer'],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-    ],
-    hasSlices: false,
-  },
-  {
-    layer: 'libs',
-    availableLayers: ['unknown-layer'],
-    // prettier-ignore
-    deniedLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-    ],
-    hasSlices: false,
-  },
-  {
-    layer: 'unknown-layer',
-    // prettier-ignore
-    availableLayers: [
-      'app', 'apps', 'core', 'init', 
-      'process', 'processes', 'flow', 'flows', 'workflow', 'workflows',
-      'page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts',
-      'widget', 'widgets',
-      'feature', 'features', 'component', 'components', 'container', 'containers',
-      'entity', 'entities', 'model', 'models',
-      'shared', 'common', 'lib', 'libs',
-      'unknown-layer', 'other-unknown-layer'
-    ],
-    deniedLayers: [],
-    hasSlices: true,
+    description: 'layer-level',
+    prefix: './',
+    getValidFilename: (layer: string) => `/src/${layer}.js`, // no slice
+    getInvalidFilename: (layer: string) => `/src/${layer}.js`, // no slice
+    hasFileSlice: false,
   },
 ];
 
 const tester = new RuleTester({
-  root: true,
-  parserOptions: {
+  languageOptions: {
     sourceType: 'module',
     ecmaVersion: 'latest',
   },
@@ -626,163 +72,90 @@ const tester = new RuleTester({
 
 const noDeniedLayersRule = plugin.rules['no-denied-layers'];
 
+const generatePaths = (prefix: string, importLayer: string) => [
+  { path: `${prefix}${importLayer}/foo/bar`, hasPathSlice: true },
+  { path: `${prefix}${importLayer}/foo`, hasPathSlice: true },
+  { path: `${prefix}${importLayer}`, hasPathSlice: false },
+];
+
 describe.each(TEST_ITEMS)(
   '$layer layer',
-  ({ layer: fileLayer, availableLayers, deniedLayers, hasSlices }) => {
-    tester.run(
-      'import from a segment-level file should be allowed',
-      noDeniedLayersRule,
-      {
-        valid: [
-          ...availableLayers
-            .flatMap((layer) => [
-              `../../${layer}/foo/bar`,
-              `../../${layer}/foo`,
-              `../../${layer}`,
-            ])
-            .map((importPath) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}/foo/bar.js`,
-              code: `import foo from "${importPath}";`,
-            })),
-          ...deniedLayers
-            .flatMap((layer) => [
-              { layer, path: `../../${layer}/foo/bar` },
-              { layer, path: `../../${layer}/foo` },
-              { layer, path: `../../${layer}` },
-            ])
-            .map(({ layer: importLayer, path: importPath }) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}/foo/bar.js`,
-              options: [{ ignores: [importLayer] }],
-              code: `import foo from "${importPath}";`,
-            })),
-        ],
-        invalid: deniedLayers
-          .flatMap((layer) => [
-            { layer, path: `../../${layer}/foo/bar`, hasPathSlice: true },
-            { layer, path: `../../${layer}/foo`, hasPathSlice: true },
-            { layer, path: `../../${layer}`, hasPathSlice: false },
-          ])
-          .map(({ layer, path: importPath, hasPathSlice }) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            code: `import foo from "${importPath}";`,
-            errors: [
-              layer === fileLayer && hasSlices && hasPathSlice
-                ? {
-                    messageId: 'deniedSlice',
-                    data: { file_slice: 'qux', denied_slice: 'foo' },
-                  }
-                : {
-                    messageId: 'deniedLayer',
-                    data: { file_layer: fileLayer, denied_layer: layer },
-                  },
-            ],
-          })),
-      },
-    );
+  ({ layer: fileLayer, layersBelow, deniedLayers, hasSlices }) => {
+    IMPORT_LEVELS.forEach(
+      ({ description, prefix, getValidFilename, getInvalidFilename, hasFileSlice }) => {
+        tester.run(
+          `import from a ${description} file should be handled correctly`,
+          noDeniedLayersRule,
+          {
+            valid: [
+              // import from allowed layers
+              ...layersBelow.flatMap((importLayer) =>
+                generatePaths(prefix, importLayer).map(({ path }) => ({
+                  settings: { fsd: { rootDir: '/src' } },
+                  filename: getValidFilename(fileLayer),
+                  code: `import foo from "${path}";`,
+                })),
+              ),
 
-    tester.run(
-      'import from a slice-level file should be allowed',
-      noDeniedLayersRule,
-      {
-        valid: [
-          ...availableLayers
-            .flatMap((layer) => [
-              `../${layer}/foo/bar`,
-              `../${layer}/foo`,
-              `../${layer}`,
-            ])
-            .map((importPath) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}/foo.js`,
-              code: `import foo from "${importPath}";`,
-            })),
-          ...deniedLayers
-            .flatMap((layer) => [
-              { layer, path: `../${layer}/foo/bar` },
-              { layer, path: `../${layer}/foo` },
-              { layer, path: `../${layer}` },
-            ])
-            .map(({ layer: importLayer, path: importPath }) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}/foo.js`,
-              options: [{ ignores: [importLayer] }],
-              code: `import foo from "${importPath}";`,
-            })),
-        ],
-        invalid: deniedLayers
-          .flatMap((layer) => [
-            { layer, path: `../${layer}/foo/bar`, hasPathSlice: true },
-            { layer, path: `../${layer}/foo`, hasPathSlice: true },
-            { layer, path: `../${layer}`, hasPathSlice: false },
-          ])
-          .map(({ layer, path: importPath, hasPathSlice }) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            code: `import foo from "${importPath}";`,
-            errors: [
-              layer === fileLayer && hasSlices && hasPathSlice
-                ? {
-                    messageId: 'deniedSlice',
-                    data: { file_slice: 'qux', denied_slice: 'foo' },
-                  }
-                : {
-                    messageId: 'deniedLayer',
-                    data: { file_layer: fileLayer, denied_layer: layer },
-                  },
-            ],
-          })),
-      },
-    );
+              // import from the same layer
+              ...generatePaths(prefix, fileLayer)
+                .filter(({ hasPathSlice }) => !hasSlices || (hasFileSlice && hasPathSlice))
+                .map(({ path }) => ({
+                  settings: { fsd: { rootDir: '/src' } },
+                  filename: getValidFilename(fileLayer),
+                  code: `import foo from "${path}";`,
+                })),
 
-    tester.run(
-      'import from a layer-level file should be allowed',
-      noDeniedLayersRule,
-      {
-        valid: [
-          ...availableLayers
-            .flatMap((layer) => [
-              `./${layer}/foo/bar`,
-              `./${layer}/foo`,
-              `./${layer}`,
-            ])
-            .map((importPath) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}.js`,
-              code: `import foo from "${importPath}";`,
-            })),
-          ...deniedLayers
-            .flatMap((layer) => [
-              { layer, path: `./${layer}/foo/bar` },
-              { layer, path: `./${layer}/foo` },
-              { layer, path: `./${layer}` },
-            ])
-            .map(({ layer: importLayer, path: importPath }) => ({
-              settings: { fsd: { rootDir: '/src' } },
-              filename: `/src/${fileLayer}.js`,
-              options: [{ ignores: [importLayer] }],
-              code: `import foo from "${importPath}";`,
-            })),
-        ],
-        invalid: deniedLayers
-          .flatMap((layer) => [
-            { layer, path: `./${layer}/foo/bar` },
-            { layer, path: `./${layer}/foo` },
-            { layer, path: `./${layer}` },
-          ])
-          .map(({ layer, path: importPath }) => ({
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            code: `import foo from "${importPath}";`,
-            errors: [
-              {
-                messageId: 'deniedLayer',
-                data: { file_layer: fileLayer, denied_layer: layer },
-              },
+              // import from ignored denied layers
+              ...deniedLayers.flatMap((importLayer) =>
+                generatePaths(prefix, importLayer).map(({ path }) => ({
+                  settings: { fsd: { rootDir: '/src' } },
+                  filename: getValidFilename(fileLayer),
+                  options: [{ ignores: [importLayer] }],
+                  code: `import foo from "${path}";`,
+                })),
+              ),
             ],
-          })),
+
+            invalid: [
+              // import from denied layers
+              ...deniedLayers.flatMap((importLayer) =>
+                generatePaths(prefix, importLayer).map(({ path }) => ({
+                  settings: { fsd: { rootDir: '/src' } },
+                  filename: getValidFilename(fileLayer),
+                  code: `import foo from "${path}";`,
+                  errors: [
+                    { messageId: 'deniedLayer', data: { fileLayer, deniedLayer: importLayer } },
+                  ],
+                })),
+              ),
+
+              // cross-slice import
+              ...(hasSlices
+                ? generatePaths(prefix, fileLayer).map(({ path, hasPathSlice }) => {
+                    const isCrossSlice = hasFileSlice && hasPathSlice;
+
+                    return {
+                      settings: { fsd: { rootDir: '/src' } },
+                      filename: getInvalidFilename(fileLayer),
+                      code: `import foo from "${path}";`,
+                      errors: [
+                        isCrossSlice
+                          ? {
+                              messageId: 'deniedSlice',
+                              data: { fileSlice: 'qux', deniedSlice: 'foo' },
+                            }
+                          : {
+                              messageId: 'deniedLayer',
+                              data: { fileLayer, deniedLayer: fileLayer },
+                            },
+                      ],
+                    };
+                  })
+                : []),
+            ],
+          },
+        );
       },
     );
   },

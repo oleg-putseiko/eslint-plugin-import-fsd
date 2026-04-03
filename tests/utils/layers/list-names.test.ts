@@ -1,17 +1,16 @@
-import { listNames } from '../../../src/utils/layers';
+import { joinNames } from '../../../src/utils/layers';
 
 describe('listNames', () => {
-  it('should return an empty string', () => {
-    expect(listNames([])).toBe('');
-  });
+  const TEST_CASES: Array<[string[], string]> = [
+    [[], ''],
+    [[''], "''"],
+    [['foo'], "'foo'"],
+    [['foo', 'bar'], "'foo' or 'bar'"],
+    [['foo', 'bar', 'baz'], "'foo', 'bar' or 'baz'"],
+    [['foo', '', 'bar', 'baz'], "'foo', '', 'bar' or 'baz'"],
+  ];
 
-  it('should return a string with a list of passed names', () => {
-    expect(listNames([''])).toBe("''");
-    expect(listNames(['foo'])).toBe("'foo'");
-    expect(listNames(['foo', 'bar'])).toBe("'foo' or 'bar'");
-    expect(listNames(['foo', 'bar', 'baz'])).toBe("'foo', 'bar' or 'baz'");
-    expect(listNames(['foo', '', 'bar', 'baz'])).toBe(
-      "'foo', '', 'bar' or 'baz'",
-    );
+  it.each(TEST_CASES)('should format %p as %p', (input, expected) => {
+    expect(joinNames(input)).toBe(expected);
   });
 });
