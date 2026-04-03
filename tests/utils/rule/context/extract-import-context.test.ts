@@ -2,7 +2,6 @@ import { extractImportContext } from '../../../../src/utils/rule/context';
 
 type ImportNode = Parameters<typeof extractImportContext>[0];
 type PathContext = Parameters<typeof extractImportContext>[1];
-type ImportContext = ReturnType<typeof extractImportContext>;
 
 type NodeItem = {
   node: ImportNode;
@@ -51,190 +50,82 @@ const LAYERS: Layer[] = GROUPED_LAYERS.flatMap((layer) =>
   })),
 );
 
-describe('extractImportContext', () => {
-  it.each(INVALID_NODE_ITEMS)(
-    'should return null if the node is $type',
-    ({ node }) => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {},
-      };
+const BASE_CONTEXT: PathContext = {
+  cwd: '/',
+  rootDir: '/src',
+  path: '/src/features/foo/bar.js',
+  layer: 'features',
+  layerIndex: 4,
+  slice: 'foo',
+  aliases: {},
+  overrides: {},
+};
 
-      expect(extractImportContext(node, pathContext)).toBeNull();
-    },
-  );
+const COMMON_ALIASES = {
+  '~/*': './source/*',
+  '@/*': './src/*',
+  'qwe/*': './qwe/*',
+};
+
+const PATH_LEVELS = [
+  {
+    type: 'segment-level',
+    suffix: '/qux/quux',
+    getExpectedSlice: (hasSlices: boolean, index: number) =>
+      hasSlices && index >= 0 ? 'qux' : null,
+  },
+  {
+    type: 'slice-level',
+    suffix: '/qux',
+    getExpectedSlice: (hasSlices: boolean, index: number) =>
+      hasSlices && index >= 0 ? 'qux' : null,
+  },
+  {
+    type: 'layer-level',
+    suffix: '',
+    getExpectedSlice: () => null,
+  },
+];
+
+describe('extractImportContext', () => {
+  it.each(INVALID_NODE_ITEMS)('should return null if the node is $type', ({ node }) => {
+    expect(extractImportContext(node, BASE_CONTEXT)).toBeNull();
+  });
 
   describe.each(LAYERS)('$name layer', (layer) => {
-    it('should detect segment data in a relative segment-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {},
-      };
+    // 1. Related and aliased paths
+    describe.each(PATH_LEVELS)('with $type import path', ({ suffix, getExpectedSlice }) => {
+      it(`should detect segment data in a relative path`, () => {
+        const node: ImportNode = {
+          source: { type: 'Literal', value: `../../${layer.name}${suffix}` },
+        };
+        expect(extractImportContext(node, BASE_CONTEXT)).toEqual({
+          layer: layer.name,
+          layerIndex: layer.index,
+          slice: getExpectedSlice(layer.hasSlices, layer.index), // Передаем индекс
+        });
+      });
 
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `../../${layer.name}/qux/quux` },
-      };
+      it(`should detect segment data in an aliased path`, () => {
+        const pathContext = { ...BASE_CONTEXT, aliases: COMMON_ALIASES };
+        const node: ImportNode = {
+          source: { type: 'Literal', value: `@/${layer.name}${suffix}` },
+        };
 
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: layer.hasSlices ? 'qux' : null,
+        expect(extractImportContext(node, pathContext)).toEqual({
+          layer: layer.name,
+          layerIndex: layer.index,
+          slice: getExpectedSlice(layer.hasSlices, layer.index), // Передаем индекс
+        });
       });
     });
 
-    it('should detect segment data in a relative slice-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {},
-      };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `../../${layer.name}/qux` },
-      };
-
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: layer.hasSlices ? 'qux' : null,
-      });
-    });
-
-    it('should detect segment data in a relative layer-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {},
-      };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `../../${layer.name}` },
-      };
-
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: null,
-      });
-    });
-
-    it('should detect segment data in an aliased segment-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          '~/*': './source/*',
-          '@/*': './src/*',
-          'qwe/*': './qwe/*',
-        },
-        overrides: {},
-      };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `@/${layer.name}/qux/quux` },
-      };
-
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: layer.hasSlices ? 'qux' : null,
-      });
-    });
-
-    it('should detect segment data in an aliased slice-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          '~/*': './source/*',
-          '@/*': './src/*',
-          'qwe/*': './qwe/*',
-        },
-        overrides: {},
-      };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `@/${layer.name}/qux` },
-      };
-
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: layer.hasSlices ? 'qux' : null,
-      });
-    });
-
-    it('should detect segment data in an aliased layer-level import path', () => {
-      const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          '~/*': './source/*',
-          '@/*': './src/*',
-          'qwe/*': './qwe/*',
-        },
-        overrides: {},
-      };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: `@/${layer.name}` },
-      };
-
-      expect(extractImportContext(node, pathContext)).toEqual({
-        layer: layer.name,
-        layerIndex: layer.index,
-        slice: null,
-      });
-    });
-
+    // 2. Overrides
     it('should override import path data', () => {
       const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {
-          '@foo/bar': { layer: layer.name, slice: 'baz' },
-        },
+        ...BASE_CONTEXT,
+        overrides: { '@foo/bar': { layer: layer.name, slice: 'baz' } },
       };
-
       const node: ImportNode = {
         source: { type: 'Literal', value: `@foo/bar` },
       };
@@ -242,53 +133,33 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: layer.hasSlices ? 'baz' : null,
+        slice: layer.hasSlices && layer.index >= 0 ? 'baz' : null,
       });
     });
 
     it('should override aliased import path data', () => {
       const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          qwe: '/src/entities/baz/qux.js',
-        },
+        ...BASE_CONTEXT,
+        aliases: { qwe: '/src/entities/baz/qux.js' },
         overrides: {
           '/src/entities/baz/qux.js': { layer: layer.name, slice: 'quux' },
         },
       };
-
-      const node: ImportNode = {
-        source: { type: 'Literal', value: 'qwe' },
-      };
+      const node: ImportNode = { source: { type: 'Literal', value: 'qwe' } };
 
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: layer.hasSlices ? 'quux' : null,
+        slice: layer.hasSlices && layer.index >= 0 ? 'quux' : null,
       });
     });
 
     it('should override import template path data', () => {
       const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          '@/*': './src/*',
-        },
-        overrides: {
-          '@foo/*': { layer: layer.name, slice: 'baz' },
-        },
+        ...BASE_CONTEXT,
+        aliases: { '@/*': './src/*' },
+        overrides: { '@foo/*': { layer: layer.name, slice: 'baz' } },
       };
-
       const node: ImportNode = {
         source: { type: 'Literal', value: `@foo/bar` },
       };
@@ -296,24 +167,16 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: layer.hasSlices ? 'baz' : null,
+        slice: layer.hasSlices && layer.index >= 0 ? 'baz' : null,
       });
     });
 
+    // 3. RegExp special characters
     it('should not match regexp special characters in an alias pattern', () => {
       const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {
-          '^()[]{}\\d\\.|?*+$': `/src/${layer.name}/*`,
-        },
-        overrides: {},
+        ...BASE_CONTEXT,
+        aliases: { '^()[]{}\\d\\.|?*+$': `/src/${layer.name}/*` },
       };
-
       const node: ImportNode = {
         source: { type: 'Literal', value: `^()[]{}\\d\\.|?qux+$` },
       };
@@ -321,24 +184,15 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: layer.hasSlices ? 'qux' : null,
+        slice: layer.hasSlices && layer.index >= 0 ? 'qux' : null,
       });
     });
 
     it('should not match regexp special characters in an override pattern', () => {
       const pathContext: PathContext = {
-        cwd: '/',
-        rootDir: '/src',
-        fullPath: '/src/features/foo/bar.js',
-        layer: 'features',
-        layerIndex: 4,
-        slice: 'foo',
-        aliases: {},
-        overrides: {
-          '^()[]{}\\d\\.|?*+$': { layer: layer.name, slice: 'quux' },
-        },
+        ...BASE_CONTEXT,
+        overrides: { '^()[]{}\\d\\.|?*+$': { layer: layer.name, slice: 'quux' } },
       };
-
       const node: ImportNode = {
         source: { type: 'Literal', value: `^()[]{}\\d\\.|?qux+$` },
       };
@@ -346,33 +200,18 @@ describe('extractImportContext', () => {
       expect(extractImportContext(node, pathContext)).toEqual({
         layer: layer.name,
         layerIndex: layer.index,
-        slice: layer.hasSlices ? 'quux' : null,
+        slice: layer.hasSlices && layer.index >= 0 ? 'quux' : null,
       });
     });
   });
 
   it('should not detect segment data in a relative root-level import path', () => {
-    const pathContext: PathContext = {
-      cwd: '/',
-      rootDir: '/src',
-      fullPath: '/src/features/foo/bar.js',
-      layer: 'features',
-      layerIndex: 4,
-      slice: 'foo',
-      aliases: {},
-      overrides: {},
-    };
+    const node: ImportNode = { source: { type: 'Literal', value: '../../' } };
 
-    const node: ImportNode = {
-      source: { type: 'Literal', value: '../../' },
-    };
-
-    const expectedResult: ImportContext = {
+    expect(extractImportContext(node, BASE_CONTEXT)).toEqual({
       layer: null,
       layerIndex: -1,
       slice: null,
-    };
-
-    expect(extractImportContext(node, pathContext)).toEqual(expectedResult);
+    });
   });
 });
