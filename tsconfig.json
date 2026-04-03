@@ -6,8 +6,9 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "rootDir": "src",
+    "skipLibCheck": true,
     "strictNullChecks": true,
-    "target": "es2021"
+    "target": "es2022"
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*.ts"]
