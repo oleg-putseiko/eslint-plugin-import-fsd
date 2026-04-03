@@ -49,6 +49,7 @@ export default [
 
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+
   {
     languageOptions: {
       globals: { ...globals.node },
@@ -91,6 +92,13 @@ export default [
       '@typescript-eslint/prefer-as-const': 'warn',
       '@typescript-eslint/prefer-includes': 'warn',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    },
+  },
+
+  {
+    files: ['*.mjs'],
+    rules: {
+      'no-restricted-exports': 'off',
     },
   },
 
