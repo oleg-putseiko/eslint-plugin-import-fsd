@@ -77,23 +77,6 @@ export default [
 
 Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
 
----
-
-The plugin supports both the eslintrc configuration format and the flat configuration format. Example plugin configuration in eslintrc format:
-
-```js
-/* .eslintrc.js */
-
-module.exports = {
-  plugins: ['import-fsd'],
-  settings: {
-    fsd: {
-      rootDir: `${__dirname}/src`,
-    },
-  },
-};
-```
-
 ## Settings
 
 ### rootDir
@@ -533,27 +516,4 @@ export default [
   importFsdPlugin.configs.recommended,
   // ...
 ];
-```
-
-### recommended-legacy
-
-Compatible with eslintrc configuration format.
-
-Contains recommended plugin rules configuration:
-
-| Rule                   | Severity | Options |
-| ---------------------- | -------- | ------- |
-| `no-denied-layers`     | error    | —       |
-| `no-deprecated-layers` | warn     | —       |
-| `no-unknown-layers`    | error    | —       |
-
-To include the recommended configuration in yours, you need to add `plugin:import-fsd/recommended-legacy` to the list of extensions in your ESLint configuration file:
-
-```js
-/* .eslintrc.js */
-
-module.exports = {
-  extends: ['plugin:import-fsd/recommended-legacy'],
-  // ...
-};
 ```
