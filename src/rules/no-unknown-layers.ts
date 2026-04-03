@@ -1,12 +1,21 @@
 import { type Rule } from 'eslint';
 
 import { isStringArray } from '../utils/guards';
-import { LAYERS } from '../utils/layers';
-import { extractPathContext, extractImportContext } from '../utils/rule/context';
+import { extractFileContext, extractImportContext } from '../utils/rule/context';
 import { Scope, isScope, isFileScope, isImportScope } from '../utils/rule/scope';
 import { SCOPED_SCHEMA } from '../utils/rule/schema';
 
-const KNOWN_LAYER_NAMES = LAYERS.flatMap((item) => item.names);
+const extractScope = (context: Rule.RuleContext): Scope => {
+  const scope = context.options.at(0)?.scope ?? Scope.All;
+
+  return isScope(scope) ? scope : Scope.All;
+};
+
+const extractIgnores = (context: Rule.RuleContext): string[] => {
+  const ignores = context.options.at(0)?.ignores ?? [];
+
+  return isStringArray(ignores) ? ignores : [];
+};
 
 export const noUnknownLayersRule: Rule.RuleModule = {
   meta: {
@@ -25,46 +34,42 @@ export const noUnknownLayersRule: Rule.RuleModule = {
   create(ruleContext) {
     const listener: Rule.RuleListener = {};
 
-    const scope = ruleContext.options.at(0)?.scope ?? Scope.All;
-    const ignoredLayers = ruleContext.options.at(0)?.ignores ?? [];
+    const fileCtx = extractFileContext(ruleContext);
 
-    if (!isScope(scope) || !isStringArray(ignoredLayers)) {
-      return listener;
-    }
+    const scope = extractScope(ruleContext);
+    const ignoredLayers = extractIgnores(ruleContext);
 
-    const pathContext = extractPathContext(ruleContext);
+    if (!fileCtx?.layer) return listener;
 
-    if (!pathContext?.layer) return listener;
+    if (isFileScope(scope)) {
+      const isUnknown = fileCtx.layerIndex < 0;
+      const isIgnored = ignoredLayers.includes(fileCtx.layer);
 
-    if (
-      isFileScope(scope) &&
-      pathContext.layerIndex < 0 &&
-      !ignoredLayers.includes(pathContext.layer)
-    ) {
-      listener.Program = (node) => {
-        if (!pathContext?.layer) return;
-
-        ruleContext.report({
-          node,
-          messageId: 'unknownFileLayer',
-          data: { layer: pathContext.layer },
-        });
-      };
+      if (isUnknown && !isIgnored) {
+        listener.Program = (node) => {
+          ruleContext.report({
+            node,
+            messageId: 'unknownFileLayer',
+            data: { layer: fileCtx.layer },
+          });
+        };
+      }
     }
 
     if (isImportScope(scope)) {
       listener.ImportDeclaration = (node) => {
-        const importContext = extractImportContext(node, pathContext);
+        const importCtx = extractImportContext(node, fileCtx);
 
-        if (
-          importContext?.layer &&
-          !ignoredLayers.includes(importContext.layer) &&
-          !KNOWN_LAYER_NAMES.includes(importContext.layer)
-        ) {
+        if (!importCtx?.layer) return;
+
+        const isUnknown = importCtx.layerIndex < 0;
+        const isIgnored = ignoredLayers.includes(importCtx.layer);
+
+        if (isUnknown && !isIgnored) {
           ruleContext.report({
             node,
             messageId: 'unknownImportLayer',
-            data: { layer: importContext.layer },
+            data: { layer: importCtx.layer },
           });
         }
       };

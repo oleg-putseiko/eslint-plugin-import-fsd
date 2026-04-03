@@ -82,7 +82,7 @@ describe.each(NON_DEPRECATED_LAYERS)('file layer "%s"', (fileLayer) => {
       PATH_SUFFIXES.forEach((suffix) => {
         const code = `import foo from "${prefix}${layer}${suffix}";`;
 
-        // Allowed: ignored import layer
+        // Allowed: ignored deprecated import layer
         SCOPES_IMPORT.forEach((scope) => {
           valid.push({
             settings: BASE_SETTINGS,
@@ -92,16 +92,16 @@ describe.each(NON_DEPRECATED_LAYERS)('file layer "%s"', (fileLayer) => {
           });
         });
 
-        // Allowed: non-influencing import layer in the file scope
+        // Allowed: skipped deprecated import layer in the file scope
         valid.push({ settings: BASE_SETTINGS, filename, options: [{ scope: 'file' }], code });
 
-        // Allowed: unknown file layer
+        // Allowed: deprecated import layer in an unknown file layer
         if (isUnknownFileLayer) {
           SCOPES_IMPORT.forEach((scope) => {
             valid.push({ settings: BASE_SETTINGS, filename, options: [{ scope }], code });
           });
         } else {
-          // Deprecated: import layer
+          // Disallowed: deprecated import layer
           SCOPES_IMPORT.forEach((scope) => {
             invalid.push({
               settings: BASE_SETTINGS,
@@ -115,11 +115,10 @@ describe.each(NON_DEPRECATED_LAYERS)('file layer "%s"', (fileLayer) => {
       });
     });
 
-    tester.run(
-      `import from a ${description} file should be handled correctly`,
-      noDeprecatedLayersRule,
-      { valid, invalid },
-    );
+    tester.run(`import from a ${description} file should be allowed`, noDeprecatedLayersRule, {
+      valid,
+      invalid,
+    });
   });
 });
 
@@ -129,13 +128,13 @@ describe.each(DEPRECATED_LAYERS)('deprecated file layer "%s"', (fileLayer) => {
     const code = 'import foo from "bar";';
 
     const valid: RuleTester.ValidTestCase[] = [
-      // Allowed: non-influencing file layer in the import scope
+      // Allowed: skipped deprecated file layer in the import scope
       { settings: BASE_SETTINGS, filename, options: [{ scope: 'import' }], code },
     ];
     const invalid: RuleTester.InvalidTestCase[] = [];
 
     SCOPES_FILE.forEach((scope) => {
-      // Allowed: ignored file layer
+      // Allowed: ignored deprecated file layer
       valid.push({
         settings: BASE_SETTINGS,
         filename,
@@ -143,7 +142,7 @@ describe.each(DEPRECATED_LAYERS)('deprecated file layer "%s"', (fileLayer) => {
         code,
       });
 
-      // Deprecated: file layer
+      // Disallowed: deprecated file layer
       invalid.push({
         settings: BASE_SETTINGS,
         filename,
@@ -153,10 +152,9 @@ describe.each(DEPRECATED_LAYERS)('deprecated file layer "%s"', (fileLayer) => {
       });
     });
 
-    tester.run(
-      `import from a ${description} file should be handled correctly`,
-      noDeprecatedLayersRule,
-      { valid, invalid },
-    );
+    tester.run(`import from a ${description} file should be allowed`, noDeprecatedLayersRule, {
+      valid,
+      invalid,
+    });
   });
 });
