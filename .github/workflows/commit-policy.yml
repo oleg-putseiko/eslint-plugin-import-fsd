@@ -1,0 +1,46 @@
+name: Commit Policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  validate-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node and Yarn via Volta
+        uses: volta-cli/action@v5
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Validate commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          COMMITS=$(git log --format=%B $BASE_SHA..$HEAD_SHA)
+
+          if echo "$COMMITS" | grep -iq "__wip__"; then
+            echo "::error title=WIP Commit Detected::Found a commit message containing '__wip__'. Please rebase and squash or reword before merging."
+            exit 1
+          fi
+
+          echo "::notice title=WIP Check Passed::No '__wip__' commits found in this PR."
+
+          echo "::group::Running commitlint validation"
+
+          if yarn exec commitlint --from $BASE_SHA --to $HEAD_SHA; then
+            echo "::endgroup::"
+            echo "::notice title=Convention Passed::All commits follow the Conventional Commits format."
+          else
+            EXIT_CODE=$?
+            echo "::endgroup::"
+            echo "::error title=Commitlint Failed::One or more commits do not follow the conventional format. Check the workflow logs for details."
+            exit $EXIT_CODE
+          fi
