@@ -1,7 +1,8 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import eslintConfigPrettier from 'eslint-config-prettier';
 import globals from 'globals';
+
+import prettierConfig from 'eslint-config-prettier';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -61,7 +62,7 @@ export default [
     rules: {
       'array-callback-return': ['error', { checkForEach: true }],
       eqeqeq: 'error',
-      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true, named: true } }],
+      'no-restricted-exports': 'off',
       'no-console': 'warn',
       'no-duplicate-imports': ['error', { includeExports: true }],
       'max-classes-per-file': ['error', { ignoreExpressions: true }],
@@ -95,12 +96,5 @@ export default [
     },
   },
 
-  {
-    files: ['*.mjs'],
-    rules: {
-      'no-restricted-exports': 'off',
-    },
-  },
-
-  eslintConfigPrettier,
+  prettierConfig,
 ];

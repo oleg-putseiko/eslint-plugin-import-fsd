@@ -47,4 +47,4 @@ Object.assign(plugin.configs.recommended, {
   plugins: { 'import-fsd': plugin },
 });
 
-export = plugin;
+export default plugin;
