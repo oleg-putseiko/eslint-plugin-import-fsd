@@ -1,4 +1,31 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env bash
 
-yarn typecheck && npx lint-staged
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+run_check() {
+  PROGRESS_MSG="$1"
+  SUCCESS_MSG="$2"
+  shift 2
+
+  printf "⏳ %-45s" "$PROGRESS_MSG..."
+
+  if OUT=$("$@" 2>&1); then
+    if [[ "$OUT" == *"__UPDATED__"* ]]; then
+      SUCCESS_MSG="Unstable packages have been pinned"
+    elif [[ "$OUT" == *"__SKIPPED__"* ]]; then
+      SUCCESS_MSG="No new unstable packages found"
+    fi
+    printf "\r${GREEN}✨ %-45s${NC}\n" "$SUCCESS_MSG"
+  else
+    printf "\r${RED}❌ %-45s${NC}\n" "$PROGRESS_MSG failed"
+    echo ""
+    echo "$OUT"
+    exit 1
+  fi
+}
+
+run_check "Verifying lockfile" "Lockfile is verified" yarn install --immutable --immutable-cache
+
+run_check "Formatting staged files" "Staged files are formatted" yarn lint-staged
