@@ -27,15 +27,21 @@
   ],
   "exports": "./dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:js && npm run build:ts",
+    "build:js": "swc src -d dist --strip-leading-paths --ignore \"node_modules,**/*.test.ts,**/*.d.ts\"",
+    "build:ts": "tsc && mkdir -p dist && find src -name \"*.d.ts\" -exec cp {} dist/ \\;",
+    "lint": "eslint ./src -c ./eslint.config.mjs",
+    "lint:fix": "yarn lint --fix && yarn format:fix",
+    "lint:strict": "yarn lint --max-warnings=0 && yarn format",
     "format": "prettier -c .",
     "format:fix": "prettier -w .",
-    "lint": "eslint ./src/**/*.{js,ts,json} && yarn format",
-    "lint:fix": "eslint ./src/**/*.{js,ts,json} --fix && yarn format:fix",
-    "lint:strict": "eslint ./src/**/*.{js,ts,json} --max-warnings=0 && yarn format",
-    "prepare": "husky install | chmod +x ./.husky/*",
+    "typecheck": "tsc --noEmit --incremental false",
     "test": "jest",
-    "typecheck": "tsc --noEmit --incremental false"
+    "setup": "yarn install && yarn setup:husky",
+    "setup:husky": "husky && chmod +x ./.husky/*",
+    "deps:audit": "bash ./scripts/deps/audit.sh",
+    "scripts:perms": "find ./scripts -type f -name \"*.sh\" -exec chmod +x {} +",
+    "scripts:perms:track": "find ./scripts -type f -name \"*.sh\" -exec git update-index --chmod=+x {} +"
   },
   "peerDependencies": {
     "eslint": ">=9.0.0 <10.0.0"

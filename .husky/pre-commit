@@ -28,4 +28,7 @@ run_check() {
 
 run_check "Verifying lockfile" "Lockfile is verified" yarn install --immutable --immutable-cache
 
+run_check "Auditing unstable packages" "" bash scripts/deps/audit.sh --pin-unstable --silent --meta
+git add .github/dependabot.yml
+
 run_check "Formatting staged files" "Staged files are formatted" yarn lint-staged
