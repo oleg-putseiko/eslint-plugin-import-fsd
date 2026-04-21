@@ -6,8 +6,8 @@ import { noDeprecatedLayersRule } from './rules/no-deprecated-layers.js';
 
 import { createRequire } from 'node:module';
 
-const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
+const _require = createRequire(import.meta.url);
+const pkg = _require('../package.json');
 
 type Rules = Record<
   'no-denied-layers' | 'no-unknown-layers' | 'no-deprecated-layers',
