@@ -9,7 +9,7 @@
 
 </div>
 
-ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.design/) methodology in imports and file locations. Compatible with FSD versions up to 2.
+A smart ESLint plugin that helps you enforce and maintain [Feature-Sliced Design](https://feature-sliced.design/) architecture. It automatically validates your imports and file boundaries, preventing architectural leaks. Fully compatible with FSD up to v2.
 
 **Contents:**
 
@@ -24,7 +24,6 @@ ESLint plugin for following [Feature-Sliced Design](https://feature-sliced.desig
   - [no-unknown-layers](#no-unknown-layers)
 - [Configs](#configs)
   - [recommended](#recommended)
-  - [recommended-legacy](#recommended-legacy)
 
 ## Getting started
 
@@ -32,33 +31,36 @@ Install `eslint-plugin-import-fsd` to your repository as dev dependency:
 
 ```bash
 npm install eslint-plugin-import-fsd --save-dev
-
+# or
 pnpm install eslint-plugin-import-fsd --save-dev
-
+# or
 yarn add eslint-plugin-import-fsd --dev
 ```
 
-In your ESLint configuration file, add `eslint-plugin-import-fsd` to the list of plugins:
+The easiest way to use this plugin is to add its **recommended configuration** to your ESLint flat config file. It automatically includes the plugin and sets up the best practices:
 
 ```js
 /* eslint.config.js */
-
 import importFsdPlugin from 'eslint-plugin-import-fsd';
 
 export default [
+  importFsdPlugin.configs.recommended,
+
+  // You must specify the root directory of your FSD layers
   {
-    plugins: {
-      'import-fsd': importFsdPlugin,
+    settings: {
+      fsd: {
+        rootDir: './src',
+      },
     },
   },
 ];
 ```
 
-Specify the directory where your FSD layers are located:
+If you prefer full control, you can define the plugin and its rules manually instead of using the recommended config:
 
 ```js
 /* eslint.config.js */
-
 import importFsdPlugin from 'eslint-plugin-import-fsd';
 
 export default [
@@ -68,14 +70,15 @@ export default [
     },
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './src',
       },
+    },
+    rules: {
+      'import-fsd/no-denied-layers': 'error',
     },
   },
 ];
 ```
-
-Configure the plugin [rules](#rules) or use the [recommended configuration](#recommended).
 
 ## Settings
 
@@ -189,9 +192,9 @@ export default [
 
 ### no-denied-layers
 
-Prevents import from a denied layer for a current one.
+Prevents importing from a denied layer into the current one.
 
-FSD layers have the following hierarchy, in which the first layer having the highest rank and the last one has the lowest:
+FSD layers have the following hierarchy, where the first layer has the highest rank and the last one has the lowest:
 
 1. `app`
 2. `processes` _(deprecated)_
@@ -201,7 +204,7 @@ FSD layers have the following hierarchy, in which the first layer having the hig
 6. `entities`
 7. `shared`
 
-A module of each layer has access only to layers located strictly lower in the hierarchy:
+Modules within a layer can only import from layers strictly below them in the hierarchy:
 
 | Layer       | Available layers                                                  |
 | ----------- | ----------------------------------------------------------------- |
@@ -213,7 +216,7 @@ A module of each layer has access only to layers located strictly lower in the h
 | `entities`  | `shared`                                                          |
 | `shared`    | —                                                                 |
 
-Each segment module on a slice has access to other segments, but not to other slices on the same layer.
+Modules within a slice can import from other segments in the same slice, but cannot import from other slices on the same layer.
 
 Example:
 
@@ -264,9 +267,9 @@ import foo from '@/features/foo/qux';
 
 #### Options
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
+- `ignores` - allows you to exclude imports from specific layers from being checked.
 
-  Possible value is an array consisting of a layer names.
+  The value must be an array of layer names.
 
   Example:
 
@@ -362,9 +365,9 @@ import foo from '@/shared/foo/bar';
   - `file` - the rule will only check files to see if they are in a deprecated layer
   - `all` (default) - the rule will check both imports and files
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
+- `ignores` - allows you to exclude imports from specific layers from being checked.
 
-  Possible value is an array consisting of a layer names.
+  The value must be an array of layer names.
 
   Example:
 
@@ -462,9 +465,9 @@ import foo from '@/entities/foo/bar';
   - `file` - the rule will only check files to see if they are in an unknown layer
   - `all` (default) - the rule will check both imports and files
 
-- `ignores` - allows you to exclude the import from a listed layers from being checked by the rule.
+- `ignores` - allows you to exclude imports from specific layers from being checked.
 
-  Possible value is an array consisting of a layer names.
+  The value must be an array of layer names.
 
   Example:
 
