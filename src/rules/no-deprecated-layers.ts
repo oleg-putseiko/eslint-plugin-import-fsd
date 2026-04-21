@@ -56,12 +56,15 @@ export const noDeprecatedLayersRule: Rule.RuleModule = {
       const isDeprecated = DEPRECATED_LAYER_NAMES.includes(fileCtx.layer);
 
       if (isDeprecated && !isIgnored) {
-        listener.Program = (node) => {
+        listener.Program = () => {
           const layer = LAYERS[fileCtx.layerIndex];
           const isReplaceable = layer.displayedActualNames.length > 0;
 
           context.report({
-            node,
+            loc: {
+              start: { line: 1, column: 0 },
+              end: { line: 1, column: 1 },
+            },
             messageId: isReplaceable ? 'replaceableDeprecatedFileLayer' : 'deprecatedFileLayer',
             data: {
               deprecatedLayer: fileCtx.layer,
