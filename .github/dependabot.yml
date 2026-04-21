@@ -34,8 +34,6 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: '@jridgewell/trace-mapping'
         update-types: ['version-update:semver-minor']
-      - dependency-name: '@pkgjs/parseargs'
-        update-types: ['version-update:semver-minor']
       - dependency-name: '@reteps/dockerfmt'
         update-types: ['version-update:semver-minor']
       - dependency-name: '@sec-ant/readable-stream'
@@ -62,11 +60,7 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: 'deep-is'
         update-types: ['version-update:semver-minor']
-      - dependency-name: 'eastasianwidth'
-        update-types: ['version-update:semver-minor']
       - dependency-name: 'emittery'
-        update-types: ['version-update:semver-minor']
-      - dependency-name: 'encoding'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'eslint-plugin-import-fsd'
         update-types: ['version-update:semver-minor']
@@ -84,15 +78,11 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: 'levn'
         update-types: ['version-update:semver-minor']
-      - dependency-name: 'negotiator'
-        update-types: ['version-update:semver-minor']
       - dependency-name: 'node-int64'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'optionator'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'prettier-plugin-sh'
-        update-types: ['version-update:semver-minor']
-      - dependency-name: 'retry'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'sh-syntax'
         update-types: ['version-update:semver-minor']
