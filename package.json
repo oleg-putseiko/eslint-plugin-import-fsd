@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-import-fsd",
-  "version": "3.0.1-canary.0",
+  "version": "3.0.1",
   "description": "A smart ESLint plugin that helps you enforce and maintain Feature-Sliced Design (FSD) architecture. Automatically validates layer hierarchy and import boundaries to prevent architectural leaks.",
   "license": "MIT",
   "author": "Oleg Putseiko <oleg.putseiko@gmail.com> (https://github.com/oleg-putseiko)",
