@@ -86,7 +86,7 @@ export default [
 
 Defines a directory that follows the FSD methodology. If not specified, the root directory will default to the directory containing the ESLint configuration file or the path passed with the `cwd` linter option.
 
-The value must be an absolute path to a folder with the layers. Files and folders lying directly in this directory will be considered as layers.
+The value can be an absolute path or a relative path (resolved relative to the directory containing the ESLint configuration file) to the folder with the layers. Files and folders lying directly in this directory will be considered as layers.
 
 For example, if your FSD layers are located in the `src` folder in the same directory as the ESLint configuration file, the `rootDir` option should be set as follows:
 
@@ -99,7 +99,7 @@ export default [
   {
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './src',
       },
     },
   },
@@ -127,12 +127,12 @@ export default [
   {
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './scr',
         aliases: {
-          // @/features/foo/bar -> <__dirname>/src/features/foo/bar
+          // @/features/foo/bar -> ./src/features/foo/bar
           '@/*': './src/*',
 
-          // foo -> <__dirname>/vendor/foo
+          // foo -> ./vendor/foo
           foo: './vendor/foo',
 
           // bar -> /bar
@@ -232,7 +232,7 @@ export default [
     },
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './src',
         aliases: {
           '@/*': './src/*',
         },
@@ -329,7 +329,7 @@ export default [
     },
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './src',
         aliases: {
           '@/*': './src/*',
         },
@@ -429,7 +429,7 @@ export default [
     },
     settings: {
       fsd: {
-        rootDir: `${__dirname}/src`,
+        rootDir: './src',
         aliases: {
           '@/*': './src/*',
         },
