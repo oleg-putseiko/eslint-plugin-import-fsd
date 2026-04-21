@@ -1,7 +1,7 @@
 {
   "name": "eslint-plugin-import-fsd",
   "version": "3.0.0",
-  "description": "ESLint plugin for following FSD methodology in imports and file locations",
+  "description": "A smart ESLint plugin that helps you enforce and maintain Feature-Sliced Design (FSD) architecture.",
   "license": "MIT",
   "author": "Oleg Putseiko <oleg.putseiko@gmail.com> (https://github.com/oleg-putseiko)",
   "keywords": [
@@ -11,12 +11,18 @@
     "import",
     "fsd",
     "feature-sliced",
-    "architecture"
+    "feature-sliced-design",
+    "architecture",
+    "boundaries",
+    "layers",
+    "hierarchy",
+    "infrastructure",
+    "lint"
   ],
   "homepage": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd"
+    "url": "git+https://github.com/oleg-putseiko/eslint-plugin-import-fsd.git"
   },
   "bugs": {
     "url": "https://github.com/oleg-putseiko/eslint-plugin-import-fsd/issues"
