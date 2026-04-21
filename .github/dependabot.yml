@@ -36,6 +36,8 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: '@pkgjs/parseargs'
         update-types: ['version-update:semver-minor']
+      - dependency-name: '@reteps/dockerfmt'
+        update-types: ['version-update:semver-minor']
       - dependency-name: '@sec-ant/readable-stream'
         update-types: ['version-update:semver-minor']
       - dependency-name: '@sinclair/typebox'
@@ -88,7 +90,11 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: 'optionator'
         update-types: ['version-update:semver-minor']
+      - dependency-name: 'prettier-plugin-sh'
+        update-types: ['version-update:semver-minor']
       - dependency-name: 'retry'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'sh-syntax'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'source-map'
         update-types: ['version-update:semver-minor']

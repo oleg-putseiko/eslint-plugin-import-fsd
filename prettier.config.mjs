@@ -3,6 +3,7 @@
  * @type {import("prettier").Config}
  */
 const config = {
+  plugins: ['prettier-plugin-sh'],
   arrowParens: 'always',
   singleQuote: true,
   trailingComma: 'all',

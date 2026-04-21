@@ -1290,6 +1290,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reteps/dockerfmt@npm:^0.5.1":
+  version: 0.5.2
+  resolution: "@reteps/dockerfmt@npm:0.5.2"
+  checksum: 10/402290057eb259b9f00f80c8c67ef514aab9ea4b50d6342715f7fd432f1371720e71bd7ef652bd08605a46f982e6391a4b37f79e063243e3b202d604fa32c3e4
+  languageName: node
+  linkType: hard
+
 "@sec-ant/readable-stream@npm:^0.4.1":
   version: 0.4.1
   resolution: "@sec-ant/readable-stream@npm:0.4.1"
@@ -3000,6 +3007,7 @@ __metadata:
     jest: "npm:^29.7.0"
     lint-staged: "npm:^16.4.0"
     prettier: "npm:^3.8.3"
+    prettier-plugin-sh: "npm:^0.18.1"
     ts-jest: "npm:^29.1.2"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.9.2"
@@ -5407,6 +5415,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-sh@npm:^0.18.1":
+  version: 0.18.1
+  resolution: "prettier-plugin-sh@npm:0.18.1"
+  dependencies:
+    "@reteps/dockerfmt": "npm:^0.5.1"
+    sh-syntax: "npm:^0.5.8"
+  peerDependencies:
+    prettier: ^3.6.0
+  checksum: 10/e4ffbff5c5c4821589ca3921596041b7d94ea6bd51593d8271680ce1d337ff6563623c37e326b799e08a8085184d1125a6369cccbc1106361aaee789565f3052
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^3.8.3":
   version: 3.8.3
   resolution: "prettier@npm:3.8.3"
@@ -5651,6 +5671,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10/26bdc6d58b29528f4142d29afb8526bc335f4fc04c4a10f2b98b217f277a031c66736bf82d3d3bb354a2f6a3ae50f18fd62b053c4ac3f294a3d10a61f5075b75
+  languageName: node
+  linkType: hard
+
+"sh-syntax@npm:^0.5.8":
+  version: 0.5.8
+  resolution: "sh-syntax@npm:0.5.8"
+  dependencies:
+    tslib: "npm:^2.8.1"
+  checksum: 10/cbc046244b81a997f988f7f2244f953756332720c82054c22d4680d4eee5dc3c5058c9bd84c13b3e9c320ba25970a99e24be465cf265f41ef7cb4c4030cab6d1
   languageName: node
   linkType: hard
 
@@ -6190,6 +6219,13 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 10/a91a15b3c9f76ac462f006fa88b6bfa528130dcfb849dd7ef7f9d640832ab681e235b8a2bc58ecde42f72851cc1d5d4e22c901b0c11aa51001ea1d395074b794
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
   languageName: node
   linkType: hard
 
