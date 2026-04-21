@@ -48,7 +48,7 @@
     "format": "prettier -c .",
     "format:fix": "prettier -w .",
     "typecheck": "tsc --noEmit --incremental false",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "setup": "yarn install && yarn setup:husky",
     "setup:husky": "husky && chmod +x ./.husky/*",
     "deps:audit": "bash ./scripts/deps/audit.sh",
