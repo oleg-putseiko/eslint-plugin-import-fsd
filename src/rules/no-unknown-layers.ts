@@ -46,9 +46,12 @@ export const noUnknownLayersRule: Rule.RuleModule = {
       const isIgnored = ignoredLayers.includes(fileCtx.layer);
 
       if (isUnknown && !isIgnored) {
-        listener.Program = (node) => {
+        listener.Program = () => {
           ruleContext.report({
-            node,
+            loc: {
+              start: { line: 1, column: 0 },
+              end: { line: 1, column: 1 },
+            },
             messageId: 'unknownFileLayer',
             data: { layer: fileCtx.layer },
           });
