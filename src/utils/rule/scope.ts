@@ -1,4 +1,4 @@
-import { isString } from '../guards';
+import { isString } from '../guards.js';
 
 export enum Scope {
   Import = 'import',

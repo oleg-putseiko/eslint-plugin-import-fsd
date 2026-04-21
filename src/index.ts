@@ -1,8 +1,8 @@
 import { type Rule, type ESLint, type Linter } from 'eslint';
 
-import { noDeniedLayersRule } from './rules/no-denied-layers';
-import { noUnknownLayersRule } from './rules/no-unknown-layers';
-import { noDeprecatedLayersRule } from './rules/no-deprecated-layers';
+import { noDeniedLayersRule } from './rules/no-denied-layers.js';
+import { noUnknownLayersRule } from './rules/no-unknown-layers.js';
+import { noDeprecatedLayersRule } from './rules/no-deprecated-layers.js';
 
 import { name, version } from '../package.json';
 

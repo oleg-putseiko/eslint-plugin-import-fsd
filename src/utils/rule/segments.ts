@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 
-import { matchOverriddenSegments, type Overrides } from './overrides';
+import { matchOverriddenSegments, type Overrides } from './overrides.js';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown> ? { [X in K]: T[K] | null } : T | null;
 

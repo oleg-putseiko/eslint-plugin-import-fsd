@@ -1,4 +1,4 @@
-import { isObject, isString } from '../guards';
+import { isObject, isString } from '../guards.js';
 
 export type Aliases = { [alias: string]: string };
 

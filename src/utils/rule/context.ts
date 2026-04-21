@@ -2,11 +2,11 @@ import { type Rule } from 'eslint';
 import { type ImportDeclaration } from 'estree';
 import * as path from 'node:path';
 
-import { type Aliases, isAliases, resolveAliasedPath } from './aliases';
-import { hasProperty, isString } from '../guards';
-import { LAYERS } from '../layers';
-import { isOverrides, type Overrides } from './overrides';
-import { extractSegments, type Segments } from './segments';
+import { type Aliases, isAliases, resolveAliasedPath } from './aliases.js';
+import { hasProperty, isString } from '../guards.js';
+import { LAYERS } from '../layers.js';
+import { isOverrides, type Overrides } from './overrides.js';
+import { extractSegments, type Segments } from './segments.js';
 
 type ShallowNullable<T> = T extends Record<infer K, unknown> ? { [X in K]: T[K] | null } : T | null;
 

@@ -1,6 +1,6 @@
 import { type JSONSchema4 } from 'json-schema';
 
-import { SCOPES } from './scope';
+import { SCOPES } from './scope.js';
 
 export const BASE_SCHEMA: JSONSchema4 = {
   type: 'object',

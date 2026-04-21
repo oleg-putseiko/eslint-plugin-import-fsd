@@ -1,9 +1,9 @@
 import { type Rule } from 'eslint';
 
-import { isStringArray } from '../utils/guards';
-import { type Layer, LAYERS } from '../utils/layers';
-import { extractFileContext, extractImportContext } from '../utils/rule/context';
-import { BASE_SCHEMA } from '../utils/rule/schema';
+import { isStringArray } from '../utils/guards.js';
+import { type Layer, LAYERS } from '../utils/layers.js';
+import { extractFileContext, extractImportContext } from '../utils/rule/context.js';
+import { BASE_SCHEMA } from '../utils/rule/schema.js';
 
 const extractIgnores = (context: Rule.RuleContext): string[] => {
   const ignores = context.options.at(0)?.ignores ?? [];
