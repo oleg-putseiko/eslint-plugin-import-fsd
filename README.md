@@ -13,19 +13,19 @@ A smart ESLint plugin that helps you enforce and maintain [Feature-Sliced Design
 
 **Contents:**
 
-- [Getting started](#getting-started)
-- [Settings](#settings)
+- [Getting started](#-getting-started)
+- [Settings](#-settings)
   - [rootDir](#rootdir)
   - [aliases](#aliases)
   - [overrides](#overrides)
-- [Rules](#rules)
+- [Rules](#️-rules)
   - [no-denied-layers](#no-denied-layers)
   - [no-deprecated-layers](#no-deprecated-layers)
   - [no-unknown-layers](#no-unknown-layers)
-- [Configs](#configs)
+- [Configs](#-configs)
   - [recommended](#recommended)
 
-## Getting started
+## 🚀 Getting started
 
 Install `eslint-plugin-import-fsd` to your repository as dev dependency:
 
@@ -80,7 +80,7 @@ export default [
 ];
 ```
 
-## Settings
+## ⚙️ Settings
 
 ### rootDir
 
@@ -188,7 +188,7 @@ export default [
 ];
 ```
 
-## Rules
+## 🛡️ Rules
 
 ### no-denied-layers
 
@@ -494,7 +494,7 @@ import foo from '@/entities/foo/bar';
   import foo from '@/qwe/foo/bar'; // Ignored unknown layer
   ```
 
-## Configs
+## 🧩 Configs
 
 ### recommended
 
