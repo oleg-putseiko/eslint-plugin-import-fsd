@@ -4,7 +4,10 @@ import { noDeniedLayersRule } from './rules/no-denied-layers.js';
 import { noUnknownLayersRule } from './rules/no-unknown-layers.js';
 import { noDeprecatedLayersRule } from './rules/no-deprecated-layers.js';
 
-import { name, version } from '../package.json';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 type Rules = Record<
   'no-denied-layers' | 'no-unknown-layers' | 'no-deprecated-layers',
@@ -23,8 +26,8 @@ type Plugin = {
 
 const plugin: Plugin = {
   meta: {
-    name,
-    version,
+    name: pkg.name,
+    version: pkg.version,
   },
   rules: {
     'no-denied-layers': noDeniedLayersRule,
