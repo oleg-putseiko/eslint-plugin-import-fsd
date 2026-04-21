@@ -1,4 +1,4 @@
-import { isString } from '../guards';
+import { isString } from '../guards.js';
 
 export enum Scope {
   Import = 'import',
@@ -14,7 +14,5 @@ export const isScope = (value: unknown): value is Scope =>
 export const isFileScope = (value: Scope): value is Scope.File | Scope.All =>
   [Scope.All, Scope.File].includes(value);
 
-export const isImportScope = (
-  value: Scope,
-): value is Scope.Import | Scope.All =>
+export const isImportScope = (value: Scope): value is Scope.Import | Scope.All =>
   [Scope.All, Scope.Import].includes(value);

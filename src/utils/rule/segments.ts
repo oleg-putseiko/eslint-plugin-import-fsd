@@ -1,10 +1,8 @@
 import * as path from 'node:path';
 
-import { matchOverriddenSegments, type Overrides } from './overrides';
+import { matchOverriddenSegments, type Overrides } from './overrides.js';
 
-type ShallowNullable<T> = T extends Record<infer K, unknown>
-  ? { [X in K]: T[K] | null }
-  : T | null;
+type ShallowNullable<T> = T extends Record<infer K, unknown> ? { [X in K]: T[K] | null } : T | null;
 
 export type Segments = {
   layer: string;
@@ -39,10 +37,8 @@ export const extractSegments = (
           .filter((segment) => segment.length > 0)
       : [];
 
-  const layer =
-    segments.length > 0 ? path.parse(segments[0]).name || null : null;
-  const slice =
-    segments.length > 1 ? path.parse(segments[1]).name || null : null;
+  const layer = segments.length > 0 ? path.parse(segments[0]).name || null : null;
+  const slice = segments.length > 1 ? path.parse(segments[1]).name || null : null;
 
   return { layer, slice };
 };

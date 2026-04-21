@@ -3,39 +3,32 @@ import plugin from '../../src';
 const { configs } = plugin;
 
 describe('recommended config', () => {
-  it('should have three rules', () => {
-    const rules = configs.recommended.rules ?? {};
+  const EXPECTED_RULES = [
+    { rule: 'import-fsd/no-denied-layers', severity: 'error' },
+    { rule: 'import-fsd/no-deprecated-layers', severity: 'warn' },
+    { rule: 'import-fsd/no-unknown-layers', severity: 'error' },
+  ];
 
+  it('should have exactly three rules', () => {
+    const rules = configs.recommended.rules ?? {};
     expect(Object.keys(rules)).toHaveLength(3);
   });
 
   it('should have plugin as a dependency', () => {
     const plugins = configs.recommended.plugins ?? {};
-
-    expect(plugins?.['import-fsd']).toEqual(plugin);
+    expect(plugins['import-fsd']).toBe(plugin);
   });
 
-  it.each([
-    { rule: 'import-fsd/no-denied-layers' },
-    { rule: 'import-fsd/no-deprecated-layers' },
-    { rule: 'import-fsd/no-unknown-layers' },
-  ])('should have rule $rule', ({ rule }) => {
-    expect(configs.recommended.rules).toHaveProperty(rule);
-  });
+  describe('rules configuration', () => {
+    it.each(EXPECTED_RULES)(
+      'rule "$rule" should be configured with "$severity" severity and no options',
+      ({ rule, severity }) => {
+        const ruleConfig = configs.recommended.rules?.[rule];
 
-  it.each([
-    { rule: 'import-fsd/no-denied-layers' },
-    { rule: 'import-fsd/no-deprecated-layers' },
-    { rule: 'import-fsd/no-unknown-layers' },
-  ])('rule $rule should not have options', ({ rule }) => {
-    expect(Array.isArray(configs.recommended.rules?.[rule])).toBe(false);
-  });
-
-  it.each([
-    { rule: 'import-fsd/no-denied-layers', severity: 'error' },
-    { rule: 'import-fsd/no-deprecated-layers', severity: 'warn' },
-    { rule: 'import-fsd/no-unknown-layers', severity: 'error' },
-  ])('rule $rule should have $severity severity', ({ rule, severity }) => {
-    expect(configs.recommended.rules?.[rule]).toEqual(severity);
+        expect(ruleConfig).toBeDefined();
+        expect(Array.isArray(ruleConfig)).toBe(false);
+        expect(ruleConfig).toBe(severity);
+      },
+    );
   });
 });

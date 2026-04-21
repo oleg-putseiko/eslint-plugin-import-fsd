@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
     'type-enum': [
@@ -16,7 +16,9 @@ module.exports = {
         'perf',
         'revert',
         'build',
+        '__wip__',
       ],
     ],
+    'header-max-length': [2, 'always', 100],
   },
 };

@@ -2,6 +2,8 @@ import { RuleTester } from 'eslint';
 
 import plugin from '../../src';
 
+const UNKNOWN_LAYERS: string[] = ['unknown-layer'];
+
 // prettier-ignore
 const NON_DEPRECATED_LAYERS: string[] = [
   'app', 'apps',
@@ -10,7 +12,7 @@ const NON_DEPRECATED_LAYERS: string[] = [
   'feature', 'features',
   'entity', 'entities',
   'shared',
-  'unknown-layer',
+  ...UNKNOWN_LAYERS,
 ];
 
 // prettier-ignore
@@ -23,9 +25,34 @@ const DEPRECATED_LAYERS: string[] = [
   'common', 'lib', 'libs',
 ];
 
+const IMPORT_LEVELS = [
+  {
+    description: 'segment-level',
+    prefix: '../../',
+    getFilename: (layer: string) => `/src/${layer}/qux/quux.js`,
+  },
+  {
+    description: 'slice-level',
+    prefix: '../',
+    getFilename: (layer: string) => `/src/${layer}/qux.js`,
+  },
+  {
+    description: 'layer-level',
+    prefix: './',
+    getFilename: (layer: string) => `/src/${layer}.js`,
+  },
+];
+
+const PATH_SUFFIXES = ['/foo/bar', '/foo', ''];
+
+const SCOPES_ALL = ['file', 'import', 'all'] as const;
+const SCOPES_IMPORT = ['import', 'all'] as const;
+const SCOPES_FILE = ['file', 'all'] as const;
+
+const BASE_SETTINGS = { fsd: { rootDir: '/src' } };
+
 const tester = new RuleTester({
-  root: true,
-  parserOptions: {
+  languageOptions: {
     sourceType: 'module',
     ecmaVersion: 'latest',
   },
@@ -34,347 +61,100 @@ const tester = new RuleTester({
 const noDeprecatedLayersRule = plugin.rules['no-deprecated-layers'];
 
 describe.each(NON_DEPRECATED_LAYERS)('file layer "%s"', (fileLayer) => {
-  tester.run(
-    'import from a segment-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        ...NON_DEPRECATED_LAYERS.flatMap((layer) => [
-          `../../${layer}/foo/bar`,
-          `../../${layer}/foo`,
-          `../../${layer}`,
-        ]).flatMap((importPath) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            options: [{ scope: 'file' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            options: [{ scope: 'import' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            options: [{ scope: 'all' }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-        ...DEPRECATED_LAYERS.flatMap((layer) => [
-          { layer, path: `../../${layer}/foo/bar` },
-          { layer, path: `../../${layer}/foo` },
-          { layer, path: `../../${layer}` },
-        ]).flatMap(({ path: importPath, layer: importLayer }) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            options: [{ scope: 'import', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux/quux.js`,
-            options: [{ scope: 'all', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-      ],
-      invalid: DEPRECATED_LAYERS.flatMap((layer) => [
-        `../../${layer}/foo/bar`,
-        `../../${layer}/foo`,
-        `../../${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-      ]),
-    },
-  );
+  IMPORT_LEVELS.forEach(({ description, prefix, getFilename }) => {
+    const isUnknownFileLayer = UNKNOWN_LAYERS.includes(fileLayer);
+    const filename = getFilename(fileLayer);
 
-  tester.run(
-    'import from a slice-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        ...NON_DEPRECATED_LAYERS.flatMap((layer) => [
-          `../${layer}/foo/bar`,
-          `../${layer}/foo`,
-          `../${layer}`,
-        ]).flatMap((importPath) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            options: [{ scope: 'file' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            options: [{ scope: 'import' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            options: [{ scope: 'all' }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-        ...DEPRECATED_LAYERS.flatMap((layer) => [
-          { layer, path: `../${layer}/foo/bar` },
-          { layer, path: `../${layer}/foo` },
-          { layer, path: `../${layer}` },
-        ]).flatMap(({ path: importPath, layer: importLayer }) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            options: [{ scope: 'import', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}/qux.js`,
-            options: [{ scope: 'all', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-      ],
-      invalid: DEPRECATED_LAYERS.flatMap((layer) => [
-        `../${layer}/foo/bar`,
-        `../${layer}/foo`,
-        `../${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-      ]),
-    },
-  );
+    const valid: RuleTester.ValidTestCase[] = [];
+    const invalid: RuleTester.InvalidTestCase[] = [];
 
-  tester.run(
-    'import from a layer-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        ...NON_DEPRECATED_LAYERS.flatMap((layer) => [
-          `./${layer}/foo/bar`,
-          `./${layer}/foo`,
-          `./${layer}`,
-        ]).flatMap((importPath) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            options: [{ scope: 'file' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            options: [{ scope: 'import' }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            options: [{ scope: 'all' }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-        ...DEPRECATED_LAYERS.flatMap((layer) => [
-          { layer, path: `./${layer}/foo/bar` },
-          { layer, path: `./${layer}/foo` },
-          { layer, path: `./${layer}` },
-        ]).flatMap(({ path: importPath, layer: importLayer }) => [
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            options: [{ scope: 'import', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-          {
-            settings: { fsd: { rootDir: '/src' } },
-            filename: `/src/${fileLayer}.js`,
-            options: [{ scope: 'all', ignores: [importLayer] }],
-            code: `import foo from "${importPath}"`,
-          },
-        ]),
-      ],
-      invalid: DEPRECATED_LAYERS.flatMap((layer) => [
-        `./${layer}/foo/bar`,
-        `./${layer}/foo`,
-        `./${layer}`,
-      ]).flatMap((importPath) => [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'import' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'all' }],
-          code: `import foo from "${importPath}"`,
-          errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
-        },
-      ]),
-    },
-  );
+    NON_DEPRECATED_LAYERS.forEach((layer) => {
+      PATH_SUFFIXES.forEach((suffix) => {
+        const code = `import foo from "${prefix}${layer}${suffix}";`;
+
+        SCOPES_ALL.forEach((scope) => {
+          valid.push({ settings: BASE_SETTINGS, filename, options: [{ scope }], code });
+        });
+      });
+    });
+
+    DEPRECATED_LAYERS.forEach((layer) => {
+      PATH_SUFFIXES.forEach((suffix) => {
+        const code = `import foo from "${prefix}${layer}${suffix}";`;
+
+        // Allowed: ignored deprecated import layer
+        SCOPES_IMPORT.forEach((scope) => {
+          valid.push({
+            settings: BASE_SETTINGS,
+            filename,
+            options: [{ scope, ignores: [layer] }],
+            code,
+          });
+        });
+
+        // Allowed: skipped deprecated import layer in the file scope
+        valid.push({ settings: BASE_SETTINGS, filename, options: [{ scope: 'file' }], code });
+
+        // Allowed: deprecated import layer in an unknown file layer
+        if (isUnknownFileLayer) {
+          SCOPES_IMPORT.forEach((scope) => {
+            valid.push({ settings: BASE_SETTINGS, filename, options: [{ scope }], code });
+          });
+        } else {
+          // Disallowed: deprecated import layer
+          SCOPES_IMPORT.forEach((scope) => {
+            invalid.push({
+              settings: BASE_SETTINGS,
+              filename,
+              options: [{ scope }],
+              code,
+              errors: [{ messageId: 'replaceableDeprecatedImportLayer' }],
+            });
+          });
+        }
+      });
+    });
+
+    tester.run(`import from a ${description} file should be allowed`, noDeprecatedLayersRule, {
+      valid,
+      invalid,
+    });
+  });
 });
 
 describe.each(DEPRECATED_LAYERS)('deprecated file layer "%s"', (fileLayer) => {
-  tester.run(
-    'import from a segment-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'import' }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'file', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'all', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-      ],
-      invalid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'file' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux/quux.js`,
-          options: [{ scope: 'all' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-      ],
-    },
-  );
+  IMPORT_LEVELS.forEach(({ description, getFilename }) => {
+    const filename = getFilename(fileLayer);
+    const code = 'import foo from "bar";';
 
-  tester.run(
-    'import from a slice-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'import' }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'file', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'all', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-      ],
-      invalid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'file' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'all' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-      ],
-    },
-  );
+    const valid: RuleTester.ValidTestCase[] = [
+      // Allowed: skipped deprecated file layer in the import scope
+      { settings: BASE_SETTINGS, filename, options: [{ scope: 'import' }], code },
+    ];
+    const invalid: RuleTester.InvalidTestCase[] = [];
 
-  tester.run(
-    'import from a layer-level file should be allowed',
-    noDeprecatedLayersRule,
-    {
-      valid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'import' }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'file', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}/qux.js`,
-          options: [{ scope: 'all', ignores: [fileLayer] }],
-          code: 'import foo from "bar"',
-        },
-      ],
-      invalid: [
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'file' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-        {
-          settings: { fsd: { rootDir: '/src' } },
-          filename: `/src/${fileLayer}.js`,
-          options: [{ scope: 'all' }],
-          code: 'import foo from "bar"',
-          errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
-        },
-      ],
-    },
-  );
+    SCOPES_FILE.forEach((scope) => {
+      // Allowed: ignored deprecated file layer
+      valid.push({
+        settings: BASE_SETTINGS,
+        filename,
+        options: [{ scope, ignores: [fileLayer] }],
+        code,
+      });
+
+      // Disallowed: deprecated file layer
+      invalid.push({
+        settings: BASE_SETTINGS,
+        filename,
+        options: [{ scope }],
+        code,
+        errors: [{ messageId: 'replaceableDeprecatedFileLayer' }],
+      });
+    });
+
+    tester.run(`import from a ${description} file should be allowed`, noDeprecatedLayersRule, {
+      valid,
+      invalid,
+    });
+  });
 });

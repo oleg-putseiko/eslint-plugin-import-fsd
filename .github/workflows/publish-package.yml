@@ -12,13 +12,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          registry-url: https://registry.npmjs.org/
+      - name: Setup Node via Volta
+        uses: volta-cli/action@v5
 
       - name: Install dependencies
         run: npm install
@@ -29,7 +26,20 @@ jobs:
       - name: Run tests
         run: npm run test
 
+      - name: Determine npm tag
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          if [[ "$VERSION" == *"-"* ]]; then
+            PRERELEASE=$(echo "$VERSION" | awk -F'-' '{print $2}' | awk -F'.' '{print $1}')
+            echo "NPM_TAG=$PRERELEASE" >> $GITHUB_ENV
+          else
+            echo "NPM_TAG=latest" >> $GITHUB_ENV
+          fi
+
+      - name: Setup npm auth
+        run: echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" > .npmrc
+
       - name: Publish
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --tag ${{ env.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

@@ -14,36 +14,13 @@ export const LAYERS: Layer[] = [
   },
   {
     names: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'],
-    deprecatedNames: [
-      'process',
-      'processes',
-      'flow',
-      'flows',
-      'workflow',
-      'workflows',
-    ],
+    deprecatedNames: ['process', 'processes', 'flow', 'flows', 'workflow', 'workflows'],
     displayedActualNames: ['app', 'features'],
     hasSlices: true,
   },
   {
-    names: [
-      'page',
-      'pages',
-      'screen',
-      'screens',
-      'view',
-      'views',
-      'layout',
-      'layouts',
-    ],
-    deprecatedNames: [
-      'screen',
-      'screens',
-      'view',
-      'views',
-      'layout',
-      'layouts',
-    ],
+    names: ['page', 'pages', 'screen', 'screens', 'view', 'views', 'layout', 'layouts'],
+    deprecatedNames: ['screen', 'screens', 'view', 'views', 'layout', 'layouts'],
     displayedActualNames: ['pages'],
     hasSlices: true,
   },
@@ -54,14 +31,7 @@ export const LAYERS: Layer[] = [
     hasSlices: true,
   },
   {
-    names: [
-      'feature',
-      'features',
-      'component',
-      'components',
-      'container',
-      'containers',
-    ],
+    names: ['feature', 'features', 'component', 'components', 'container', 'containers'],
     deprecatedNames: ['component', 'components', 'container', 'containers'],
     displayedActualNames: ['features'],
     hasSlices: true,
@@ -80,7 +50,7 @@ export const LAYERS: Layer[] = [
   },
 ];
 
-export const listNames = (names: string[]): string =>
+export const joinNames = (names: string[]): string =>
   names.reduce((acc, name, index) => {
     if (index <= 0) return `'${name}'`;
     if (index !== names.length - 1) return `${acc}, '${name}'`;

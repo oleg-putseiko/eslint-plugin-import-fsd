@@ -19,4 +19,4 @@ run_check() {
   fi
 }
 
-run_check "Validating commit message" "Commit message is valid" yarn commitlint --edit "$1"
+run_check "Running workspace type checks" "Workspace types are valid" yarn typecheck

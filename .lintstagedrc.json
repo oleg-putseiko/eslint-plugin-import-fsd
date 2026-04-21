@@ -1,0 +1,3 @@
+{
+  "*.{js,ts,json,md,yaml,yml,sh}": ["yarn prettier --write"]
+}
