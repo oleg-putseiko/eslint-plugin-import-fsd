@@ -6,8 +6,8 @@ import { noDeprecatedLayersRule } from './rules/no-deprecated-layers.js';
 
 import { createRequire } from 'node:module';
 
-const _require = createRequire(import.meta.url);
-const pkg = _require('../package.json');
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 type Rules = Record<
   'no-denied-layers' | 'no-unknown-layers' | 'no-deprecated-layers',
@@ -49,5 +49,10 @@ Object.assign(plugin.configs.recommended, {
   ...plugin.configs.recommended,
   plugins: { 'import-fsd': plugin },
 });
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = plugin;
+  Object.assign(module.exports, { default: plugin });
+}
 
 export default plugin;

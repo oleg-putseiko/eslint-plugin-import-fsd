@@ -32,7 +32,16 @@
 
 UTILS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$UTILS_DIR/colors.sh"
+if [ -f "$UTILS_DIR/colors.sh" ]; then
+  source "$UTILS_DIR/colors.sh"
+else
+  GREEN='\033[0;32m'
+  RED='\033[0;31m'
+  YELLOW='\033[1;33m'
+  BLUE='\033[0;34m'
+  GRAY='\033[0;90m'
+  NC='\033[0m'
+fi
 
 log() {
   local msg=""
@@ -49,20 +58,20 @@ log() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --msg | -m)
-        msg="$2"
-        shift 2
+        msg="${2:-}"
+        [[ $# -ge 2 ]] && shift 2 || shift 1
         ;;
       --level | -l)
-        level="$2"
-        shift 2
+        level="${2:-1}"
+        [[ $# -ge 2 ]] && shift 2 || shift 1
         ;;
       --icon | -ic)
-        icon="$2"
-        shift 2
+        icon="${2:-}"
+        [[ $# -ge 2 ]] && shift 2 || shift 1
         ;;
       --color | -c)
-        color_name="$2"
-        shift 2
+        color_name="${2:-}"
+        [[ $# -ge 2 ]] && shift 2 || shift 1
         ;;
       --success | -s)
         type_icon="✅"
@@ -126,9 +135,11 @@ log() {
   local end=$'\n'
   [ "$is_inline" = true ] && end=""
 
+  local reset_color="${NC:-\033[0m}"
+
   if [ -n "$final_icon" ]; then
-    printf "%b${final_color}%s%b %b${NC}%b" "$start" "$indent" "$final_icon" "$msg" "$end"
+    printf "%b${final_color}%s%b %b${reset_color}%b" "$start" "$indent" "$final_icon" "$msg" "$end"
   else
-    printf "%b${final_color}%s%b${NC}%b" "$start" "$indent" "$msg" "$end"
+    printf "%b${final_color}%s%b${reset_color}%b" "$start" "$indent" "$msg" "$end"
   fi
 }
