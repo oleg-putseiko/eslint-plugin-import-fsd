@@ -13,7 +13,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # artifacts
-build
+/build
 dist
 coverage
 .cache
