@@ -2082,15 +2082,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"argparse@npm:^1.0.7":
-  version: 1.0.10
-  resolution: "argparse@npm:1.0.10"
-  dependencies:
-    sprintf-js: "npm:~1.0.2"
-  checksum: 10/c6a621343a553ff3779390bb5ee9c2263d6643ebcd7843227bdde6cc7adbed796eb5540ca98db19e3fd7b4714e1faa51551f8849b268bb62df27ddb15cbcd91e
-  languageName: node
-  linkType: hard
-
 "argparse@npm:^2.0.1":
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
@@ -2976,16 +2967,6 @@ __metadata:
     acorn-jsx: "npm:^5.3.2"
     eslint-visitor-keys: "npm:^4.2.1"
   checksum: 10/9b355b32dbd1cc9f57121d5ee3be258fab87ebeb7c83fc6c02e5af1a74fc8c5ba79fe8c663e69ea112c3e84a1b95e6a2067ac4443ee7813bb85ac7581acb8bf9
-  languageName: node
-  linkType: hard
-
-"esprima@npm:^4.0.0":
-  version: 4.0.1
-  resolution: "esprima@npm:4.0.1"
-  bin:
-    esparse: ./bin/esparse.js
-    esvalidate: ./bin/esvalidate.js
-  checksum: 10/f1d3c622ad992421362294f7acf866aa9409fbad4eb2e8fa230bd33944ce371d32279667b242d8b8907ec2b6ad7353a717f3c0e60e748873a34a7905174bc0eb
   languageName: node
   linkType: hard
 
@@ -4351,26 +4332,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.13.1":
-  version: 3.14.2
-  resolution: "js-yaml@npm:3.14.2"
-  dependencies:
-    argparse: "npm:^1.0.7"
-    esprima: "npm:^4.0.0"
-  bin:
-    js-yaml: bin/js-yaml.js
-  checksum: 10/172e0b6007b0bf0fc8d2469c94424f7dd765c64a047d2b790831fecef2204a4054eabf4d911eb73ab8c9a3256ab8ba1ee8d655b789bf24bf059c772acc2075a1
-  languageName: node
-  linkType: hard
-
-"js-yaml@npm:^4.1.0, js-yaml@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "js-yaml@npm:4.1.1"
+"js-yaml@npm:^4.1.0, js-yaml@npm:^4.1.1, js-yaml@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "js-yaml@npm:4.2.0"
   dependencies:
     argparse: "npm:^2.0.1"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10/a52d0519f0f4ef5b4adc1cde466cb54c50d56e2b4a983b9d5c9c0f2f99462047007a6274d7e95617a21d3c91fde3ee6115536ed70991cd645ba8521058b78f77
+  checksum: 10/51de2067a2b44b07ba5206132e56005f8b568ff279bb4d2f645068958c56fa4827d40a6841c983234671fa0a134bf094d0b0717873c2a3d319185297af145a6d
   languageName: node
   linkType: hard
 
@@ -5562,13 +5531,6 @@ __metadata:
   version: 0.7.4
   resolution: "source-map@npm:0.7.4"
   checksum: 10/a0f7c9b797eda93139842fd28648e868a9a03ea0ad0d9fa6602a0c1f17b7fb6a7dcca00c144476cccaeaae5042e99a285723b1a201e844ad67221bf5d428f1dc
-  languageName: node
-  linkType: hard
-
-"sprintf-js@npm:~1.0.2":
-  version: 1.0.3
-  resolution: "sprintf-js@npm:1.0.3"
-  checksum: 10/c34828732ab8509c2741e5fd1af6b767c3daf2c642f267788f933a65b1614943c282e74c4284f4fa749c264b18ee016a0d37a3e5b73aee446da46277d3a85daa
   languageName: node
   linkType: hard
 
